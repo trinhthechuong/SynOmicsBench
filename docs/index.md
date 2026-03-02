@@ -75,7 +75,7 @@ Quantifies disclosure vulnerability aligned with EDPB regulatory principles:
 
     Learn how to install the framework and run your first benchmark.
 
--   :material-layers-outline:{ .lg .middle } **[Framework Documentation](framework/index.md)**
+-   :material-layers-outline:{ .lg .middle } **[Synthetic Data Methods](synthetic-data/index.md)**
 
     Detailed explanation of the preprocessing and SDG algorithms.
 

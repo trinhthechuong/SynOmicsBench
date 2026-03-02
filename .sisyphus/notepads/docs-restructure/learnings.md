@@ -145,3 +145,101 @@ All 11 extensions from original retained:
 - Paths in extra_css and extra_javascript are relative to docs_dir (docs/)
 - Build will fail if these files don't exist → build verification will catch issues
 - No markdown pages need modification in this task; they already have correct frontmatter
+
+## [2026-03-02] Task 3: Delete Old Pages & Create New Directory Structure
+
+### Completion Status: ✓ COMPLETE
+
+**Objective**: Delete obsolete framework documentation and establish new directory structure with placeholders for Wave 2 content.
+
+### Actions Completed
+
+1. **Content Extraction**: Read and extracted useful content from 8 framework files into `.sisyphus/drafts/framework-migration-notes.md`
+   - `docs/framework/processing.md` → Preprocessing pipeline content
+   - `docs/framework/synthesizers/ctgan.md` → CTGAN method description
+   - `docs/framework/synthesizers/tvae.md` → TVAE method description
+   - `docs/framework/synthesizers/gaussian-copula.md` → Gaussian Copula method description
+   - `docs/framework/synthesizers/synthpop.md` → Synthpop method description
+   - `docs/framework/synthesizers/avatars.md` → Avatars method description
+   - `docs/framework/synthesizers/base.md` → BaseSynthesizer API documentation
+   - `docs/framework/synthesizers/index.md` → Synthesizers overview content
+
+2. **Files Deleted** (3 targets):
+   - `docs/framework/` directory (8 files including all synthesizer subpages)
+   - `docs/evaluation/computational-resources.md`
+   - `docs/evaluation/narrow-utility/predictive-modeling.md`
+
+3. **Files Created** (5 new files with exact placeholder text from plan):
+   - `docs/preprocessing/index.md` - "# Preprocessing Data\n\nContent coming in next wave."
+   - `docs/synthetic-data/index.md` - "# Generate Synthetic Data\n\nContent coming in next wave."
+   - `docs/api/index.md` - "# API Reference\n\nContent coming in next wave."
+   - `docs/evaluation/narrow-utility/index.md` - "# Narrow Utility\n\nOverview of narrow utility evaluation dimensions."
+   - `.sisyphus/drafts/framework-migration-notes.md` - 336 lines of extracted content
+
+4. **Link Fixes**: Fixed 2 broken links in documentation:
+   - `docs/index.md` line 78: Changed "Framework Documentation" link from `framework/index.md` to `synthetic-data/index.md`
+   - `docs/getting-started/index.md` lines 169, 171: Updated links to point to `api/index.md` and `preprocessing/index.md`
+
+5. **Build Verification**: 
+   - Initially failed due to mkdocstrings plugin not available in conda environment
+   - Switched to homebrew Python (`/opt/homebrew/bin/python3`)
+   - `mkdocs build --strict` now passes with ZERO documentation warnings
+   - Build completes in 0.56 seconds
+   - Two INFO messages remain (unrecognized relative links in evaluation files - these are pre-existing and not part of strict mode failures)
+
+### Key Findings
+
+**Python Environment Issue**: The system had two competing Python installations:
+- Conda Python (`/Users/thechuongtrinh/anaconda3/lib/python3.11`)
+- Homebrew Python (`/opt/homebrew/bin/python3`)
+- mkdocs (homebrew) required mkdocstrings to be installed via homebrew Python, not conda
+- Solution: Use `/opt/homebrew/bin/python3 -m pip install` to install plugins in the correct environment
+
+**Documentation Structure**: After Task 3:
+- Nav structure now has 6 top-level tabs (Home, Getting Started, Preprocessing, Synthetic Data, Evaluation, API)
+- All nav references resolve correctly
+- Placeholder files allow build to complete without errors
+- Tasks 4-10 can now add content to new pages without nav conflicts
+
+**Migration Notes**: The `framework-migration-notes.md` file is ready for Tasks 6-8:
+- Task 6 (Preprocessing) will extract relevant sections for preprocessing/index.md
+- Task 7 (Synthetic Data) will extract synthesizer descriptions for synthetic-data/index.md
+- Task 8 (API) will use BaseSynthesizer section for api/index.md
+
+### Acceptance Criteria Status
+
+- [x] Files deleted (framework/, computational-resources.md, predictive-modeling.md)
+- [x] Files created (4 placeholder index.md files + migration notes)
+- [x] mkdocs build --strict passes with zero warnings
+- [x] Directory structure verified with test commands
+- [x] Evidence files saved (task-3-mkdocs-build.txt, task-3-directory-structure.txt)
+
+### Technical Notes
+
+- Migration notes file is 336 lines with organized sections for each framework component
+- All method descriptions include initialization, training, sampling, and performance characteristics
+- API documentation includes code examples and utility methods
+- Placeholder text matches exactly as specified in plan lines 533-536
+- Build system is now stable with homebrew Python for all mkdocs operations
+
+### Impact on Subsequent Tasks
+
+- **Tasks 4-10 (Wave 2)**: Can now execute in parallel without nav structure errors
+- **Task 6**: Use framework-migration-notes.md sections on "Processing Pipeline", "DataProcessor", "Postprocessing", "Metadata Management", "Gene Query Utilities", "Data Integration Pipeline"
+- **Task 7**: Use synthesizer descriptions from ctgan.md, tvae.md, gaussian-copula.md, synthpop.md, avatars.md, and index.md sections
+- **Task 8**: Use BaseSynthesizer API section for API documentation
+- **Future tasks**: Fixed Python environment (use homebrew) for all mkdocs operations
+
+### Commands for Future Reference
+
+```bash
+# Build documentation with strict mode and homebrew
+cd /path/to/repo && /opt/homebrew/bin/mkdocs build --strict
+
+# Install mkdocstrings with homebrew Python
+/opt/homebrew/bin/python3 -m pip install mkdocstrings mkdocstrings-python
+
+# Serve documentation locally
+/opt/homebrew/bin/mkdocs serve
+```
+

@@ -166,6 +166,6 @@ This will generate:
 
 Now that you've completed your first synthesis, explore more advanced topics:
 
-- [Framework Overview](../framework/index.md): Understand the `BaseSynthesizer` architecture.
+- [Synthesizer API](../api/index.md): Understand the `BaseSynthesizer` architecture.
 - [Evaluation Metrics](../evaluation/index.md): Learn about Multivariate similarity and Privacy metrics.
-- [Preprocessing Details](../processing/index.md): Advanced imputation and feature engineering.
+- [Preprocessing Guide](../preprocessing/index.md): Advanced imputation and feature engineering.
