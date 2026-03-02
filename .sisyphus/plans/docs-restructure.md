@@ -736,7 +736,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 5. Rewrite Getting Started Page (docs/getting-started/index.md)
+- [x] 5. Rewrite Getting Started Page (docs/getting-started/index.md)
 
   **What to do**:
   - Rewrite `docs/getting-started/index.md` following `documentation_prompt.md` Section 3
