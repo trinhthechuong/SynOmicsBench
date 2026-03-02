@@ -55,6 +55,7 @@ nav:
       - Narrow Utility: evaluation/narrow-utility/index.md
       - Privacy: evaluation/privacy.md
       - Meta-ranking: evaluation/meta-ranking.md
+      - Computational Resources: evaluation/computational-resources.md
   - Resources: resources/index.md
 
 # Documentation Directory
