@@ -324,7 +324,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 2. Rewrite mkdocs.yml + Create Custom CSS
+- [x] 2. Rewrite mkdocs.yml + Create Custom CSS
 
   **What to do**:
   - Create `docs/stylesheets/extra.css` with custom theme:
