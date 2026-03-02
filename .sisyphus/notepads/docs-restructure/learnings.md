@@ -348,3 +348,52 @@ cd /path/to/repo && /opt/homebrew/bin/mkdocs build --strict
 - All dataset statistics preserved (patient counts, feature dimensions, sources)
 - SDG method descriptions unchanged
 - Evaluation pillar descriptions maintained with proper terminology
+
+## [2026-03-02] Task 6: Preprocessing Data Page Creation
+
+**Status**: COMPLETE ✓
+
+### What Was Done
+- Replaced placeholder with full preprocessing documentation (109 lines)
+- Added Data Integration Pipeline figure (processing_pipeline.png)
+- Included exact pipeline execution code from spec (55 lines)
+- Described 8 pipeline steps with brief explanations
+- Applied proper formatting (figure caption, code blocks)
+
+### Key Sections
+1. **Introduction**: Explains data integration purpose and module capabilities
+2. **Data Integration Pipeline**: Figure 2 with caption (blank line before caption verified)
+3. **Pipeline Execution**: Complete working code example (lines 19-71)
+4. **Pipeline Steps**: 8 step descriptions (remove_undefined → integrate_data)
+
+### Content Sources
+- Framework migration notes: Processing pipeline overview, DataProcessor methods
+- Spec lines 149-203: Exact pipeline execution code (copied verbatim)
+- Source code docstrings: Step descriptions and parameter explanations
+
+### Evidence Generated
+1. task-6-preprocessing.txt — Figure/code/method verification (all matches found)
+2. task-6-caption-format.txt — Caption format check (blank line present)
+
+### Acceptance Criteria Met
+✓ File > 50 lines (actual: 109 lines)
+✓ processing_pipeline.png referenced (line 7)
+✓ DataIntegrationPipeline imported (lines 11, 19, 49)
+✓ run_pipeline method called (line 54)
+✓ Figure caption below figure with blank line (line 9 caption)
+
+### Pipeline Steps Documented
+1. **remove_undefined**: Removes samples with missing identifiers
+2. **remove_duplicates**: Removes duplicate rows/columns
+3. **remove_overmissing_samples**: Filters samples exceeding missingness threshold
+4. **remove_low_expression_genes**: Filters genes by expression/variance
+5. **check_duplicate_genes**: Identifies genes with identical profiles
+6. **mapping_genes**: Maps Ensembl IDs to HUGO symbols
+7. **feature_engineering**: Type classification, encoding, scaling, imputation
+8. **integrate_data**: Merges clinical and transcriptomics data
+
+### Formatting Applied
+- Figure on own line with blank line before caption
+- Code block with `python` language tag
+- No icons or emoji
+- Proper heading hierarchy (## for major, ### for subsections)
