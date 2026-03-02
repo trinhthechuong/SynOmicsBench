@@ -1,0 +1,48 @@
+## Task 1: PDF to PNG Conversion Evidence (CORRECTED)
+## Date: 2026-03-02
+## Status: SUCCESS (After Location Fix)
+
+### Critical Fix Applied
+Initial implementation created PNG files in main repo (/Users/thechuongtrinh/Workspace/SynOmicBench/docs/assets/figures/)
+**CORRECTED TO**: Worktree location (/Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/docs/assets/figures/)
+
+### Required PDFs Converted to PNG in Worktree (>10KB each):
+-rw-r--r--  1 thechuongtrinh  staff   1.3M Mar  2 23:07 /Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/docs/assets/figures/Figure_1_Graphical_abstract.png
+-rw-r--r--  1 thechuongtrinh  staff   3.3M Mar  2 23:07 /Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/docs/assets/figures/processing_pipeline.png
+
+### Optional PDFs Converted to PNG in Worktree (>10KB each):
+-rw-r--r--  1 thechuongtrinh  staff   995K Mar  2 23:07 /Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/docs/assets/figures/melanoma_dge_gcs.png
+-rw-r--r--  1 thechuongtrinh  staff   722K Mar  2 23:07 /Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/docs/assets/figures/melanoma_gsea_pcs.png
+
+### Conversion Commands Used (with absolute source paths):
+pdftocairo -png -singlefile -r 300 \
+  /Users/thechuongtrinh/Workspace/SynOmicBench/manu_md/figures/Figure_1_Graphical_abstract.pdf \
+  /Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/docs/assets/figures/Figure_1_Graphical_abstract
+
+pdftocairo -png -singlefile -r 300 \
+  /Users/thechuongtrinh/Workspace/SynOmicBench/manu_md/figures/processing_pipeline.pdf \
+  /Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/docs/assets/figures/processing_pipeline
+
+pdftocairo -png -singlefile -r 300 \
+  /Users/thechuongtrinh/Workspace/SynOmicBench/Manuscripts/Melanoma/NarrowUtility/DGE/GCS/Seed_42.pdf \
+  /Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/docs/assets/figures/melanoma_dge_gcs
+
+pdftocairo -png -singlefile -r 300 \
+  /Users/thechuongtrinh/Workspace/SynOmicBench/Manuscripts/Melanoma/NarrowUtility/GSEA/PCS/Seed_42.pdf \
+  /Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/docs/assets/figures/melanoma_gsea_pcs
+
+### DPI Verification:
+All conversions used -r 300 flag for 300 DPI output.
+All PNG files are suitable for high-resolution web rendering and print publication.
+
+### File Size Verification:
+✓ Figure_1_Graphical_abstract.png: 1.3M (>>10KB threshold)
+✓ processing_pipeline.png: 3.3M (>>10KB threshold)
+✓ melanoma_dge_gcs.png: 995K (>>10KB threshold)
+✓ melanoma_gsea_pcs.png: 722K (>>10KB threshold)
+
+### Worktree Isolation Verification:
+✓ All 4 PNG files exist in worktree
+✓ All 4 PNG files removed from main repo
+✓ Main repo docs/assets/figures/ contains no newly-created PNGs
+✓ Worktree docs/assets/figures/ contains exactly 4 converted PNG files
