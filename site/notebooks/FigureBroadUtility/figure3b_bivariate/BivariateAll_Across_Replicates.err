@@ -1,0 +1,7 @@
+/usr/bin/bash: line 2: $'\t': command not found
+/usr/bin/bash: line 3:  : command not found
+./submit_figure3b_bivariate_all.sh: line 22: 1053638 Killed                  singularity exec --bind /bettik/PROJECTS/pr-ai4drug/trinhtc/workspace:/mnt/ --no-home my_sandbox bash -c "
+    source /binary/miniforge3/etc/profile.d/conda.sh && \	
+    conda activate synthetic_data && \ 
+    cd /mnt/digphat/syntheticDataBenchmark/Chuong_pipeline/Manuscript/FigureBroadUtility &&     python Figure3b_bivariate_all.py
+"
