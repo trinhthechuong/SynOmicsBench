@@ -52,7 +52,14 @@ nav:
   - Evaluation:
       - evaluation/index.md
       - Broad Utility: evaluation/broad-utility.md
-      - Narrow Utility: evaluation/narrow-utility/index.md
+      - Narrow Utility:
+          - Overview: evaluation/narrow-utility/index.md
+          - DGE: evaluation/narrow-utility/dge.md
+          - GSEA: evaluation/narrow-utility/gsea.md
+          - ssGSEA: evaluation/narrow-utility/ssgsea.md
+          - Cell Deconvolution: evaluation/narrow-utility/cell-deconvolution.md
+          - Survival Analysis: evaluation/narrow-utility/survival-analysis.md
+          - Predictive Modeling: evaluation/narrow-utility/predictive-modeling.md
       - Privacy: evaluation/privacy.md
       - Meta-ranking: evaluation/meta-ranking.md
       - Computational Resources: evaluation/computational-resources.md
