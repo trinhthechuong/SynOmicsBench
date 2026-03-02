@@ -871,3 +871,323 @@ All 8 acceptance criteria commands run successfully:
 6. `grep -cE '^\!\!\!' docs/evaluation/narrow-utility/dge.md` → 0
 7. `grep 'src/SynOmics/metrics/narrow_utility/DGE.py' docs/evaluation/narrow-utility/dge.md` → match
 8. `/opt/homebrew/bin/mkdocs build` → SUCCESS (1.86s)
+
+## [Mon Mar 3 00:28:00 PST 2026] Task 14: Update ssGSEA Page
+
+### Changes Made
+- **Overview section** (lines 3-4): Replaced 3-paragraph hypothetical introduction with concise 2-3 sentence explanation of ssGSEA per-sample pathway activity
+- **Methodology section** (lines 5-6): Replaced detailed pipeline with KSC (Kolmogorov-Smirnov Conservation) metric description
+  - KS statistic quantifies maximum distance between cumulative distributions
+  - KS-Complement (1 - KS statistic) provides intuitive similarity score (higher = better)
+  - Bayesian estimation with posterior probabilities
+- **Results section** (lines 7-23): Replaced hypothetical benchmarking with manuscript content (lines 862-900)
+  - Gaussian Copula >87% posterior probability (Bayesian estimation)
+  - Synthpop ranked second
+  - PBRM1 mutation signal: IL6-JAK-STAT3 downregulation in ccRCC (Wilcoxon rank-sum, P=0.01)
+  - Pathway recovery: estrogen response, apoptosis, allograft rejection, UV response
+  - MHC-II scores in Melanoma: responders > progressors in ipilimumab-treated (MWU P<0.1), no difference in naïve (MWU P>0.1)
+  - Single-replicate recovery limitation (Avatars K10, Gaussian Copula)
+  - Prognostic model: MHC-II + LDH + lymph node status (5-fold CV, 3 repeats)
+- **Observations section** (lines 24-30): Replaced "Key Findings" admonitions with neutral bullet points
+  - 5 observations using factual language ("demonstrated", "showed", "exhibited")
+- **References section** (lines 32-36): Added notebook and visualization references
+  - Analysis: `Manuscripts/Melanoma/NarrowUtility/ssGSEA/ssGSEA_KS.ipynb`
+  - Visualization: `Manuscripts/FiguressGSEA/Figure6a_KSC_ssGSEA.ipynb`
+- **Code Example section** (lines 37-77): Preserved unchanged (40 lines)
+
+### Acceptance Criteria Results
+✓ Key Findings removed (count = 0)
+✓ ssGSEA_KS notebook reference present
+✓ Figure6a_KSC visualization reference present
+✓ No emoji icons (count = 0)
+✓ No Material icons (count = 0)
+✓ No admonitions (count = 0)
+✓ Build passes (non-strict mode, 1.85s)
+
+### File Statistics
+- Original: 89 lines (hypothetical content)
+- New: 77 lines (-12 lines)
+- Sections: 1 heading (#) + 4 major sections (##) + 2 subsections (###) = 7 headings
+- Manuscript content: ~20 lines integrated (KSC methodology + biological validation + prognostic model)
+- References: 4 lines
+- Observations: 7 lines
+- Code Example: 40 lines (preserved)
+
+### Key Patterns (Building on Task 12)
+1. **KSC vs GCS/PCS terminology**: ssGSEA uses "Kolmogorov-Smirnov Conservation" (KSC) - manuscript is precise about metric names
+2. **Subgroup analyses strengthen validation**: ipilimumab-treated vs naïve comparison adds biological depth
+3. **Cross-replicate stability is critical**: Single-replicate recovery is explicitly noted as limitation
+4. **Prognostic model transfer**: First mention of training on synthetic, evaluating on original (important use case)
+5. **Neutral language for observations**: "demonstrated highest cross-replicate stability" vs "excellent performance" (no hype)
+6. **Both notebook AND visualization references**: ssGSEA has separate analysis and figure generation notebooks
+
+### Manuscript Integration Notes
+**Source**: Manuscript lines 862-900
+
+**KSC Methodology**:
+- "comparing the distribution of NES between original and synthetic datasets using the KS statistic"
+- "KS-Complement scores" (higher = better preservation)
+- "Bayesian estimation identified the Gaussian Copula as the optimal method"
+
+**Benchmark Results (lines 862-873)**:
+- Gaussian Copula: "highest similarity of NES distribution to the original data"
+- "consistently high and tightly distributed KS-Complement scores"
+- Bayesian posterior probabilities "exceeding 87%"
+- Synthpop ranked second
+
+**Biological Validation - ccRCC (lines 875-881)**:
+- PBRM1 loss-of-function mutations → reduced IL6-JAK-STAT3 signaling (P=0.01)
+- Signal robustly reproduced by Gaussian Copula across multiple replicates
+- Other pathways recovered: estrogen response, apoptosis, allograft rejection, UV response
+- Other SDG methods exhibited pronounced inter-replicate variability
+
+**Biological Validation - Melanoma (lines 882-889)**:
+- MHC class II scores: responders vs progressors
+- Only Avatars K10 and Gaussian Copula reproduced expected pattern
+- Ipilimumab-treated: higher MHC-II in responders (MWU P<0.1)
+- Ipilimumab-naïve: no significant difference (MWU P>0.1)
+- Recovery NOT robust (single replicate only)
+
+**Prognostic Model Transfer (lines 891-900)**:
+- MHC-II + LDH + lymph node metastasis status
+- Strong prognostic performance for progression in ipilimumab-treated patients
+- Models trained exclusively on synthetic data
+- Evaluated on held-out folds of original cohort
+- 5-fold cross-validation repeated three times
+
+### Content Removed
+- Old Overview (lines 3-7): 3 paragraphs with hypothetical precision medicine narrative
+- Old Methodology (lines 8-25): Detailed pipeline (Pathway Selection, Score Calculation, Statistical Comparison subsections)
+- Old Benchmark Results (lines 26-38): Hypothetical performance tiers (High/Moderate/Low Fidelity)
+- Key Findings section (lines 39-48): 3 admonitions
+  - `!!! note "Biological Heterogeneity"` (Avatar preservation of patient-level heterogeneity)
+  - `!!! warning "Correlation Collapse"` (coordinated expression failure)
+  - `!!! tip "Precision Medicine Readiness"` (downstream task validity)
+
+### Content Preserved
+- Heading: `# Single-sample Gene Set Enrichment Analysis (ssGSEA)` (line 1)
+- Figure: `narrow-utility-ssgsea.png` (line 9)
+- Figure caption format: blank line before caption (verified)
+- Code Example section: 40 lines of NarrowUtilityEvaluator usage (lines 37-77)
+
+### Key Decisions
+1. **Concise overview**: Replaced 5-paragraph introduction with 1 paragraph (ssGSEA = per-sample pathway activity)
+2. **KSC metric focus**: Emphasized KS-Complement as intuitive similarity score
+3. **Biological validation depth**: Added both ccRCC (PBRM1) and Melanoma (MHC-II) examples
+4. **Subgroup analysis**: Explicitly contrasted ipilimumab-treated vs naïve cohorts
+5. **Limitation transparency**: Noted single-replicate recovery as not robust
+6. **Prognostic model section**: NEW subsection demonstrating clinical utility (training on synthetic)
+7. **Two notebook references**: Analysis AND visualization (Figure 6a)
+
+### Evidence Generated
+File: `.sisyphus/evidence/task-14-ssgsea.txt`
+- All 7 verification commands passed
+- Build: 1.85 seconds (non-strict mode, griffe warnings are pre-existing)
+- File shrunk from 89 to 77 lines (-12 lines, removed verbose hypothetical sections)
+
+### Next Task Impact
+- Task 15-17 (remaining Wave 3 tasks): Can follow same manuscript integration pattern
+- ssGSEA now consistent with DGE (Task 12) and GSEA structure
+- All narrow utility pages approaching manuscript-level scientific rigor
+- Biological validation with subgroup analyses sets high bar for remaining pages
+
+### Implementation Notes
+- ssGSEA vs GSEA distinction: ssGSEA = per-sample (single-sample), GSEA = group comparison
+- NES = Normalized Enrichment Score (pathway activity score per sample)
+- KSC = Kolmogorov-Smirnov Conservation (distribution similarity metric)
+- MWU = Mann-Whitney U test (non-parametric test for two independent samples)
+- Wilcoxon rank-sum test = same as MWU (manuscript uses both names)
+- PBRM1 = loss-of-function mutations associated with IL6-JAK-STAT3 downregulation
+- MHC class II = HLA molecules, responders have higher scores in ipilimumab-treated
+- LDH = lactate dehydrogenase (prognostic marker)
+- 5-fold CV repeated 3 times = 15 total model training runs (robust evaluation)
+
+### Verification Commands Used
+All 7 acceptance criteria commands run successfully:
+1. `grep -c 'Key Finding' docs/evaluation/narrow-utility/ssgsea.md` → 0
+2. `grep 'ssGSEA_KS' docs/evaluation/narrow-utility/ssgsea.md` → match
+3. `grep 'Figure6a_KSC' docs/evaluation/narrow-utility/ssgsea.md` → match
+4. `grep -cE '🔬|📊|🤖|📐|🚀|📝' docs/evaluation/narrow-utility/ssgsea.md` → 0
+5. `grep -cE ':material-' docs/evaluation/narrow-utility/ssgsea.md` → 0
+6. `grep -cE '^\!\!\!' docs/evaluation/narrow-utility/ssgsea.md` → 0
+7. `mkdocs build` → SUCCESS (1.85s)
+
+### Critical Worktree Lesson (AGAIN)
+**Issue**: Initial verification commands ran in main repo instead of worktree
+**Root Cause**: Forgot to specify `workdir` parameter for bash commands
+**Resolution**: Re-ran all commands with explicit worktree path (`workdir="/Users/thechuongtrinh/Workspace/SynOmicBench-docs-work"`)
+**Prevention**: ALWAYS use worktree path for verification commands in future tasks
+
+## [Mon Mar 3 00:40:00 PST 2026] Task 15: Update Cell Deconvolution Page
+
+### Changes Made
+- **Heading** (line 1): "Cell Type Deconvolution Analysis" → "Cell Type Deconvolution" (concise)
+- **Introduction section** (lines 3-5): Replaced 5-paragraph generic overview with concise 3-sentence explanation
+  - CIBERSORTx with LM22 reference signature for immune cell proportions
+  - Compositional nature of immune cell fractions (sum to 1)
+  - Aitchison distance as compositional data metric
+- **Methodology section** (lines 7-13): Replaced multi-algorithm description with Aitchison distance focus
+  - Aitchison distance for compositional data on simplex
+  - Accounts for relative nature of proportions
+  - Lower distance = better immune landscape preservation
+  - Global measure of multivariate immune landscape
+- **Results section** (lines 15-25): Replaced hypothetical with manuscript content (lines 961-1000)
+  - Global performance: Synthpop best (0.816 ± 0.057 ccRCC), Gaussian Copula second (0.798 ± 0.079)
+  - Avatars K10 stable (0.756 ± 0.038), K5 high inter-replicate variation
+  - TVAE/CTGAN consistently lower across cohorts
+  - Performance decline: ccRCC → Melanoma → NSCLC
+  - Differential analysis in ccRCC: immune-infiltrated vs immune-excluded/desert
+  - Cell types enriched in infiltrated: CD8+ T cells, follicular helper T cells, activated CD4+ memory T cells, M1 macrophages
+  - Cell types enriched in excluded/desert: M2/M0 macrophages, resting CD4+ memory T cells, resting NK cells, eosinophils
+  - Only Avatars + Gaussian Copula reconstructed contrasts (Wilcoxon FDR Q < 0.25)
+  - Reproducibility limited to strong signals (Q < 0.05): CD8+ T cells, resting CD4+ memory T cells
+  - Melanoma/NSCLC: no significant patterns recovered
+- **Key Findings section** (REMOVED, old lines 39-48): Deleted heading + 3 admonitions
+  - Removed `!!! note "Immune Landscape Maintenance"`
+  - Removed `!!! warning "Deconvolution Artifacts"`
+  - Removed `!!! tip "Immuno-oncology Utility"`
+- **Observations section** (NEW, lines 30-36): Added 5 neutral bullet points
+  - Synthpop highest Aitchison similarity for ccRCC (0.816 ± 0.057)
+  - Gaussian Copula second-best across cohorts (0.798 ± 0.079 ccRCC)
+  - Performance decline ccRCC → Melanoma → NSCLC
+  - Only Avatars + Gaussian Copula reconstructed contrasts (limited to strong signals)
+  - TVAE/CTGAN consistently lower similarity
+- **References section** (NEW, lines 38-44): Added notebook and script references
+  - Analysis: `Manuscripts/Melanoma/NarrowUtility/CellDecovo/AitchisonDistance_final.ipynb`
+  - Differential analysis: `Manuscripts/Melanoma/NarrowUtility/CellDecovo/CellDecovolution_DifferentialAnalysis.py`
+  - Helper: `Manuscripts/Melanoma/NarrowUtility/CellDecovo/calculate_immune_signature.py`
+- **Code Example section** (PRESERVED, lines 45-93): Kept unchanged (49 lines)
+
+### Acceptance Criteria Results
+✓ Key Findings removed (count = 0)
+✓ Notebook reference present (AitchisonDistance_final.ipynb)
+✓ Aitchison distance mentioned (9 matches)
+✓ CIBERSORTx mentioned (4 matches)
+✓ Figure reference present (narrow-utility-cell-deconvolution.png)
+✓ Build passes (non-strict mode, 2.26s)
+
+### File Statistics
+- Original: 92 lines (hypothetical content + 3 admonitions)
+- New: 93 lines (+1 line net, but substantial content replacement)
+- Sections: 1 heading (#) + 4 major sections (##) + 2 subsections (###) = 7 headings
+- Manuscript content: ~20 lines integrated (Aitchison methodology + global performance + differential analysis)
+- References: 6 lines
+- Observations: 7 lines
+- Code Example: 49 lines (preserved)
+
+### Key Patterns (Building on Tasks 11-14)
+1. **Aitchison distance for compositional data**: Cell deconvolution uses specialized metric for simplex-constrained data (fractions sum to 1)
+2. **Differential analysis adds biological depth**: immune-infiltrated vs immune-excluded/desert provides clinical relevance
+3. **Cell type directionality matters**: Specifying which cell types enriched where (CD8+ in infiltrated, M2 in excluded) enhances interpretation
+4. **Reproducibility limitations explicit**: Noting strong signal requirement (Q < 0.05) and weak signal variability is honest science
+5. **Method-specific winners**: Synthpop for global similarity, Avatars+GC for differential contrasts (cohort-dependent)
+6. **Three-script references**: Analysis notebook + differential analysis script + helper script (most comprehensive so far)
+
+### Manuscript Integration Notes
+**Source**: Manuscript lines 961-1000
+
+**Aitchison Distance Methodology**:
+- "compositional nature of immune cell fractions"
+- "Aitchison distance across datasets"
+- Measures dissimilarity between probability distributions on simplex
+
+**Global Performance (lines 962-975)**:
+- Synthpop: 0.816 ± 0.057 (ccRCC), highest overall
+- Gaussian Copula: 0.798 ± 0.079 (ccRCC), close second
+- Avatars K10: 0.756 ± 0.038 (ccRCC), mild decrease in Melanoma/NSCLC
+- Avatars K5: high inter-replicate variation
+- TVAE/CTGAN: consistently lower across cohorts
+- Bayesian: Synthpop best globally, GC/Avatars second (cohort-dependent)
+
+**Differential Analysis - ccRCC (lines 977-989)**:
+- CIBERSORTx LM22 deconvolution: immune-infiltrated vs immune-excluded/desert
+- Infiltrated enriched: CD8+ T cells, follicular helper T cells, activated CD4+ memory T cells, M1 macrophages
+- Excluded/desert enriched: M2/M0 macrophages, resting CD4+ memory T cells, resting NK cells, eosinophils
+- Only Avatars + Gaussian Copula reconstructed contrasts (Wilcoxon FDR Q < 0.25)
+- Reproducibility limited to very strong signals (Q < 0.05): CD8+ T cells, resting CD4+ memory T cells
+- Weak signals not robust across replicates
+
+**Melanoma/NSCLC (lines 991-1000)**:
+- Differential analyses (responders vs non-responders): no significant patterns recovered
+- This negative finding is important to document (honest reporting)
+
+### Content Removed
+- Key Findings heading (old line 39)
+- 3 admonitions (old lines 40-48):
+  - `!!! note "Immune Landscape Maintenance"` (correlation-preserving methods effective)
+  - `!!! warning "Deconvolution Artifacts"` (generative model artifacts)
+  - `!!! tip "Immuno-oncology Utility"` (high fidelity requirement)
+
+### Content Preserved
+- Existing figure (line 15): `narrow-utility-cell-deconvolution.png`
+- Figure caption format: blank line before caption (line 17)
+- Code Example section: 49 lines of DeconvolutionEvaluator usage (lines 45-93)
+- Final closing paragraph: biologically-relevant validation (line 93)
+
+### Key Decisions
+1. **Aitchison distance explained**: Full compositional data context (not just "similarity metric")
+2. **Global + differential results**: Both cohort-level performance and biological signal recovery
+3. **Cell type specificity**: Named cell types with directionality (not just "immune cells")
+4. **Statistical tests specified**: Wilcoxon rank-sum test, FDR Q-values
+5. **Three-script references**: Most comprehensive documentation of analysis pipeline
+6. **Negative findings included**: Melanoma/NSCLC no recovery (honest science)
+7. **Code Example retained**: DeconvolutionEvaluator API practical guidance
+
+### Evidence Generated
+File: `.sisyphus/evidence/task-15-cell-deconvolution.txt`
+- All 6 verification commands passed (Key Findings, notebook, Aitchison, CIBERSORTx, figure, build)
+- Build: 2.26 seconds (non-strict mode, griffe warnings are pre-existing)
+- File length: 93 lines (92→93, minimal growth due to efficient rewrite)
+
+### Next Task Impact
+- Task 16-17 (Wave 3 remaining): Can follow same manuscript integration pattern
+- All narrow utility pages now have manuscript-grounded scientific content
+- Cell deconvolution shows most sophisticated metric (Aitchison) and most detailed differential analysis
+- Reproducibility limitations theme consistent across DGE (Task 12), ssGSEA (Task 14), and Cell Deconvolution (Task 15)
+
+### Implementation Notes
+- CIBERSORTx terminology consistent: "Cell-type Identification By Estimating Relative Subsets Of RNA Transcripts"
+- LM22 signature matrix: 22 human immune cell types
+- FDR Q-values: False Discovery Rate adjusted P-values (Benjamini-Hochberg)
+- Cell type names exact: "CD8+ T cells" (not CD8 T cells), "M1 macrophages" (not M1)
+- Statistical tests: Wilcoxon rank-sum test (MWU equivalent)
+- Compositional data constraint: immune fractions sum to 1 (simplex)
+- Method names: Avatars K5/K10, Gaussian Copula, Synthpop, TVAE, CTGAN (consistent capitalization)
+
+### Verification Commands Used
+All 6 acceptance criteria commands run successfully:
+1. `grep -c 'Key Finding' docs/evaluation/narrow-utility/cell-deconvolution.md` → 0
+2. `grep 'AitchisonDistance_final' docs/evaluation/narrow-utility/cell-deconvolution.md` → match
+3. `grep -iE 'Aitchison Distance|Aitchison' docs/evaluation/narrow-utility/cell-deconvolution.md` → 9 matches
+4. `grep 'CIBERSORTx' docs/evaluation/narrow-utility/cell-deconvolution.md` → 4 matches
+5. `grep 'narrow-utility-cell-deconvolution.png' docs/evaluation/narrow-utility/cell-deconvolution.md` → match
+6. `mkdocs build` → SUCCESS (2.26s)
+
+### Terminology Precision
+- **CIBERSORTx**: Cell-type Identification By Estimating Relative Subsets Of RNA Transcripts (deconvolution algorithm)
+- **LM22**: Signature matrix with 22 human immune cell types
+- **Aitchison distance**: Compositional data dissimilarity metric accounting for simplex constraint
+- **Simplex**: Mathematical space where proportions sum to 1 (natural habitat for immune cell fractions)
+- **FDR Q-value**: False Discovery Rate adjusted P-value (Benjamini-Hochberg correction)
+- **Immune-infiltrated**: Tumors with high immune cell presence
+- **Immune-excluded/desert**: Tumors with low immune infiltration or exclusion from tumor core
+- **Wilcoxon rank-sum test**: Non-parametric test for group differences (Mann-Whitney U equivalent)
+
+### Scientific Rigor
+- Exact statistics reported: 0.816 ± 0.057 (mean ± SD)
+- Statistical thresholds specified: FDR Q < 0.25 (near significance), Q < 0.05 (strong significance)
+- Inter-replicate variation noted: Avatars K5 high variation, K10 stable
+- Reproducibility limitations stated explicitly: limited to strong signals, weak signals not robust
+- Negative findings reported: Melanoma/NSCLC no significant patterns (not hidden)
+- Biological directionality: cell types enriched in infiltrated vs excluded/desert (not just correlation)
+
+### Biological Context Preserved
+- Tumor microenvironment (TME): immune landscape reflects clinical outcomes
+- Immune checkpoint blockade (ICB): response prediction depends on immune composition
+- CD8+ T cells: cytotoxic T lymphocytes, key anti-tumor effectors
+- Follicular helper T cells: support B cell responses, germinal center formation
+- M1 vs M2 macrophages: pro-inflammatory vs anti-inflammatory/pro-tumorigenic
+- MHC class II: antigen presentation, T cell activation marker
+- ccRCC: clear cell renal cell carcinoma, immune-infiltrated cancer type
+- Melanoma: cutaneous malignancy, ICB-responsive
+- NSCLC: non-small cell lung cancer, heterogeneous immune landscape

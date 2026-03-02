@@ -1,52 +1,53 @@
-# Cell Type Deconvolution Analysis
+# Cell Type Deconvolution
 
-## Overview
-Cell type deconvolution represents one of the most sophisticated and biologically meaningful narrow utility tests in the SynOmicBench framework. In bulk transcriptomic data, each sample is a complex mixture of different cell types, including malignant cells, stromal components, and infiltrating immune cells. Deconvolution algorithms aim to computationally estimate the relative proportions of these constituent cell types from the bulk gene expression profile.
+## Introduction
 
-For synthetic transcriptomic data to be considered high-fidelity, it must preserve this intricate "cellular architecture." This means that the synthetic data generation method must accurately capture the gene expression signatures of individual cell types and their relative frequencies within a sample. This evaluation is critical for immuno-oncology research, where the composition of the tumor microenvironment (TME) significantly impacts patient outcomes and responses to immunotherapy.
+Cell type deconvolution evaluates whether immune cell composition inferred from bulk RNA-seq data can be faithfully preserved in synthetic datasets. We employ CIBERSORTx with the LM22 reference signature matrix to estimate the relative proportions of 22 human immune cell types across original and synthetic cohorts. Given the compositional nature of immune cell fractions (which sum to 1), similarity between original and synthetic immune landscapes is quantified using the Aitchison distance—a metric specifically designed for compositional data on the simplex.
 
 ## Methodology
-SynOmicBench validates the preservation of cell composition using a multi-algorithm approach, ensuring that results are robust and not dependent on a single computational method.
 
-### Deconvolution Algorithms
-We employ several widely-recognized deconvolution methods to estimate cell type proportions in both original and synthetic datasets:
-*   **CIBERSORT (Cell-type Identification By Estimating Relative Subsets Of RNA Transcripts)**: Uses a support vector regression approach to estimate the relative proportions of 22 different human immune cell types (LM22 signature).
-*   **quanTIseq**: Specifically designed for quantifying immune cell fractions from RNA-seq data, providing absolute cell fractions.
-*   **EPIC (Estimate of Proportion of Immune and Cancer cells)**: Estimates immune and other non-malignant cell types while also quantifying the "other" (primarily cancer) cell fraction.
+### Aitchison Distance
 
-### Evaluation Workflow
-The evaluation process is systematic:
-1.  **Preprocessing**: Bulk RNA-seq data (original and synthetic) is normalized to meet the requirements of the specific deconvolution algorithms (e.g., TPM, RPKM, or CPM).
-2.  **Estimation**: Each deconvolution method is applied independently to both datasets, yielding a matrix of samples by cell type proportions.
-3.  **Comparative Analysis**: We compare the resulting cell type distributions using several statistical metrics:
-    *   **Proportion Distribution**: Comparing the range and distribution of each cell type (e.g., T cells, B cells, Macrophages) between the original and synthetic cohorts.
-    *   **Correlation Preservation**: Assessing whether the inter-cell-type correlations (e.g., the co-infiltration of different immune cells) are maintained in the synthetic data.
-    *   **Total Immune Score**: Comparing the overall estimated immune infiltration across datasets.
+The Aitchison distance measures dissimilarity between probability distributions on the simplex, making it appropriate for compositional data such as immune cell fractions. Unlike Euclidean distance, it accounts for the relative nature of cell proportions and the constraint that fractions must sum to unity. Lower Aitchison distance indicates better preservation of the immune landscape between original and synthetic datasets.
 
-## Benchmark Results
-Our benchmarking reveals that cell deconvolution is a particularly sensitive test of a synthetic method's ability to maintain complex correlation structures.
+For each synthetic data generation method, we compute the Aitchison distance between the CIBERSORTx-estimated immune cell composition profiles of the original and synthetic cohorts. This metric provides a global measure of how well the multivariate immune landscape is preserved across the entire sample space.
+
+## Results
 
 ![Cell Deconvolution Evaluation Results](../../assets/figures/narrow-utility-cell-deconvolution.png)
-*Figure 7: Comparison of immune cell type proportions (estimated via CIBERSORT and quanTIseq) across original and synthetic datasets. The heatmap and boxplots illustrate the preservation of the immune landscape.*
 
-### Performance Tiers
-The performance of different synthetic generation methods on the cell deconvolution task falls into several distinct categories:
+Figure 7: Evaluation of cell type deconvolution preservation. Aitchison distance measures the similarity of immune cell compositions estimated by CIBERSORTx between original and synthetic datasets.
 
-1.  **Correlation-Preserving (Avatars, Copula)**: Methods that focus on preserving the multivariate relationship between genes (the correlation structure) consistently perform best. These methods, particularly Avatar-based approaches, maintain the subtle gene co-expression patterns that the deconvolution algorithms use to distinguish between different cell types. The resulting synthetic cell fractions closely match the proportions estimated from original clinical data.
-2.  **Generative Models (Diffusion, VAEs)**: While these models often preserve individual gene distributions (univariate fidelity), they can sometimes "scramble" the finer correlations required for precise deconvolution. The resulting estimated cell fractions may appear homogenized, lacking the sample-to-sample variation seen in original cohorts.
-3.  **Low Fidelity (Mode-collapsed GANs)**: If a synthetic method suffers from mode collapse or ignores feature correlations, the deconvolution results for synthetic samples will be wildly inaccurate or nearly identical across all samples, failing to represent the biological diversity of the tumor microenvironment.
+### Global Performance
 
-## Key Findings
-!!! note "Immune Landscape Maintenance"
-    Correlation-preserving methods (Avatars, Copula) are the most effective at maintaining the immune landscape. This is critical for researchers who use synthetic data to study tumor-immune interactions or develop biomarkers for immunotherapy response.
+Across all three cohorts (ccRCC, Melanoma, NSCLC), synthetic data generation methods showed a clear decline in performance when moving from ccRCC to Melanoma and NSCLC. The highest overall Aitchison similarity for ccRCC was achieved by Synthpop (0.816 ± 0.057), with Gaussian Copula as a close second (0.798 ± 0.079). Avatars K10 achieved comparable results in ccRCC (0.756 ± 0.038) and displayed a mild decrease in Melanoma and NSCLC, whereas high inter-replicate variation was observed for Avatars K5. In contrast, TVAE and CTGAN produced consistently lower Aitchison similarity scores across all cohorts. Pairwise Bayesian estimation ranked Synthpop as the best method globally, with Gaussian Copula and Avatars being second best depending on the cohort.
 
-!!! warning "Deconvolution Artifacts"
-    Some generative models can introduce artifacts that lead deconvolution algorithms to overestimate or underestimate certain cell types (e.g., high-ranking B-cell signatures appearing in synthetic data where they were absent in the original). SynOmicBench highlights these discrepancies to prevent researchers from drawing false biological conclusions.
+### Differential Analysis
 
-!!! tip "Immuno-oncology Utility"
-    For synthetic data to be truly useful in immuno-oncology, it must demonstrate high fidelity in cell deconvolution. This allows for valid exploration of the tumor microenvironment in synthetic cohorts.
+Beyond global concordance, we evaluated whether immune-related biological signals could be recovered in synthetic data. Using CIBERSORTx-based LM22 deconvolution, differential analysis between immune-infiltrated and immune-excluded/desert tumors in the ccRCC cohort identified enrichment of CD8+ T cells, follicular helper T cells, activated CD4+ memory T cells, and M1 macrophages in infiltrated tumors. In contrast, excluded/desert tumors exhibited higher proportions of M2/M0 macrophages, resting CD4+ memory T cells, resting NK cells, and eosinophils.
+
+Among the synthetic data generation methods, only Avatars and Gaussian Copula managed to reconstruct immune contrasts at a near significance level (Wilcoxon rank-sum test, FDR Q < 0.25). Of note, synthetic replicate reproducibility was achieved only for cell types that already had very strong significance in the original data (Wilcoxon rank-sum test, FDR Q < 0.05), such as CD8+ T cells and resting CD4+ memory T cells. For all other cell types, which showed weaker or non-significant effects in the original cohort, the corresponding synthetic results were not robust and varied substantially between replicates.
+
+In Melanoma and NSCLC, differential analyses between responders and non-responders revealed no significant immune cell enrichment patterns that could be consistently recovered in synthetic datasets.
+
+## Observations
+
+- Synthpop achieved the highest Aitchison similarity for the ccRCC cohort (0.816 ± 0.057), demonstrating superior preservation of immune cell composition in kidney cancer datasets.
+- Gaussian Copula consistently ranked as the second-best method across all cohorts, with particularly strong performance in ccRCC (0.798 ± 0.079).
+- Performance declined systematically from ccRCC to Melanoma to NSCLC across all methods, suggesting that immune landscape complexity varies by cancer type.
+- Only Avatars and Gaussian Copula reconstructed biologically meaningful immune contrasts in differential analysis, but reproducibility was limited to strongly significant cell types in the original data (FDR Q < 0.05).
+- TVAE and CTGAN methods showed consistently lower Aitchison similarity across all cohorts, indicating difficulty in preserving the multivariate immune landscape structure.
+
+## References
+
+The cell type deconvolution analysis was implemented using the following scripts and notebooks:
+
+- Analysis notebook: `Manuscripts/Melanoma/NarrowUtility/CellDecovo/AitchisonDistance_final.ipynb`
+- Differential analysis script: `Manuscripts/Melanoma/NarrowUtility/CellDecovo/CellDecovolution_DifferentialAnalysis.py`
+- Helper script: `Manuscripts/Melanoma/NarrowUtility/CellDecovo/calculate_immune_signature.py`
 
 ## Code Example
+
 The following code demonstrates how to execute cell deconvolution-based evaluation using the SynOmicBench API.
 
 ```python
