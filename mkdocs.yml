@@ -1,0 +1,63 @@
+site_name: SynOmicBench Documentation
+site_description: Synthetic data benchmarking for omics data
+site_author: SynOmicBench Team
+site_url: https://trinhthechuong.github.io/SynOmicBench/
+repo_url: https://github.com/trinhthechuong/SynOmicBench
+repo_name: SynOmicBench
+
+# Theme
+theme:
+  name: material
+  palette:
+    scheme: default
+    primary: teal
+    accent: indigo
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+
+# Markdown Extensions
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.highlight:
+      use_pygments: true
+      pygments_style: default
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+  - toc:
+      permalink: true
+
+# Navigation Structure
+# Navigation Structure
+nav:
+  - Home: index.md
+  - Getting Started: getting-started/index.md
+  - Framework:
+      - framework/index.md
+      - Processing: framework/processing.md
+      - Synthesizers: framework/synthesizers/index.md
+  - Evaluation:
+      - evaluation/index.md
+      - Broad Utility: evaluation/broad-utility.md
+      - Narrow Utility: evaluation/narrow-utility/index.md
+      - Privacy: evaluation/privacy.md
+      - Meta-ranking: evaluation/meta-ranking.md
+  - Resources: resources/index.md
+
+# Documentation Directory
+docs_dir: docs
+
+# Plugins
+plugins:
+  - search
