@@ -737,3 +737,137 @@ All 8 acceptance criteria commands run successfully:
 6. `grep -cE '🔬|📊|🤖|📐|🚀|📝' docs/evaluation/broad-utility.md` → 0
 7. `grep -cE ':material-' docs/evaluation/broad-utility.md` → 0
 8. `mkdocs build` → SUCCESS (1.91s)
+
+## [Mon Mar 3 00:22:00 PST 2026] Task 12: Update DGE Page
+
+### Changes Made
+- **GCS methodology section** (line 20): Replaced generic Gene-set Concordance Score with full Gene Conservation Score definition from manuscript (lines 647-657)
+  - Full definition: weighted proportion across regulation direction + statistical significance
+  - Joint assessment of directionality and significance patterns
+  - Higher GCS = better preservation of both aspects
+  - Reference to Methods section for calculation protocol
+- **Benchmark results section** (lines 28-31): Expanded with Gaussian Copula performance
+  - Gaussian Copula achieved highest GCS across all cohorts
+  - Bayesian probabilities exceeding 70%
+  - Spearman correlation for log₂FC monotonic concordance
+  - Correlations modest, especially ccRCC (>40K genes)
+  - One Gaussian Copula replicate reached 0.63 correlation
+- **Biological validation section** (NEW, lines 36-44): Added 3 cancer-specific examples from manuscript (lines 672-697)
+  - ccRCC: PBRM1-associated angiogenesis (Braun et al., P < 0.01)
+  - Melanoma: MHC class II responder signatures (Liu et al., 13 HLA genes, 4 significant)
+  - NSCLC: immunoproteasome enrichment (PSME1/2, PSMB8/9/10, P < 0.01)
+- **References section** (NEW, lines 46-50): Added notebook and source code references
+  - Analysis notebook: `Manuscripts/Melanoma/NarrowUtility/DGE/GCS_analysis.ipynb`
+  - Source code: `src/SynOmics/metrics/narrow_utility/DGE.py`
+  - Used inline code format (backticks) without links (same pattern as Task 11)
+- **Key Findings section** (REMOVED, old lines 34-44): Deleted heading + 3 admonitions
+  - Removed `!!! success "Top Performers"`
+  - Removed `!!! note "The Deep Learning Challenge"`
+  - Removed `!!! info "Stability"`
+- **Key Observations section** (NEW, lines 52-57): Added 4 neutral bullet points
+  - Gaussian Copula highest GCS (Bayesian >70%)
+  - Statistical methods preserved complex biological signals (3 examples)
+  - Spearman correlations modest (high-dimensional challenge)
+  - Trade-offs between directionality and significance
+- **Code Example section** (PRESERVED, lines 58-87): Kept unchanged (29 lines)
+
+### Acceptance Criteria Results
+✓ Key Findings removed (count = 0)
+✓ GCS_analysis notebook reference present
+✓ Gene Conservation Score/GCS references present (5 matches including class name)
+✓ No emoji icons (count = 0)
+✓ No Material icons (count = 0)
+✓ No admonitions (count = 0)
+✓ Source code reference present
+✓ Build passes (non-strict mode, 1.86s)
+
+### File Statistics
+- Original: 74 lines
+- New: 87 lines (+13 lines)
+- Sections: 1 heading (#) + 4 major sections (##) + 1 subsection (###) = 6 headings
+- Manuscript content: ~20 lines integrated (GCS definition + benchmark results + biological validation)
+- References section: 5 lines
+- Key Observations: 6 lines
+- Code Example: 29 lines (preserved)
+
+### Key Patterns (Building on Task 11)
+1. **GCS vs PCS terminology**: DGE uses "Gene Conservation Score" while GSEA uses "Pathway Concordance Score" - manuscript is specific about terminology
+2. **Biological validation is critical**: DGE page benefits from concrete examples (PBRM1, MHC, immunoproteasome) showing biological utility
+3. **Statistical details matter**: Including exact tests (Wilcoxon rank-sum, P < 0.01) and specific gene names (HLA-DMA, HLA-DMB, etc.) adds credibility
+4. **Trade-offs are honest**: Acknowledging attenuation (GC, Avatars K10) and false-positives (Avatars K5, TVAE) shows scientific rigor
+5. **Inline code references work**: Using backticks without links (like Task 11) avoids broken link warnings while providing paths
+6. **Code examples are valuable**: GCSAnalyzer usage preserved because it demonstrates practical API usage
+
+### Manuscript Integration Notes
+**Source**: `/Users/thechuongtrinh/Workspace/SynOmicBench/manu_md/1ebe617a69894c3c8f078a0a793f273c.markdown` (lines 643-703)
+
+**GCS Definition (lines 647-657)**:
+- "weighted proportion of synthetic genes concordant with original data"
+- "two key dimensions: regulation direction (up- or down-regulation) and level of statistical significance"
+- "jointly accounting for these two aspects"
+- "Higher GCS values indicate larger proportion that faithfully preserve both"
+
+**Benchmark Results (lines 658-670)**:
+- Gaussian Copula consistently highest GCS across all cohorts
+- Bayesian estimation over 5 replicates showed superior probabilities >70%
+- Spearman correlation assessed monotonic concordances of log₂FC values
+- Correlations modest, especially ccRCC (>40K genes)
+- One GC replicate reached Spearman 0.63
+
+**Biological Validation (lines 672-697)**:
+- ccRCC (lines 675-678): PBRM1 alterations → angiogenesis gene expression (Braun et al.)
+- Melanoma (lines 679-688): 13 MHC class II HLA genes in responders (Liu et al.), 4 significant
+- NSCLC (lines 690-697): 5 immunoproteasome genes (PSME1/2, PSMB8/9/10) enriched in responders
+
+### Content Removed
+- Key Findings heading (old line 34)
+- 3 admonitions with icons (old lines 36-44):
+  - `!!! success "Top Performers"` (2 lines about Gaussian Copula and Synthpop)
+  - `!!! note "The Deep Learning Challenge"` (2 lines about CTGAN/TVAE struggles)
+  - `!!! info "Stability"` (2 lines about statistical method stability)
+
+### Content Preserved
+- Existing DGE figure (line 30): `narrow-utility-dge.png`
+- Figure caption format: blank line before caption (verified correct)
+- Code Example section: 29 lines of GCSAnalyzer usage (lines 58-87)
+- All methodology sections (Overview, Methodology unchanged)
+
+### Key Decisions
+1. **GCS expanded definition**: Full manuscript definition (3 sentences) instead of brief mention
+2. **Spearman correlation added**: Important complementary metric to GCS
+3. **Biological validation section**: NEW section with 3 cancer-specific examples for credibility
+4. **References format**: Inline code (backticks) without links to avoid broken link warnings
+5. **Key Observations neutral tone**: Removed success/note/info framing, kept factual observations
+6. **Code Example retained**: Practical value for users learning GCSAnalyzer API
+
+### Evidence Generated
+File: `.sisyphus/evidence/task-12-dge.txt`
+- All 7 verification commands passed
+- Build: 1.86 seconds (non-strict mode, griffe warnings are pre-existing)
+- File grew from 74 to 87 lines (+13 lines, net effect of +20 content, -7 admonitions)
+
+### Next Task Impact
+- Task 13-17 (Wave 3 parallel tasks): Can follow same manuscript integration pattern
+- DGE page now consistent with Broad Utility structure (Task 11)
+- All narrow utility pages will have manuscript-level scientific rigor
+- Biological validation examples set precedent for other evaluation pages
+
+### Implementation Notes
+- GCS terminology consistent throughout (Gene Conservation Score, not Gene-set)
+- Manuscript biology preserved verbatim: "PBRM1 alterations associated with increased angiogenesis"
+- Statistical tests specified: Wilcoxon rank-sum, P < 0.01 or P < 0.05
+- Gene names spelled exactly as in manuscript: HLA-DMA, HLA-DMB, HLA-DOA, HLA-DOB
+- Protein complex notation: GOCC_PROTEASOME_COMPLEX, IFN-γ (gamma symbol preserved)
+- Correlation metrics: Spearman's rank correlation for monotonic concordances
+- Method names: Avatars K5/K10, Gaussian Copula, Synthpop, TVAE (consistent capitalization)
+
+### Verification Commands Used
+All 8 acceptance criteria commands run successfully:
+1. `grep -c 'Key Finding' docs/evaluation/narrow-utility/dge.md` → 0
+2. `grep 'GCS_analysis' docs/evaluation/narrow-utility/dge.md` → match
+3. `grep -iE 'Gene Conservation Score|GCS' docs/evaluation/narrow-utility/dge.md` → 5 matches
+4. `grep -cE '🔬|📊|🤖|📐|🚀|📝' docs/evaluation/narrow-utility/dge.md` → 0
+5. `grep -cE ':material-' docs/evaluation/narrow-utility/dge.md` → 0
+6. `grep -cE '^\!\!\!' docs/evaluation/narrow-utility/dge.md` → 0
+7. `grep 'src/SynOmics/metrics/narrow_utility/DGE.py' docs/evaluation/narrow-utility/dge.md` → match
+8. `/opt/homebrew/bin/mkdocs build` → SUCCESS (1.86s)
