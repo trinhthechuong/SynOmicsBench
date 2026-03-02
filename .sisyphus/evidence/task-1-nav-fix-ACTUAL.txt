@@ -1,0 +1,18 @@
+# Navigation Structure
+nav:
+  - Home: index.md
+  - Getting Started: getting-started/index.md
+  - Framework:
+      - framework/index.md
+      - Processing: framework/processing.md
+      - Synthesizers: framework/synthesizers/index.md
+  - Evaluation:
+      - evaluation/index.md
+      - Broad Utility: evaluation/broad-utility.md
+      - Narrow Utility: evaluation/narrow-utility/index.md
+      - Privacy: evaluation/privacy.md
+      - Meta-ranking: evaluation/meta-ranking.md
+  - Resources: resources/index.md
+
+# Documentation Directory
+docs_dir: docs

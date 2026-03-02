@@ -1,0 +1,2 @@
+Extensions found: ['admonition', 'attr_list', 'md_in_html', 'pymdownx.highlight', 'pymdownx.inlinehilite', 'pymdownx.superfences', 'pymdownx.tabbed', 'pymdownx.details', 'pymdownx.arithmatex', 'toc']
+Extensions OK

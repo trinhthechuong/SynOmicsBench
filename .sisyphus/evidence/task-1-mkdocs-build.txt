@@ -1,0 +1,12 @@
+
+[31m │ ⚠ WARNING – MkDocs 2.0 is incompatible with Material for MkDocs[0m
+[31m │ [0m
+[31m │ [0m  MkDocs 1.x is unmaintained. We recommend switching to Zensical, our
+[31m │ [0m  new static site generator, as soon as possible. We're providing an
+[31m │ [0m  analysis of the situation in this article:
+[31m │ [0m  
+[31m │ [0m  [4mhttps://squidfunk.github.io/mkdocs-material/blog/2026/02/18/mkdocs-2.0/[0m
+[0m
+INFO    -  Cleaning site directory
+INFO    -  Building documentation to directory: /Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/site
+INFO    -  Documentation built in 0.18 seconds
