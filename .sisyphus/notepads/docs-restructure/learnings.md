@@ -288,3 +288,63 @@ cd /path/to/repo && /opt/homebrew/bin/mkdocs build --strict
 
 ### Next Wave Task
 - Task 6: Preprocessing Guide (tabs 3-4 structure)
+
+## [2026-03-02] Task 4: HOME Page Rewrite
+
+**Status**: COMPLETE ✓
+
+### What Was Done
+- Complete rewrite of docs/index.md with 8 required sections
+- Added Abstract section with manuscript text (lines 18-36 from manuscript)
+- Updated Figure 1 path to converted PNG (Figure_1_Graphical_abstract.png)
+- Removed all icons, Key Findings, grid cards, and admonitions
+- Preserved datasets table, SDG methods list, evaluation pillars, citation
+
+### Key Changes
+1. **Abstract Section Added**: Copied manuscript abstract verbatim (19 lines)
+2. **Figure Path Updated**: overview-project.png → Figure_1_Graphical_abstract.png
+3. **Grid Cards Removed**: Replaced with 5 plain markdown links
+4. **Icon Removal**: 0 icons remaining (verified with grep)
+5. **Heading Structure**: 7 top-level sections + 3 evaluation sub-headings
+6. **Key Findings Removed**: Entire admonition block deleted
+7. **Citation Format**: Changed from admonition to plain paragraph
+
+### Content Preserved
+- Intro paragraph (Welcome to SynOmicBench...)
+- Benchmarked Datasets table (ccRCC, Melanoma, NSCLC) with table caption
+- SDG Methods list (6 methods: Gaussian Copula, CTGAN, TVAE, Synthpop, Avatars)
+- Evaluation Pillars (3 categories with detailed bullets)
+- Citation text (Trinh et al. 2024)
+
+### Formatting Improvements
+- **Figure caption**: Added blank line before caption (line 12 is blank)
+- **Table caption**: Added table title above table (*Table 1: Overview of benchmarked cancer datasets.*)
+- **Section order**: Exact match to specification (Abstract → Framework → Datasets → SDG → Evaluation → Explore → Citation)
+
+### Evidence Generated
+1. **task-4-home-sections.txt** — Section structure (10 headings: 7 ## + 3 ###)
+2. **task-4-no-icons.txt** — Icon scan result: **0** (zero icons/Material syntax/grid cards/Key Finding)
+3. **task-4-figure-path.txt** — Figure path verification: `Figure_1_Graphical_abstract.png` present
+
+### Acceptance Criteria Met
+✓ Abstract section present (line 5: `## Abstract`)
+✓ Citation section present (line 76: `## Citation`)
+✓ Explore the Documentation section: **1 occurrence** (line 68)
+✓ No Key Findings: **count = 0**
+✓ No Material icons (`:material-*:`): **count = 0**
+✓ No emoji icons (🔬📊🤖📐🚀📝): **count = 0**
+✓ No grid cards (`<div class="grid cards">`): **count = 0**
+✓ Figure_1_Graphical_abstract.png referenced on line 11
+✓ Figure caption has blank line before it (line 12 blank, caption on line 13)
+✓ MkDocs build passes: **Built in 0.42 seconds** (warnings about MkDocs 2.0 compatibility are environment-related, not content errors)
+
+### File Statistics
+- **Original file**: 99 lines
+- **New file**: 82 lines (17 lines removed due to icon removal, grid card deletion, Key Findings removal)
+- **Sections**: 7 top-level (##) + 3 subsections (###) = 10 total headings
+
+### Scientific Accuracy
+- Abstract text copied verbatim from manuscript (no edits to scientific content)
+- All dataset statistics preserved (patient counts, feature dimensions, sources)
+- SDG method descriptions unchanged
+- Evaluation pillar descriptions maintained with proper terminology
