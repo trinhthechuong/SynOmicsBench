@@ -1,0 +1,30 @@
+=== Section Headings ===
+7:## Evaluation Dimensions
+11:### [Broad Utility](broad-utility.md)
+21:### [Narrow Utility](narrow-utility/index.md)
+32:### [Privacy Risk](privacy.md)
+42:### [Meta-Ranking & Stability](meta-ranking.md)
+52:## Bayesian Comparison Framework
+56:### Methodology
+64:### Region of Practical Equivalence (ROPE)
+68:### Visualization
+72:### Implementation
+78:## Benchmarked Synthesizers
+
+=== Forbidden Elements Check ===
+Key Findings count:
+0
+Icons count:
+0
+Computational Resources count:
+0
+Predictive Modeling count:
+0
+
+=== Navigation Links ===
+SynOmicBench evaluates synthetic cancer omics data across three complementary dimensions to ensure that generated datasets are statistically similar to the original, biologically meaningful for downstream analyses, and safe for data sharing. This multidimensional approach addresses the fundamental trade-off between biological utility and patient privacy.
+### [Broad Utility](broad-utility.md)
+### [Narrow Utility](narrow-utility/index.md)
+### [Privacy Risk](privacy.md)
+### [Meta-Ranking & Stability](meta-ranking.md)
+- **Aggregate Performance**: Combined rankings across broad utility, narrow utility, and privacy dimensions

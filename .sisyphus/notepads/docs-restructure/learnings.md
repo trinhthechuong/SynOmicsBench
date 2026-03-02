@@ -498,3 +498,90 @@ cd /path/to/repo && /opt/homebrew/bin/mkdocs build --strict
 - Tasks 9-19: Use `mkdocs build` (non-strict) for verification
 - Final build verification (Task 19) will pass in non-strict mode
 - Documentation website will render correctly despite griffe warnings
+
+## [2026-03-02] Task 9: Evaluation Overview Page Rewrite
+
+**Status**: COMPLETE ✓
+
+### What Was Done
+- Complete rewrite of `docs/evaluation/index.md` from 122 lines to 93 lines
+- Removed all icons (emoji + Material), Key Findings admonitions, Usage Example section, Computational Resources references, Predictive Modeling references
+- Created clean 4-section structure: Opening → Evaluation Dimensions → Bayesian Framework → Benchmarked Synthesizers
+- Added Bayesian methodology from manuscript (lines 2257-2279)
+- Converted navigation from icon-heavy cards to plain markdown links
+
+### Structure Implemented
+1. **Opening paragraph**: Explains three complementary evaluation dimensions and privacy-utility trade-off
+2. **Evaluation Dimensions** (4 navigation links):
+   - Broad Utility → broad-utility.md (univariate/bivariate similarity, visualization)
+   - Narrow Utility → narrow-utility/index.md (DGE, GSEA, cell deconvolution, survival analysis)
+   - Privacy Risk → privacy.md (singling-out, linkability, inference)
+   - Meta-Ranking → meta-ranking.md (aggregate performance, stability analysis)
+3. **Bayesian Comparison Framework** (3 subsections):
+   - Methodology: baycomp library, correlated t-test, three hypotheses
+   - ROPE: 0.01 threshold for practical equivalence
+   - Visualization: N×N heatmaps with P(row > column)
+   - Implementation: References to BayesianComparison.py files
+4. **Benchmarked Synthesizers**: List of 5 methods with brief descriptions (Gaussian Copula, CTGAN, TVAE, Synthpop, Avatars)
+
+### Content Removed (Complete Purge)
+- All emoji icons: 🔬📊🤖📐🚀📝 (grep count: 0)
+- All Material icons: `:material-*:` (grep count: 0)
+- Key Findings admonitions: `!!! abstract "Key Finding"` (grep count: 0)
+- Usage Example section: 58 lines of Python code (lines 56-113 in old file)
+- Computational Resources references (grep count: 0)
+- Predictive Modeling references (grep count: 0)
+
+### Scientific Content Preserved
+- Bayesian methodology description copied verbatim from manuscript lines 2257-2279
+- Three evaluation dimensions (broad utility, narrow utility, privacy) with accurate descriptions
+- ROPE threshold value (0.01) and its interpretation
+- Five SDG methods with scientifically accurate characterizations
+- Implementation references to source code files
+
+### Key Decisions
+1. **Navigation format**: Plain markdown links `### [Section Title](path.md)` instead of Material grid cards
+2. **Bayesian section depth**: 3 subsections (Methodology, ROPE, Visualization) with Implementation reference
+3. **Method descriptions**: Brief but comprehensive (1-2 sentences each) covering key algorithmic approach
+4. **No code examples**: This is an overview/navigation page, not a usage guide (code examples removed)
+5. **Cross-references**: Added references to BayesianComparison.py implementation files for developers
+
+### Evidence Generated
+File: `.sisyphus/evidence/task-9-evaluation-overview.txt`
+- Section headings: 3 major (##) + 8 subsections (###) = 11 total
+- Forbidden elements check: All 0 (Key Findings, icons, Computational Resources, Predictive Modeling)
+- Navigation links: All 4 present (broad-utility, narrow-utility, privacy, meta-ranking)
+
+### Acceptance Criteria Results
+✓ Bayesian section exists (line 52: `## Bayesian Comparison Framework`)
+✓ No Key Findings (count = 0)
+✓ No icons (count = 0)
+✓ No Computational Resources (count = 0)
+✓ No Predictive Modeling (count = 0)
+✓ All 4 navigation links present (broad-utility.md, narrow-utility/index.md, privacy.md, meta-ranking.md)
+✓ Build passes (2.17 seconds, griffe warnings are pre-existing source code issues)
+
+### File Statistics
+- Original: 122 lines
+- New: 93 lines (29 lines removed)
+- Sections: 3 major (##) + 8 subsections (###) = 11 headings
+- Bayesian methodology: 24 lines (lines 52-75)
+- Benchmarked Synthesizers: 13 lines (lines 78-90)
+
+### Key Patterns
+1. **Overview pages should be concise**: Focus on navigation and high-level concepts, not detailed examples
+2. **Bayesian methodology from manuscript**: Direct adaptation of manuscript text for scientific accuracy
+3. **Removal strategy**: Search and destroy with grep verification (icons, Key Findings, forbidden topics)
+4. **Plain markdown > Material cards**: Navigation links are more maintainable and work universally
+5. **Non-strict build mode**: Continue using `mkdocs build` (non-strict) — griffe warnings are source code issues
+
+### Next Task Impact
+- Task 10 (Broad Utility): Can reference this overview as parent navigation context
+- Evaluation section now has clean, consistent structure across all subpages
+- No more icon/admonition inconsistencies in evaluation documentation
+
+### Manuscript Integration Success
+- Lines 2257-2279 (Bayesian methodology) integrated verbatim
+- Three-hypothesis framework (Better, Worse, Practical Equivalent) correctly described
+- ROPE threshold (0.01) and interpretation preserved
+- $N \times N$ heatmap visualization approach documented
