@@ -1,0 +1,67 @@
+TASK 5: GETTING STARTED REWRITE
+================================
+Date: 2026-03-02
+
+SECTION STRUCTURE VERIFICATION
+================================
+
+Sections found (grep -n '## \|### '):
+✓ Line 3: ## Installation
+✓ Line 7: ### From Source
+✓ Line 21: ### From Singularity
+✓ Line 27: ## Quick Example
+✓ Line 76: ## Step-by-Step Walkthrough
+✓ Line 80: ### 1. Load and Clean Data
+✓ Line 104: ### 2. Prepare Metadata
+✓ Line 118: ### 3. Initialize the Synthesizer
+✓ Line 132: ### 4. Generate Synthetic Data
+✓ Line 162: ### 5. Evaluate Fidelity
+✓ Line 188: ## Next Steps
+
+INSTALLATION SECTION
+====================
+✓ ### From Source: Documents `pip install -e .` with clone step
+✓ Python version 3.11+ mentioned
+✓ requirements.txt placeholder documented
+
+✓ ### From Singularity: Placeholder text present
+  "Singularity container instructions coming soon."
+
+QUICK EXAMPLE SECTION
+=====================
+✓ Location: Lines 27-74
+✓ Code includes EXACT imports:
+  - from SynOmics.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
+  - from SynOmics.processing.metadata import MetaData
+  - from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
+
+✓ Code logic preserved:
+  - MetaData.get_metadata() with ordinal_features
+  - GaussianCopulasynthesizer initialization
+  - synth.generate() with n_samples
+  - UnivariateSimilarity evaluation
+  - print(f"Overall Fidelity Score: {score:.4f}")
+
+STEP-BY-STEP SECTION
+====================
+✓ Preserved from original with all 5 steps:
+  1. Load and Clean Data (with DataProcessor)
+  2. Prepare Metadata (with feature type classification)
+  3. Initialize the Synthesizer
+  4. Generate Synthetic Data
+  5. Evaluate Fidelity
+
+✓ Expected console output preserved
+✓ Next Steps section with nav links intact
+
+ACCEPTANCE CRITERIA
+===================
+✓ From Source section present
+✓ From Singularity section present
+✓ GaussianCopulasynthesizer imports found
+✓ UnivariateSimilarity imports found
+✓ No emoji or Material icons found (0 matches)
+✓ No "Key Finding" sections
+
+TOTAL LINES: 195 (up from 171)
+STATUS: COMPLETE

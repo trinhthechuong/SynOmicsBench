@@ -1,0 +1,2 @@
+
+*Figure 2: Standardized preprocessing pipeline for clinical-transcriptomic data integration.*

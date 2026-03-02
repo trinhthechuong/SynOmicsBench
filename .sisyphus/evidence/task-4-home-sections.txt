@@ -1,0 +1,10 @@
+5:## Abstract
+9:## Framework Overview
+17:## Benchmarked Datasets
+29:## SDG Methods Evaluated
+39:## Evaluation Pillars
+43:### 1. Broad Utility (Statistical Fidelity)
+50:### 2. Narrow Utility (Biological Signal)
+60:### 3. Privacy Risk
+68:## Explore the Documentation
+76:## Citation

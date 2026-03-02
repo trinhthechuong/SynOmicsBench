@@ -1,0 +1,6 @@
+7:![Data Integration Pipeline](../assets/figures/processing_pipeline.png)
+11:The `DataIntegrationPipeline` class coordinates preprocessing, integration, and imputation into a single unified workflow. This pipeline ensures data quality and consistency before synthetic data generation or downstream analysis.
+19:from SynOmics.processing.pipeline import DataIntegrationPipeline
+49:pipeline = DataIntegrationPipeline(
+54:results = pipeline.run_pipeline(
+     109 docs/preprocessing/index.md
