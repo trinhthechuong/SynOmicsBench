@@ -53,3 +53,95 @@ pdftocairo -png -singlefile -r 300 \
 - Task 2 can now proceed with mkdocs.yml rewrite in worktree (dependencies installed)
 - PNG figures ready for integration into documentation pages in worktree
 - All work remains isolated in worktree; main repo unaffected
+
+## [2026-03-02] Task 2: Rewrite mkdocs.yml + Create Custom CSS
+
+### Custom Color Implementation
+- Material theme's `primary` field doesn't support arbitrary hex colors directly
+- Solution: Set `primary: custom` in theme config, then define CSS variables in extra.css
+- CSS Variables override pattern:
+  ```css
+  :root {
+    --md-primary-fg-color: #FFE4E1;  /* Custom color */
+    --md-primary-fg-color--light: #FFF0ED;
+    --md-primary-fg-color--dark: #E8C4BE;
+  }
+  ```
+- Dark text (#333333) on light background (#FFE4E1) provides sufficient contrast for accessibility
+
+### mkdocs.yml Navigation Structure
+- **EXACTLY 6 top-level tabs** required (each starting with `  - ` at column 2)
+- Navigation structure verification: Use `sed -n '/^nav:/,/^[a-z]/p' mkdocs.yml | grep -c '^  - '`
+- Nested items (Evaluation subitems) use 6-space indentation (3 levels deep):
+  ```yaml
+  nav:
+    - Home: index.md                    # Level 1 (2 spaces)
+    - Evaluation:                        # Level 1 (2 spaces)
+        - evaluation/index.md            # Level 2 (6 spaces)
+        - Broad Utility: ...             # Level 2 (6 spaces)
+        - Narrow Utility:                # Level 2 (6 spaces)
+            - Overview: ...              # Level 3 (10 spaces)
+  ```
+
+### mkdocstrings Plugin Configuration
+- `paths: [src]` assumes src/ directory exists in main repo (for API doc generation)
+- Plugin configuration in mkdocs.yml:
+  ```yaml
+  plugins:
+    - mkdocstrings:
+        handlers:
+          python:
+            paths: [src]
+            options:
+              docstring_style: google
+              show_source: true
+              show_root_heading: true
+  ```
+
+### Files Created in Worktree
+- `/docs/stylesheets/extra.css`: 517 bytes - Material theme CSS variable overrides
+- `/docs/javascripts/mathjax.js`: 267 bytes - MathJax inline/display math configuration
+- Rewrote `/mkdocs.yml`: 84 lines - Complete restructure with custom theme and new nav
+
+### Old Navigation Removed
+- Removed: Framework section (was at level 1)
+- Removed: Resources section (was at level 1)  
+- Removed: Computational Resources (was under Evaluation)
+- Removed: Predictive Modeling (was under Narrow Utility)
+- Verification: `grep -c 'framework\|Resources\|Computational Resources\|Predictive Modeling' mkdocs.yml` returns 0
+
+### Metadata Preserved
+From existing mkdocs.yml (lines 1-6):
+- site_name: SynOmicBench Documentation
+- site_description: Synthetic data benchmarking for omics data
+- site_author: SynOmicBench Team
+- site_url: https://trinhthechuong.github.io/SynOmicBench/
+- repo_url: https://github.com/trinhthechuong/SynOmicBench
+- repo_name: SynOmicBench
+
+### Markdown Extensions Preserved
+All 11 extensions from original retained:
+- admonition, attr_list, md_in_html
+- pymdownx.highlight (with pygments)
+- pymdownx.inlinehilite, pymdownx.superfences
+- pymdownx.tabbed (alternate_style)
+- pymdownx.details, pymdownx.arithmatex
+- toc (with permalink)
+
+### New Features Added
+- MathJax support: Both inline ($...$) and display ($$...$$) math notation
+- mkdocstrings: Auto-generates Python API documentation from source
+- Material theme features: search.highlight, search.suggest, navigation.top
+
+### Verification Results
+✓ `grep 'primary: custom' mkdocs.yml` returns match
+✓ `sed -n '/^nav:/,/^[a-z]/p' mkdocs.yml | grep -c '^  - '` returns 6
+✓ Old framework/Resources nav removed (grep count = 0)
+✓ Custom color #FFE4E1 present in extra.css
+✓ All CSS and JS files created in worktree docs/
+
+### Key Insights for Task 3
+- mkdocs build will reference stylesheets/extra.css and javascripts/mathjax.js
+- Paths in extra_css and extra_javascript are relative to docs_dir (docs/)
+- Build will fail if these files don't exist → build verification will catch issues
+- No markdown pages need modification in this task; they already have correct frontmatter
