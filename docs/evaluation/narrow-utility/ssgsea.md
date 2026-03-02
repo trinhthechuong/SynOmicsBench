@@ -1,51 +1,39 @@
 # Single-sample Gene Set Enrichment Analysis (ssGSEA)
 
 ## Overview
-Single-sample Gene Set Enrichment Analysis (ssGSEA) represents a critical component of narrow utility evaluation in SynOmicBench. While standard Gene Set Enrichment Analysis (GSEA) compares groups of samples (e.g., tumor vs. normal), ssGSEA calculates an enrichment score for each individual sample across a defined set of biological pathways or gene signatures. This per-sample resolution is essential for precision medicine applications, where understanding the unique molecular landscape of a single patient's tumor can guide personalized therapeutic decisions.
-
-In the context of synthetic data generation, preserving the distribution and inter-sample variability of these enrichment scores is a high-bar requirement. It tests whether the synthetic generation method has captured not just the general biological signals, but the complex, high-dimensional correlation structures that define individual sample heterogeneity. A high-quality synthetic dataset should allow a researcher to perform the same patient stratification or pathway-level clustering as they would with the original data.
-
+Single-sample Gene Set Enrichment Analysis (ssGSEA) calculates pathway enrichment scores for each individual sample, enabling per-sample assessment of biological pathway activity. Unlike standard GSEA which compares groups of samples, ssGSEA provides sample-level resolution essential for precision medicine applications. In synthetic data evaluation, preserving the distribution of these enrichment scores across samples tests whether generation methods capture the complex correlation structures underlying individual sample heterogeneity.
 ## Methodology
-The ssGSEA evaluation in SynOmicBench follows a rigorous pipeline to compare the biological fidelity of synthetic cohorts against their original counterparts. This process is designed to expose failures in capturing the co-expression patterns within gene sets.
-
-### Pathway Selection
-We utilize established gene set databases, primarily focusing on the Hallmark gene sets from the Molecular Signatures Database (MSigDB). These gene sets represent well-defined biological processes, such as the cell cycle, immune response, and metabolic pathways, with minimal redundancy and high consensus in the biological literature. This selection provides a broad yet manageable scope for evaluating the functional preservation of synthetic transcriptomic data.
-
-### Score Calculation
-For both original and synthetic datasets, ssGSEA scores are calculated using a rank-based enrichment method. The process involves several mathematical steps:
-1.  **Gene Ranking**: Within each sample, genes are ranked according to their expression levels.
-2.  **Cumulative Distribution**: An enrichment score (ES) is calculated as the difference between the weighted cumulative distribution functions of genes within a specific set and those outside the set.
-3.  **Normalization**: The resulting scores are normalized to allow for comparison across different pathways and samples, providing a relative measure of pathway activity.
-
-### Statistical Comparison
-The primary metric for evaluation is the preservation of the distribution of these scores. We assess whether the synthetic data maintains the same mean, variance, and overall shape of the pathway activity distribution seen in the original data. We employ several statistical tests, including:
-*   **Kolmogorov-Smirnov (KS) Test**: To determine if the distributions of ssGSEA scores for the original and synthetic samples differ significantly.
-*   **Jensen-Shannon Divergence**: To quantify the similarity between the probability distributions of the enrichment scores.
-*   **Correlation preservation**: We examine whether the co-regulation between different biological pathways (e.g., the coordination between DNA repair and cell cycle progression) is maintained in the synthetic output.
-
-## Benchmark Results
-Our benchmarking reveals significant performance differences across various synthetic data generation architectures when subjected to ssGSEA evaluation. This test is particularly effective at highlighting the "blunting" of biological signals common in many generative models.
+We evaluate single-sample pathway-level concordance by performing ssGSEA on both original and synthetic datasets, then comparing the distribution of Normalized Enrichment Scores (NES) using the Kolmogorov-Smirnov (KS) statistic. The KS statistic quantifies the maximum distance between cumulative distributions of NES values, providing a sensitive measure of distribution similarity. We report the KS-Complement score (1 - KS statistic), which provides an intuitive similarity metric where higher values indicate better preservation of pathway activity distributions. Bayesian estimation is used to identify optimal methods across multiple replicates, with posterior probabilities indicating confidence in method rankings.
+## Results
 
 ![ssGSEA Evaluation Results](../../assets/figures/narrow-utility-ssgsea.png)
-*Figure 6: Comparison of ssGSEA score distributions and pathway-pathway correlations across different synthetic generation methods, illustrating the preservation of sample-level heterogeneity.*
 
-### Performance Analysis
-Through extensive testing across multiple TCGA datasets, we have identified several tiers of performance among synthetic generation methods:
+Figure 6: Evaluation of single-sample Gene Set Enrichment Analysis preservation. The KS-Complement score measures the distribution similarity of pathway enrichment scores between original and synthetic datasets.
 
-1.  **High Fidelity (Avatars, Copula)**: Methods that explicitly model or preserve the underlying correlation structure of the data, such as Avatar-based approaches and Gaussian Copulas, demonstrate superior performance. These methods successfully capture the sample-level heterogeneity, resulting in ssGSEA score distributions that closely mirror the original data.
-2.  **Moderate Fidelity (VAEs, Diffusion Models)**: Modern generative architectures like Variational Autoencoders (VAEs) and Denoising Diffusion Probabilistic Models (DDPMs) often capture broad utility metrics well. However, they frequently struggle with the precise per-sample enrichment scores, often producing "blurred" biological signals where the extremes of pathway activity (high or low activity outliers) are compressed.
-3.  **Low Fidelity (Standard GANs, Independent Sampling)**: Methods that ignore feature-feature correlations or suffer from mode collapse fail this test entirely. Because ssGSEA relies heavily on the coordinated expression of entire gene sets, any breakdown in these correlations leads to wildly inaccurate enrichment scores.
+Across all cohorts, Gaussian Copula achieved the highest similarity of NES distribution to the original data, characterized by consistently high and tightly distributed KS-Complement scores. Bayesian estimation identified Gaussian Copula as the optimal method for ssGSEA preservation, with posterior probabilities exceeding 87%. Synthpop ranked second, following Gaussian Copula. Additional replicates showed similar patterns.
 
-## Key Findings
-!!! note "Biological Heterogeneity"
-    Avatars-based methods are particularly effective at preserving patient-level pathway heterogeneity. This suggests that the local structure preservation inherent in the Avatar approach is well-suited for maintaining the subtle molecular differences that distinguish individual samples within a clinical cohort.
+### Biological Validation
 
-!!! warning "Correlation Collapse"
-    Many synthetic generation methods suffer from "correlation collapse" when evaluated via ssGSEA. Even if the univariate distributions of individual genes appear well-preserved, the failure to maintain the coordinated expression patterns within a gene set leads to inaccurate enrichment scores. This renders the synthetic data less useful for pathway-level clinical research and patient stratification.
+In the original ccRCC cohort, loss-of-function PBRM1 mutations were associated with reduced IL6-JAK-STAT3 signaling (Wilcoxon rank-sum test, P = 0.01). This signal was robustly reproduced by Gaussian Copula across multiple synthetic replicates. The direction and statistical significance of other pathways, including estrogen response, apoptosis, allograft rejection, and UV response, were also recovered by Gaussian Copula, whereas other SDG methods exhibited pronounced inter-replicate variability.
 
-!!! tip "Precision Medicine Readiness"
-    For synthetic data to be considered "precision medicine ready," it must pass the ssGSEA benchmark. This ensures that downstream tasks, such as predicting pathway-based drug responses, remain valid when applied to synthetic patients.
+In the Melanoma cohort, comparison of MHC class II scores between responders and progressors showed that only Avatars K10 and Gaussian Copula reproduced the expected pattern of higher MHC-II scores in responders in the ipilimumab-treated group (Mann-Whitney U test, P < 0.1) and no significant difference in the ipilimumab-naïve group (Mann-Whitney U test, P > 0.1). However, this recovery was not robust and was observed in only a single replicate.
 
+### Prognostic Model Transfer
+
+In the Melanoma study, the combination of MHC class II score, lactate dehydrogenase (LDH) level, and lymph node metastasis status was reported to have strong prognostic performance for predicting progression in ipilimumab-treated patients. Models were trained exclusively on synthetic data and evaluated on held-out folds of the original cohort using 5-fold cross-validation repeated three times.
+## Observations
+
+- Gaussian Copula demonstrated highest cross-replicate stability for pathway-level signals, with posterior probabilities exceeding 87% across all cohorts
+- Biological validation signals (PBRM1-associated IL6-JAK-STAT3 downregulation in ccRCC) were robustly reproduced by Gaussian Copula across multiple replicates
+- Recovery of MHC-II patterns in Melanoma subgroups (ipilimumab-treated vs naïve) was observed in only single replicates for Avatars K10 and Gaussian Copula, indicating limited robustness
+- Inter-replicate variability was pronounced for methods other than Gaussian Copula, particularly for subgroup-specific pathway signals
+- Prognostic model transferability (MHC-II + LDH + lymph node status) demonstrated feasibility of training on synthetic data for clinical prediction tasks
+
+## References
+
+**Analysis Notebook**: `Manuscripts/Melanoma/NarrowUtility/ssGSEA/ssGSEA_KS.ipynb`
+
+**Visualization Notebook**: `Manuscripts/FiguressGSEA/Figure6a_KSC_ssGSEA.ipynb`
 ## Code Example
 The following snippet demonstrates how to perform ssGSEA-based evaluation using the SynOmicBench API. This allows developers to quickly assess their models' biological fidelity.
 
