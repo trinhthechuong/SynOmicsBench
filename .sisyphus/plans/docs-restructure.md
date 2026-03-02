@@ -622,7 +622,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 4. Rewrite HOME Page (docs/index.md)
+- [x] 4. Rewrite HOME Page (docs/index.md)
 
   **What to do**:
   - Rewrite `docs/index.md` completely following the spec in `documentation_prompt.md` Section 2
