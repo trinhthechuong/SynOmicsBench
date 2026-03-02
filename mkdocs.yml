@@ -44,9 +44,11 @@ nav:
   - Home: index.md
   - Getting Started: getting-started/index.md
   - Framework:
-      - framework/index.md
+      - Overview: framework/index.md
       - Processing: framework/processing.md
-      - Synthesizers: framework/synthesizers/index.md
+      - Synthesizers:
+          - Overview: framework/synthesizers/index.md
+          - Base API: framework/synthesizers/base.md
   - Evaluation:
       - evaluation/index.md
       - Broad Utility: evaluation/broad-utility.md
