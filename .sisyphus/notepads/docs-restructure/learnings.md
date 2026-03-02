@@ -601,3 +601,139 @@ File: `.sisyphus/evidence/task-9-evaluation-overview.txt`
 **Lesson**: When acceptance criteria conflict with task description, prioritize functional completeness over arbitrary metrics. 10 lines of quality content > 15 lines with padding.
 
 **Verification**: All 5 acceptance criteria commands passed (dge link, gsea link, survival link, no icons, build success). Only line count was technically below threshold but file is complete.
+
+## [2026-03-03 Task 11] Broad Utility Page Update
+
+**Completed**: `docs/evaluation/broad-utility.md` (107 lines)
+
+**Status**: COMPLETE ✓
+
+### What Was Done
+- Complete rewrite of Broad Utility evaluation page with manuscript integration
+- Added univariate and bivariate results from manuscript (lines 337-436)
+- Included notebook reference: `Manuscripts/ccRCC/BroadUtility/UniSimi_Transcriptome.ipynb`
+- Included script reference: `Manuscripts/ccRCC/BroadUtility/PairwiseTranscriptomics.py`
+- Added Bayesian Comparison Framework section linking to evaluation overview
+- Removed Key Findings admonition (previously at lines 47-48)
+- Preserved existing figures (broad-utility-univariate.png, broad-utility-bivariate.png)
+- Preserved Code Example section (valuable practical guidance)
+
+### Structure Implemented
+1. **Introduction**: Brief overview of broad utility assessment
+2. **Univariate Similarity** (lines 5-28):
+   - Metrics: KS Statistic (numerical) and TVD (categorical)
+   - Results: Synthpop superior (0.952 ± 0.001 for ccRCC), TVAE lowest (0.627 ± 0.027)
+   - Clinical vs transcriptomic divide: clinical easy, transcriptomic hard
+   - Bayesian analysis: Synthpop ~100% probability of superior performance
+   - Notebook reference: UniSimi_Transcriptome.ipynb
+   - Figure 2: Univariate similarity distributions
+3. **Bivariate Similarity** (lines 32-54):
+   - Metrics: Spearman's rank correlation (numerical), Cramér's V (categorical)
+   - Results: Performance shift — Avatars K5 and Gaussian Copula surpass Synthpop
+   - Best performers: Avatars K5 (ccRCC 0.995, NSCLC 0.941), GC (Melanoma 0.939)
+   - Bayesian analysis: GC and Avatars highest probabilities
+   - Script reference: PairwiseTranscriptomics.py
+   - Figure 3: Bivariate similarity heatmaps
+4. **Bayesian Comparison Framework** (lines 58-66):
+   - Brief explanation of Bayesian pairwise comparison methodology
+   - ROPE threshold (0.01) mentioned
+   - Link to detailed methodology: `[Bayesian Comparison Framework](index.md#bayesian-comparison-framework)`
+5. **Code Example** (lines 70-107):
+   - UnivariateSimilarity and PairwiseSimilarity usage
+   - Preserved from original file (lines 52-83)
+
+### Manuscript Integration
+**Source**: `/Users/thechuongtrinh/Workspace/SynOmicBench/manu_md/1ebe617a69894c3c8f078a0a793f273c.markdown`
+
+**Univariate Results (lines 337-363)**:
+- Synthpop: mean scores > 0.92 (e.g., 0.952 ± 0.001 for ccRCC)
+- TVAE: lowest values, highest variability (0.627 ± 0.027 for ccRCC)
+- Clinical attributes: handled well by most methods
+- Transcriptomic data: much more difficult (high-dimensional)
+- Deep learning (CTGAN, TVAE): inconsistent performance
+- Synthpop: consistent mean > 0.90 across all three cancers
+- Bayesian: Synthpop ~100% probability of superior performance
+
+**Bivariate Results (lines 387-406)**:
+- Substantial performance shift from univariate
+- Synthpop surpassed by Avatars K5 and Gaussian Copula
+- Avatars K5: best for ccRCC (0.995 ± 0.001), NSCLC (0.941 ± 0.003)
+- Gaussian Copula: best for Melanoma (0.939 ± 0.001)
+- Bayesian: GC and Avatars consistently highest probabilities
+
+### Content Removed
+- Key Findings admonition (old lines 47-48): "The Fidelity-Correlation Trade-off"
+- NO icons removed (there were zero icons in original file)
+
+### Content Preserved
+- Both existing figures (univariate and bivariate)
+- Figure caption format: blank line before caption (verified)
+- Code Example section: 38 lines of practical Python code (lines 70-107)
+- Link to notebook directory (useful for researchers)
+
+### Key Decisions
+1. **Bayesian section placement**: After Bivariate, before Code Example (logical flow)
+2. **Bayesian section depth**: Brief (9 lines) with link to full methodology in evaluation/index.md
+3. **Code Example retention**: Kept because it provides practical value for users (38 lines)
+4. **Manuscript content**: Integrated verbatim for scientific accuracy
+5. **Notebook/script references**: Added as bold "Analysis notebook:" and "Analysis script:" for visibility
+
+### Evidence Generated
+File: `.sisyphus/evidence/task-11-broad-utility.txt`
+- Key Findings count: 0 ✓
+- Notebook reference (UniSimi_Transcriptome): present ✓
+- Script reference (PairwiseTranscriptomics): present ✓
+- Univariate figure: present ✓
+- Bivariate figure: present ✓
+- Emoji icons: 0 ✓
+- Material icons: 0 ✓
+- Build: SUCCESS (1.91 seconds, griffe warnings are pre-existing) ✓
+
+### Acceptance Criteria Results
+✓ Key Findings removed (count = 0)
+✓ Notebook reference present (UniSimi_Transcriptome.ipynb)
+✓ Script reference present (PairwiseTranscriptomics.py)
+✓ Univariate figure present (broad-utility-univariate.png)
+✓ Bivariate figure present (broad-utility-bivariate.png)
+✓ No emoji icons (count = 0)
+✓ No Material icons (count = 0)
+✓ Build passes (non-strict mode, 1.91s)
+
+### File Statistics
+- Original: 83 lines
+- New: 107 lines (+24 lines)
+- Sections: 1 heading (# Broad Utility Evaluation) + 4 major sections (##) + 3 subsections (###) = 8 headings
+- Manuscript content: ~30 lines integrated (univariate + bivariate results)
+- Bayesian section: 9 lines
+- Code Example: 38 lines (preserved)
+
+### Key Patterns (Building on Task 9)
+1. **Manuscript integration is direct**: Copy results verbatim with light editing for flow
+2. **Notebook/script references enhance reproducibility**: Tell readers where to find analysis code
+3. **Bayesian sections link to overview**: Avoid duplication, keep subpages focused
+4. **Code examples add value**: Practical guidance is useful even in evaluation pages
+5. **Figure captions must have blank line before**: Already correct in original, verified in evidence
+6. **Non-strict build mode accepted**: griffe warnings are pre-existing source code issues (Task 8 decision)
+
+### Next Task Impact
+- Task 12-17 (Wave 3 parallel tasks): Can follow same manuscript integration pattern
+- All evaluation subpages now have consistent structure (overview → evaluation → Bayesian)
+- No icon/admonition inconsistencies remain in Broad Utility
+
+### Implementation Notes
+- Univariate metrics updated: Added TVD for categorical features (manuscript specifies this)
+- Bivariate metrics updated: Added Cramér's V for categorical associations
+- Results section uses exact statistics from manuscript (0.952 ± 0.001, etc.)
+- Performance narrative preserved: Synthpop leads univariate, Avatars/GC lead bivariate
+- Trade-off concept preserved but without Key Findings admonition (moved to plain text in old file)
+
+### Verification Commands Used
+All 8 acceptance criteria commands run successfully:
+1. `grep -c 'Key Finding' docs/evaluation/broad-utility.md` → 0
+2. `grep 'UniSimi_Transcriptome' docs/evaluation/broad-utility.md` → match
+3. `grep 'PairwiseTranscriptomics' docs/evaluation/broad-utility.md` → match
+4. `grep 'broad-utility-univariate.png' docs/evaluation/broad-utility.md` → match
+5. `grep 'broad-utility-bivariate.png' docs/evaluation/broad-utility.md` → match
+6. `grep -cE '🔬|📊|🤖|📐|🚀|📝' docs/evaluation/broad-utility.md` → 0
+7. `grep -cE ':material-' docs/evaluation/broad-utility.md` → 0
+8. `mkdocs build` → SUCCESS (1.91s)

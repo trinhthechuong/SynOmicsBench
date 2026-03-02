@@ -4,24 +4,28 @@ Broad utility assessment evaluates the ability of synthetic data generation meth
 
 ## Univariate Similarity
 
-Univariate similarity measures how well the distribution of each feature in the synthetic data matches the corresponding feature in the real dataset. This is crucial for ensuring that basic statistical summaries (mean, variance, range) and the overall shape of the data are maintained.
+Univariate similarity measures how well the distribution of each feature in the synthetic data matches the corresponding feature in the real dataset. This is crucial for ensuring that basic statistical summaries and the overall shape of the data are maintained.
 
 ### Metrics
-We utilize three primary metrics for univariate assessment:
 
-1.  **Kolmogorov-Smirnov (KS) Statistic:** A non-parametric test that quantifies the maximum distance between the empirical cumulative distribution functions (ECDF) of the real and synthetic data.
-2.  **Jensen-Shannon (JS) Divergence:** A symmetric measure of the similarity between two probability distributions, based on the Kullback–Leibler divergence. It provides a smoother and more stable evaluation of distributional overlap.
-3.  **Missing Value Similarity:** Compares the proportion and pattern of missing data between original and synthetic datasets, ensuring that the synthetic model correctly captures the "missingness" structure.
+We utilize two primary metrics for univariate assessment:
 
-### Benchmark Results
-Our evaluation across diverse cohorts (ccRCC, Melanoma, NSCLC) highlights the strengths of different synthesizers:
+1. **Kolmogorov-Smirnov (KS) Statistic:** A non-parametric test that quantifies the maximum distance between the empirical cumulative distribution functions (ECDF) of the real and synthetic data, applied to numerical features.
+2. **Total Variation Distance (TVD):** A metric for comparing categorical distributions, measuring the maximum difference between probability mass functions.
 
-*   **Synthpop:** Consistently achieves the best performance in univariate similarity across both clinical and transcriptomic features. Its tree-based approach effectively captures local data density.
-*   **Gaussian Copula:** Ranks second, demonstrating robust ability to model marginal distributions, especially for numerical transcriptomic data.
-*   **Deep Learning (TVAE, CTGAN):** Perform well but are slightly more prone to mode collapse or over-smoothing compared to statistical methods.
+### Results
+
+Our evaluation across diverse cohorts (ccRCC, Melanoma, NSCLC) reveals distinct performance patterns across synthesizers. Synthpop consistently outperformed other methods across all three cohorts, achieving mean scores above 0.92 (e.g., 0.952 ± 0.001 for ccRCC). In contrast, TVAE exhibited the lowest values and highest variability, particularly within the ccRCC cohort (0.627 ± 0.027).
+
+A clear divide emerges between data types. Most methods handled clinical attributes well, with both Synthpop and Gaussian Copula maintaining tight distributions and high fidelity. However, the high-dimensional nature of transcriptomic data proved much more difficult to replicate. While deep learning methods such as CTGAN and TVAE showed inconsistent performance across gene expression profiles, Synthpop remained highly stable, maintaining a consistent mean score above 0.90 in all three cancers.
+
+Bayesian analysis on the results of 5 replicates confirmed that Synthpop achieves close to 100% probability of superior performance over all other methods for all tested oncology cohorts.
+
+**Analysis notebook:** `Manuscripts/ccRCC/BroadUtility/UniSimi_Transcriptome.ipynb`
 
 ![Broad Utility Univariate](../assets/figures/broad-utility-univariate.png)
-*Figure 2: Distribution of univariate similarity metrics (KS Statistic and JS Divergence) across evaluated synthesizers.*
+
+*Figure 2: Distribution of univariate similarity metrics (KS Statistic and TVD) across evaluated synthesizers for clinical and transcriptomic features.*
 
 ---
 
@@ -29,23 +33,36 @@ Our evaluation across diverse cohorts (ccRCC, Melanoma, NSCLC) highlights the st
 
 Bivariate similarity evaluates the preservation of relationships between pairs of features. In multi-omics data, capturing these correlations is essential for maintaining biological validity and downstream utility.
 
-### Correlation Analysis
-We compute the **Pearson correlation matrix** for both original and synthetic datasets. The similarity is then quantified by:
-- **Correlation Difference:** The absolute difference between the real and synthetic correlation matrices.
-- **Log-cluster Similarity:** Assessing how well the hierarchical clustering of features in the original data is preserved in the synthetic version.
+### Metrics
 
-### Key Findings
-The preservation of bivariate structure often presents a trade-off with univariate fidelity:
+We compute bivariate similarity by comparing correlation structures between real and synthetic data:
 
-*   **Avatars (K=5, K=10):** Lead in bivariate similarity, particularly in preserving the complex correlation structure of transcriptomic features. By performing synthesis in a transformed latent space, Avatars effectively maintain global inter-feature dependencies.
-*   **Gaussian Copula:** Also performs strongly here, as its primary objective is to model the dependency structure (the copula) between variables.
-*   **Synthpop:** While excellent at univariate matching, it can sometimes struggle to capture the full complexity of high-dimensional correlations in omics data compared to the latent-space methods.
+- **Spearman's Rank Correlation:** For numerical feature pairs
+- **Cramér's V:** For categorical associations
+
+These metrics are aggregated into an overall bivariate score that quantifies how well the inter-variable relationships are preserved.
+
+### Results
+
+While univariate metrics confirm that marginal distributions are preserved, they do not guarantee that the intricate co-dependence between features is captured. The bivariate results indicate a substantial shift in method performance. Synthpop, which led in univariate validation, was surpassed by Avatars K5 and Gaussian Copula.
+
+Avatars K5 achieved the best performance for ccRCC (0.995 ± 0.001) and NSCLC (0.941 ± 0.003) datasets, whereas Gaussian Copula obtained the best fidelity in the Melanoma dataset (0.939 ± 0.001). Throughout all three cancer datasets, pairwise Bayesian comparison heatmaps indicate that Gaussian Copula and Avatars (K5/K10, depending on cohort) consistently demonstrate the highest probabilities of outperforming other methods in preserving bivariate relationships.
+
+**Analysis script:** `Manuscripts/ccRCC/BroadUtility/PairwiseTranscriptomics.py`
 
 ![Broad Utility Bivariate](../assets/figures/broad-utility-bivariate.png)
+
 *Figure 3: Comparison of correlation preservation and bivariate similarity across different cohorts and methods.*
 
-!!! note "The Fidelity-Correlation Trade-off"
-    Synthesizers that excel at matching individual feature distributions (high univariate fidelity) do not always preserve the global correlation structure. Selecting the optimal method requires balancing these two dimensions based on the specific requirements of the downstream analysis.
+---
+
+## Bayesian Comparison Framework
+
+Both univariate and bivariate similarity assessments utilize Bayesian pairwise comparisons to rigorously evaluate performance differences between synthesizers. This approach estimates the posterior probability that one method outperforms another, accounting for uncertainty across multiple replicates.
+
+The Bayesian framework employs a correlated t-test with a Region of Practical Equivalence (ROPE) threshold of 0.01, allowing us to distinguish between methods that are practically equivalent versus those with meaningful performance differences. Results are visualized as N×N heatmaps where each cell represents P(row > column), indicating the probability that the row method achieves superior performance.
+
+For detailed methodology, see [Bayesian Comparison Framework](index.md#bayesian-comparison-framework).
 
 ---
 
