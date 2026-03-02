@@ -507,7 +507,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 3. Delete Old Pages + Create Directory Structure
+- [x] 3. Delete Old Pages + Create Directory Structure
 
   **What to do**:
   - **Before deleting**, quickly review content of these files for any useful content to migrate:
