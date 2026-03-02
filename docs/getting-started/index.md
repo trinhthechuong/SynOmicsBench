@@ -1,6 +1,4 @@
-# Getting Started with SynOmicBench
-
-This tutorial provides an end-to-end guide to using SynOmicBench for generating and evaluating synthetic multi-omics data. You will learn how to install the framework, prepare your data, and run a complete synthesis pipeline.
+# Getting Started
 
 ## Installation
 
@@ -16,38 +14,61 @@ cd SynOmicBench
 pip install -e .
 ```
 
-### Dependencies
+**Python Version**: 3.11+ (tested with 3.11.5)
 
-SynOmicBench requires Python 3.9+ and several scientific computing libraries including:
-- `pandas` and `numpy` for data manipulation
-- `scikit-learn` for preprocessing and encoding
-- `sdmetrics` for evaluation metrics
-- `miceforest` for MICE imputation
+A `requirements.txt` file is provided in the repository root for reference.
+
+### From Singularity
+
+Singularity container instructions coming soon.
+
+---
 
 ## Quick Example
 
-Here's a minimal example showing how to synthesize data using the Gaussian Copula model.
+Here's a complete example showing how to generate synthetic data using GaussianCopula and evaluate fidelity:
 
 ```python
 import pandas as pd
+import numpy as np
 from SynOmics.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
+from SynOmics.processing.metadata import MetaData
 
-# 1. Load your data
-data = pd.read_csv("your_omics_data.csv")
+original_data = pd.read_csv("your_original_data.csv")
 
-# 2. Define column types (metadata)
-# Types: "numerical", "dummy_categorical", "ordinal_categorical", "missing_categorical"
-metadata = {col: "numerical" for col in data.columns}
+ordinal_features = ["Mstage", "Tx_Start_ECOG",
+                    "numPriorTherapies", "biopsyContext"]
 
-# 3. Initialize and run the pipeline
-synthesizer = GaussianCopulasynthesizer(output_path="./results", metadata=metadata)
-synthetic_data = synthesizer.generate(
-    data=data,
-    n_samples=len(data),
-    output_filename="synthetic_output.csv"
+metadata = MetaData.get_metadata(
+    data=original_data,
+    ordinal_features=ordinal_features
 )
 
-print(f"Generated synthetic data with shape: {synthetic_data.shape}")
+output_path = "./results"
+
+synth = GaussianCopulasynthesizer(
+    output_path=output_path,
+    metadata=metadata
+)
+
+synthetic_data = synth.generate(
+    data=original_data,
+    n_samples=original_data.shape[0],
+    output_filename="synthetic_data.csv",
+)
+
+from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
+
+evaluator = UnivariateSimilarity(output_dir="./evaluation_results")
+
+score = evaluator.get_univariate_score(
+    original_data=original_data,
+    synthetic_data=synthetic_data,
+    metadata=metadata,
+    save=True
+)
+
+print(f"Overall Fidelity Score: {score:.4f}")
 ```
 
 ---
@@ -123,6 +144,7 @@ synthetic_df = synthesizer.generate(
 ```
 
 **Expected Console Output:**
+
 ```text
 ========== Synthesizer Initialized ==========
 Class: GaussianCopulasynthesizer
@@ -159,6 +181,7 @@ print(f"Overall Fidelity Score: {score:.4f}")
 ```
 
 This will generate:
+
 1. `Detail_score_UnivariateSimilarity.csv`: Individual scores for every gene.
 2. `UnivariateSimilarity.png`: A histogram visualizing the score distribution.
 

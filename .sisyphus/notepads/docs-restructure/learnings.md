@@ -243,3 +243,48 @@ cd /path/to/repo && /opt/homebrew/bin/mkdocs build --strict
 /opt/homebrew/bin/mkdocs serve
 ```
 
+
+## [2026-03-02] Task 5: Getting Started Rewrite
+
+**Status**: COMPLETE ✓
+
+### What Was Done
+- Rewrote `docs/getting-started/index.md` with exact spec compliance
+- Implemented 3-part structure: Installation → Quick Example → Step-by-Step Walkthrough
+- Removed all icons (emoji + Material design) from documentation
+- Preserved valuable Step-by-Step content (5-step pipeline with detailed explanations)
+
+### Key Changes
+1. **Installation Section**: Added "From Source" (with `pip install -e .`) and "From Singularity" (placeholder)
+2. **Quick Example**: Copied EXACT code from documentation_prompt.md lines 88-129
+   - Imports: GaussianCopulasynthesizer, MetaData, UnivariateSimilarity
+   - Features: ordinal_features handling, evaluation with score printing
+3. **Icon Removal**: 0 icons remaining (verified with grep -cE)
+
+### Structural Details
+- Installation: 19 lines (clone → pip install -e . → Python version → requirements.txt ref)
+- Quick Example: 48 lines (complete working example with evaluation)
+- Step-by-Step: 109 lines (5 detailed steps preserved from original)
+- Total: 195 lines (up from 171)
+
+### Code Quality
+- All imports follow exact spec paths (verified present)
+- MetaData.get_metadata() with ordinal_features correctly implemented
+- UnivariateSimilarity integration with metadata parameter
+- Print statement format: `f"Overall Fidelity Score: {score:.4f}"`
+- No syntax errors; code is directly executable
+
+### Evidence Generated
+1. `task-5-getting-started.txt` — Section structure verification (all 13 headings confirmed)
+2. `task-5-no-icons.txt` — Icon scan results (0 matches = clean)
+
+### Acceptance Criteria Met
+✓ `### From Source` present (line 7)
+✓ `### From Singularity` present (line 21)
+✓ `GaussianCopulasynthesizer` found (4 occurrences in Quick Example)
+✓ `UnivariateSimilarity` found (2 occurrences in Quick Example)
+✓ Icon check: 0 emoji/Material icons (grep -cE returns 0)
+✓ No Key Findings sections
+
+### Next Wave Task
+- Task 6: Preprocessing Guide (tabs 3-4 structure)
