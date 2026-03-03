@@ -9,47 +9,51 @@
   --md-primary-bg-color--light: #F5F7F9;
 }
 
-/* SECTION 1: The Brand Header */
+/* --- SECTION 1: THE BRAND HEADER --- */
 .md-header {
   background-color: var(--md-primary-fg-color);
   color: #FFFFFF;
-  /* subtle shadow for depth without using dark borders */
   box-shadow: 0 2px 10px rgba(226, 0, 26, 0.15); 
 }
 
 .md-header__topic {
-  color: #FFFFFF;
+  color: #FFFFFF !important;
   font-weight: 700;
 }
 
-/* SECTION 2: The Navigation Tabs (Light Mode) */
+/* --- SECTION 2: THE NAVIGATION TABS (Light Mode) --- */
 .md-tabs {
-  /* Using a very light grey instead of dark colors */
   background-color: #F8F9FB; 
   border-bottom: 1px solid #E0E4E8;
 }
 
+/* Trạng thái tab bình thường */
 .md-tabs__link {
-  /* Using a deep grey/blue for text - much softer than black */
-  color: #455A64; 
+  color: #455A64 !important; 
   opacity: 0.7;
   font-weight: 500;
   transition: all 0.2s ease;
 }
 
+/* Khi di chuột qua (Hover) */
 .md-tabs__link:hover {
   opacity: 1;
-  color: var(--md-primary-fg-color); /* Turns red on hover */
+  color: var(--md-primary-fg-color) !important;
 }
 
-.md-tabs__link--active {
-  color: var(--md-primary-fg-color); /* Red text for active page */
-  opacity: 1;
+/* TRẠNG THÁI ACTIVE: Khắc phục lỗi bị trắng khó nhìn */
+.md-tabs__item--active .md-tabs__link {
+  color: var(--md-primary-fg-color) !important; /* Chữ chuyển đỏ thay vì trắng */
+  opacity: 1 !important;
   font-weight: 700;
-  /* A bold red underline to match the logo style */
-  border-bottom: 3px solid var(--md-primary-fg-color); 
 }
-/* SECTION 3: Links in content */
+
+/* Thanh gạch chân đỏ cho tab đang chọn */
+.md-tabs__link--active {
+  border-bottom: 3px solid var(--md-primary-fg-color) !important;
+}
+
+/* --- SECTION 3: LINKS IN CONTENT --- */
 .md-content a {
   color: #0D47A1;  /* Blue */
   text-decoration: none;
@@ -60,36 +64,12 @@
   text-decoration: underline;
 }
 
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
+/* --- SECTION 4: SIDEBAR & NAV (Tùy chỉnh thêm để đồng bộ) --- */
+.md-nav__link--active {
+  color: var(--md-primary-fg-color) !important;
+  font-weight: 700;
 }
 
-.doc-card {
-  display: block;
-  padding: 20px;
-  border-radius: 12px;
-  background: #ffffff;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-  text-decoration: none;
-  color: inherit;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.doc-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-}
-
-.doc-card h3 {
-  margin-top: 0;
-  margin-bottom: 10px;
-}
-
-.doc-card p {
-  margin: 0;
-  font-size: 0.95rem;
-  opacity: 0.8;
+.md-nav__link:hover {
+  color: var(--md-primary-fg-color--light) !important;
 }

@@ -20,7 +20,7 @@ The SynOmicBench pipeline combines standardized preprocessing with a multidimens
 
 ## Benchmarked Datasets
 
-SynOmicBench utilizes three diverse cancer cohorts treated with immune checkpoint blockade (ICB), reflecting realistic heterogeneity in sample size and transcriptomic dimensionality.
+SynOmicBench utilizes three diverse cancer cohorts treated with immune checkpoint blockade (ICB), reflecting realistic heterogeneity in sample size and transcriptomic dimensionality (Figure 1b).
 
 ***Table 1**: Overview of benchmarked cancer datasets.*
 
@@ -41,23 +41,16 @@ SynOmicBench utilizes three diverse cancer cohorts treated with immune checkpoin
 
 ---
 
-## SDG Methods Evaluated
+## Synthetic Data Generation (SDG) Pipeline
 
-We benchmarked six configurations representing three major categories of synthetic data generation:
+As illustrated in Figure 1c, clinical and transcriptomic data were harmonized and integrated through a standardized data processing pipeline. This process ensured consistency and compatibility across SDG methods. The processed dataset was subsequently used to train SDG models (Gaussian Copula, CTGAN, TVAE, Synthpop and Avatars (K5/K10)), which generated patient-level synthetic multimodal datasets. 
 
-1.  [**Gaussian Copula**](https://github.com/sdv-dev/Copulas): A statistical approach that models multivariate dependencies using copula functions.
-2.  [**CTGAN**](https://papers.nips.cc/paper_files/paper/2019/hash/254ed7d2de3b23ab10936522dd547b78-Abstract.html): Conditional Tabular Generative Adversarial Networks, designed specifically for tabular data.
-3.  [**TVAE**](https://papers.nips.cc/paper_files/paper/2019/hash/254ed7d2de3b23ab10936522dd547b78-Abstract.html): Tabular Variational Autoencoders, an adaptation of VAEs for mixed-type tabular datasets.
-4.  [**Synthpop**](https://www.jstatsoft.org/article/view/v074i11): A synthesis tool using sequential conditional distributions.
-5.  [**Avatars (K5 & K10)**](https://www.nature.com/articles/s41746-023-00771-5): A sample-centric approach that generates synthetic "avatars" from local patient neighborhoods.
-
----
 
 ## Evaluation Pillars
 
-SynOmicBench evaluates synthetic data through three primary lenses to ensure a comprehensive understanding of the utility-privacy trade-off:
+SynOmicBench evaluates synthetic data through three primary lenses (Figure 1d):
 
-### 1. Broad Utility (Statistical Fidelity)
+### 1.Statistical Fidelity
 
 Validates the preservation of global statistical properties by comparing:
 
@@ -76,7 +69,7 @@ Evaluates task-specific performance in clinically relevant downstream analyses:
 
 ### 3. Privacy Risk
 
-Quantifies disclosure vulnerability aligned with EDPB regulatory principles:
+Quantifies disclosure vulnerability aligned with the European Data Protection Board (EDPB) regulatory principles:
 
 *   **Singling-Out**: Risk of isolating a unique individual.
 *   **Linkability**: Risk of connecting records from multiple datasets.
