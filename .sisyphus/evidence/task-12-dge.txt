@@ -1,0 +1,61 @@
+=== TASK 12: UPDATE DGE PAGE - VERIFICATION RESULTS ===
+Date: Mon Mar  3 00:22:00 PST 2026
+
+--- Command 1: Count Key Finding occurrences ---
+$ grep -c 'Key Finding' docs/evaluation/narrow-utility/dge.md
+0
+Expected: 0 ✓
+
+--- Command 2: Check GCS_analysis notebook reference ---
+$ grep "GCS_analysis" docs/evaluation/narrow-utility/dge.md
+**Analysis notebook:** `Manuscripts/Melanoma/NarrowUtility/DGE/GCS_analysis.ipynb`
+Expected: match ✓
+
+--- Command 3: Check Gene Conservation Score references ---
+$ grep -iE "Gene Conservation Score|GCS" docs/evaluation/narrow-utility/dge.md | head -5
+4.  **Gene Conservation Score (GCS)**: SynOmicBench introduces the **Gene Conservation Score (GCS)** to quantify concordance between synthetic and original DGE results. This metric provides a single integrated measure that quantifies the weighted proportion of synthetic genes concordant with the original data across two key dimensions: regulation direction (up- or down-regulation) and level of statistical significance. By jointly accounting for these two aspects, GCS enables a one-shot assessment of whether synthetic data preserve not only the directionality of gene regulation but also their significance patterns. Higher GCS values indicate a larger proportion of synthetic genes that faithfully preserve both the directionality and the degree of statistical significance observed in the original data. The calculation protocol for this metric is described in the Methods section.
+Evaluation across multiple cohorts (ccRCC, Melanoma, NSCLC) reveals that **Gaussian Copula** consistently achieved the highest GCS values across all cohorts. Bayesian estimation over five replicates showed that Gaussian Copula achieved superior probabilities (exceeding 70%) compared to alternative methods.
+**Analysis notebook:** `Manuscripts/Melanoma/NarrowUtility/DGE/GCS_analysis.ipynb`
+- Gaussian Copula demonstrated the highest GCS values across all three cancer cohorts (ccRCC, Melanoma, NSCLC) with Bayesian probabilities exceeding 70%
+The `GCSAnalyzer` class in SynOmicBench provides a streamlined way to evaluate DGE preservation.
+Expected: match ✓
+
+--- Command 4: Count emoji icons ---
+$ grep -cE "🔬|📊|🤖|📐|🚀|📝" docs/evaluation/narrow-utility/dge.md
+0
+Expected: 0 ✓
+
+--- Command 5: Count Material icons ---
+$ grep -cE ":material-" docs/evaluation/narrow-utility/dge.md
+0
+Expected: 0 ✓
+
+--- Command 6: Count admonitions ---
+$ grep -cE "^\!\!\!" docs/evaluation/narrow-utility/dge.md
+0
+Expected: 0 ✓
+
+--- Command 7: Check source code reference ---
+$ grep "src/SynOmics/metrics/narrow_utility/DGE.py" docs/evaluation/narrow-utility/dge.md
+**Source code:** `src/SynOmics/metrics/narrow_utility/DGE.py`
+Expected: match ✓
+
+--- Command 8: Build documentation ---
+$ /opt/homebrew/bin/mkdocs build
+INFO    -  Documentation built in 1.86 seconds
+Expected: Build passes ✓
+
+=== FILE STATISTICS ===
+      87 docs/evaluation/narrow-utility/dge.md
+Original: 74 lines
+New: 87 lines (+13 lines)
+
+=== ALL ACCEPTANCE CRITERIA MET ===
+✓ Key Findings removed (count = 0)
+✓ GCS_analysis notebook reference present
+✓ Gene Conservation Score/GCS references present
+✓ No emoji icons (count = 0)
+✓ No Material icons (count = 0)
+✓ No admonitions (count = 0)
+✓ Source code reference present
+✓ Build passes (non-strict mode, 1.86s)

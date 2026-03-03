@@ -97,4 +97,3 @@ print(f"Mean Correlation Absolute Error: {corr_diff:.4f}")
 pair_sim.plot_correlation_comparison(real_df, syn_df, save_path="plots/corr_diff.png")
 ```
 
-For a deeper dive into these metrics across all evaluated cohorts, please see our [Broad Utility Notebooks](../../site/notebooks/FigureBroadUtility/).

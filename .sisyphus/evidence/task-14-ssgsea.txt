@@ -1,0 +1,49 @@
+TASK 14: UPDATE ssGSEA PAGE - EVIDENCE
+======================================
+
+TIMESTAMP: 2026-03-03
+
+FILE MODIFIED: docs/evaluation/narrow-utility/ssgsea.md
+- Original: 89 lines (hypothetical content)
+- Updated: 77 lines (manuscript-grounded content)
+- Net change: -12 lines (removed verbose hypothetical sections and admonitions)
+
+SECTIONS MODIFIED:
+1. Overview (lines 3-4): Replaced 3-paragraph introduction with 1 concise paragraph
+2. Methodology (lines 5-6): Replaced detailed pipeline description with KSC metric explanation
+3. Results (lines 7-23): Replaced hypothetical benchmarking with manuscript content
+   - Gaussian Copula >87% posterior probability
+   - PBRM1 mutation signal in ccRCC (IL6-JAK-STAT3, P=0.01)
+   - MHC-II patterns in Melanoma (ipilimumab-treated vs naïve)
+   - Prognostic model transferability
+4. Observations (lines 24-30): Replaced "Key Findings" admonitions with neutral bullet points
+5. References (lines 32-36): Added notebook links (ssGSEA_KS.ipynb, Figure6a_KSC_ssGSEA.ipynb)
+6. Code Example (lines 37-77): Preserved existing code
+
+ACCEPTANCE CRITERIA RESULTS:
+✅ 1. grep -c 'Key Finding' → 0 (no "Key Finding" heading)
+✅ 2. grep 'ssGSEA_KS' → Match (notebook reference present)
+✅ 3. grep 'Figure6a_KSC' → Match (visualization reference present)
+✅ 4. grep -cE '🔬|📊|🤖|📐|🚀|📝' → 0 (no emoji icons)
+✅ 5. grep -cE ':material-' → 0 (no Material icons)
+✅ 6. grep -cE '^\!\!\!' → 0 (no admonitions)
+✅ 7. mkdocs build → SUCCESS (1.85 seconds, expected griffe warnings)
+
+MANUSCRIPT CONTENT INTEGRATED (Lines 862-900):
+- KS-Complement scores with Gaussian Copula winner
+- Bayesian estimation posterior probabilities >87%
+- PBRM1 mutation signal reproduction (P=0.01, Wilcoxon rank-sum)
+- Pathway recovery: estrogen response, apoptosis, allograft rejection, UV response
+- MHC-II scores in Melanoma subgroups (MWU test P<0.1 ipilimumab-treated, P>0.1 naïve)
+- Single-replicate recovery limitation noted for Avatars K10 and Gaussian Copula
+- Prognostic model: MHC-II + LDH + lymph node status (5-fold CV, 3 repeats)
+
+FORMATTING COMPLIANCE:
+- Figure caption placed BELOW figure with blank line
+- NO admonitions (!!! note/warning/tip removed)
+- NO icons (emoji or Material)
+- Neutral language in Observations ("demonstrated", "showed", "exhibited")
+
+VERIFICATION:
+All 7 acceptance criteria passed successfully.
+Build completed without errors (griffe warnings are pre-existing docstring issues).

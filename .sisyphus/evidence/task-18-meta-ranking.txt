@@ -1,0 +1,82 @@
+=== ACCEPTANCE CRITERIA VERIFICATION: Task 18 - Meta-Ranking Page ===
+
+AC1: Verify Key Findings removed
+Command: grep -c 'Key Finding' docs/evaluation/meta-ranking.md
+Result: 0
+Status: ✅ PASS
+
+AC2: Verify MetaScore_all notebook referenced
+Command: grep 'MetaScore_all' docs/evaluation/meta-ranking.md
+Result: - **Aggregated analysis**: `Manuscripts/MetaScore/MetaScore_all.ipynb` — computes meta-scores across all three cancer datasets (ccRCC, melanoma, NSCLC)
+Status: ✅ PASS
+
+AC3: Verify composite/weighted terminology present
+Command: grep -iE 'composite score|weighted|rank-derived' docs/evaluation/meta-ranking.md
+Result: Multiple matches found including:
+- "rank-derived meta-score aggregation approach"
+- "computes a weighted composite score"
+- "rank-derived meta-scores"
+Status: ✅ PASS
+
+AC4: Verify figure present
+Command: grep 'meta-ranking.png' docs/evaluation/meta-ranking.md
+Result: ![Meta-Ranking Comparison](../assets/figures/meta-ranking.png)
+Status: ✅ PASS
+
+AC5: Verify no icons
+Command: grep -cE ':material-|:fontawesome-|🔬|📊|🤖|📐|🚀|📝' docs/evaluation/meta-ranking.md
+Result: 0
+Status: ✅ PASS
+
+AC6: Verify Gaussian Copula mentioned as best
+Command: grep -iE 'gaussian copula.*best|lowest.*gaussian copula' docs/evaluation/meta-ranking.md
+Result: Multiple matches found including:
+- "Gaussian Copula achieved the lowest (best) aggregated meta-score"
+- "Gaussian Copula obtained the lowest (best) overall meta-score"
+- "Gaussian Copula — achieved the lowest (best) overall meta-score"
+Status: ✅ PASS
+
+AC7: Verify utility-privacy tradeoff mentioned
+Command: grep -i 'utility-privacy' docs/evaluation/meta-ranking.md
+Result: Multiple matches found including:
+- "A utility-privacy trade-off is observed"
+- "### Utility-Privacy Trade-Off"
+- "reflecting a utility-privacy trade-off"
+Status: ✅ PASS
+
+AC8: Verify correlation analysis present
+Command: grep -iE 'correlation|spearman' docs/evaluation/meta-ranking.md
+Result: Extensive correlation analysis found including:
+- "Metric Correlations" section
+- "Spearman correlation coefficients"
+- "pairwise correlation" analysis
+Status: ✅ PASS
+
+AC9: Verify Observations section exists (not Key Findings)
+Command: grep -c '^## Observations$' docs/evaluation/meta-ranking.md
+Result: 1
+Status: ✅ PASS
+
+AC10: Build verification
+Command: mkdocs build
+Result: INFO - Building documentation to directory: .../site
+        (warnings about griffe type annotations - expected and acceptable)
+Status: ✅ PASS
+
+=== SUMMARY ===
+Total Criteria: 10
+Passed: 10
+Failed: 0
+
+Final Status: ✅ ALL ACCEPTANCE CRITERIA PASSED
+
+File Statistics:
+- Original file: 83 lines (outdated content)
+- Rewritten file: 93 lines
+- Heading changed: "Meta-Ranking" (removed "& Stability Analysis")
+- Manuscript integration: Lines 1425-1494 fully integrated
+- Methodology: References MetaScore notebooks
+- Results: Cancer-specific and aggregated meta-scores
+- Metric correlations: Full analysis from manuscript
+- Observations: 8 neutral bullet points (no "Key Findings")
+- Figure caption: Below figure with blank line before

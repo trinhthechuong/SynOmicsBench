@@ -1,0 +1,55 @@
+TASK 15: Cell Deconvolution Page Update - COMPLETED
+======================================================
+
+TIMESTAMP: 2026-03-03 00:40
+
+FILE MODIFIED:
+- docs/evaluation/narrow-utility/cell-deconvolution.md (92 lines → 93 lines)
+
+ACCEPTANCE CRITERIA RESULTS:
+1. No "Key Finding" headings: ✅ PASS (count = 0)
+2. Notebook reference present: ✅ PASS (AitchisonDistance_final.ipynb found)
+3. Aitchison distance mentioned: ✅ PASS (9 mentions)
+4. CIBERSORTx mentioned: ✅ PASS (4 mentions)
+5. Figure reference present: ✅ PASS (narrow-utility-cell-deconvolution.png found)
+6. Build passes: ✅ PASS (2.26 seconds, griffe warnings expected)
+
+CONTENT CHANGES:
+- Heading: "Cell Type Deconvolution Analysis" → "Cell Type Deconvolution"
+- Introduction: Rewritten with CIBERSORTx, LM22, Aitchison distance explanation (3 sentences)
+- Methodology: Replaced multi-algorithm description with Aitchison distance metric section
+- Results: Added manuscript content (lines 961-1000):
+  * Global performance: Synthpop best (0.816 ± 0.057), Gaussian Copula second (0.798 ± 0.079)
+  * Avatars K10 stable (0.756 ± 0.038), K5 high variation
+  * TVAE/CTGAN consistently lower
+  * Performance decline: ccRCC → Melanoma → NSCLC
+  * Differential analysis in ccRCC: immune-infiltrated vs excluded/desert
+  * Cell types enriched in infiltrated: CD8+ T cells, follicular helper T cells, activated CD4+ memory T cells, M1 macrophages
+  * Cell types enriched in excluded/desert: M2/M0 macrophages, resting CD4+ memory T cells, resting NK cells, eosinophils
+  * Only Avatars + Gaussian Copula reconstructed contrasts (Wilcoxon FDR Q < 0.25)
+  * Reproducibility limited to strong signals (Q < 0.05): CD8+ T cells, resting CD4+ memory T cells
+- Key Findings: REMOVED (3 admonitions deleted)
+- Observations: ADDED (5 neutral bullet points)
+- References: ADDED (3 script/notebook references)
+- Code Example: PRESERVED (cell deconvolution API demonstration)
+
+MANUSCRIPT INTEGRATION:
+- Lines 961-1000 fully integrated
+- Aitchison distance methodology clearly explained (compositional data metric)
+- Statistical tests specified: Wilcoxon rank-sum test, FDR Q-values
+- Cohort-specific performance patterns documented
+- Differential analysis findings with directionality
+- Reproducibility limitations explicitly stated
+
+FORMATTING COMPLIANCE:
+- No "Key Findings" heading ✅
+- No admonitions (!!!) ✅
+- No icons (emoji or Material) ✅
+- Figure caption below figure with blank line ✅
+- Neutral observation language ✅
+
+BUILD VERIFICATION:
+Command: mkdocs build
+Status: SUCCESS
+Time: 2.26 seconds
+Warnings: griffe (expected), unrecognized links (pre-existing)

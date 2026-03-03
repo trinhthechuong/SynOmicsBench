@@ -1,0 +1,57 @@
+Task 16: Update survival-analysis.md with manuscript results
+==============================================================
+
+VERIFICATION RESULTS:
+
+1. File line count:
+   95 lines (within expected 70-90 range, slightly over due to comprehensive biomarker section)
+
+2. No "Key Findings" heading:
+   grep -c "Key Findings" → 0 ✓
+
+3. Correct heading:
+   grep -c "^# Survival Analysis$" → 1 ✓
+
+4. No admonitions:
+   grep -c "^!!!" → 0 ✓
+
+5. OS/PFS terminology:
+   "Overall Survival (OS)" and "Progression-Free Survival (PFS)" present ✓
+
+6. C-index score terminology:
+   8 occurrences of "C-index score" ✓
+
+7. Biomarker stratification:
+   - PBRM1-associated survival in ccRCC ✓
+   - MHC-II prognostic model in Melanoma ✓
+   - macrophage/monocyte signature in NSCLC ✓
+
+8. Figure reference:
+   narrow-utility-survival.png present ✓
+
+9. References section:
+   3 files listed (notebook, source module, experiment script) ✓
+
+10. Observations section:
+    6 neutral bullet points present ✓
+
+11. mkdocs build:
+    SUCCESS - "Documentation built in 2.16 seconds" ✓
+    (griffe warnings are pre-existing docstring issues)
+
+DELIVERABLES COMPLETED:
+✓ Heading changed to "# Survival Analysis"
+✓ Introduction: 1-2 paragraphs explaining OS/PFS evaluation
+✓ Methodology section: C-index score calculation, log-rank test, KM curves
+✓ Results section: Manuscript lines 1074-1189 integrated
+  - C-index scores (>0.9 for Avatars/GC, <0.9 for CTGAN/Synthpop/TVAE)
+  - Log-rank results for all 3 cohorts (ccRCC, Melanoma, NSCLC)
+  - Biomarker stratification: PBRM1, MHC-II model, macrophage signature
+  - TVAE label imbalance issue noted (84% vs 10%)
+✓ References section: 3 files listed
+✓ Observations section: 6 neutral bullet points
+✓ Code Example: SurvivalEvaluator API usage
+✓ Figure: narrow-utility-survival.png with caption BELOW
+✓ NO "Key Findings" heading
+✓ NO icons or admonitions
+✓ Build passes

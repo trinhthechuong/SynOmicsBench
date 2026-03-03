@@ -1,31 +1,51 @@
 :root {
-  --md-primary-fg-color: #FFE4E1;
-  --md-primary-fg-color--light: #FFF0ED;
-  --md-primary-fg-color--dark: #E8C4BE;
-  --md-primary-bg-color: #333333;
-  --md-primary-bg-color--light: #444444;
+  /* Official CEA Red */
+  --md-primary-fg-color:        #E2001A; 
+  --md-primary-fg-color--light: #EB3348;
+  --md-primary-fg-color--dark:  #C10016;
+  
+  /* Soft Light Neutrals */
+  --md-primary-bg-color:        #FFFFFF;
+  --md-primary-bg-color--light: #F5F7F9;
 }
 
+/* SECTION 1: The Brand Header */
 .md-header {
   background-color: var(--md-primary-fg-color);
-  color: #333333;
+  color: #FFFFFF;
+  /* subtle shadow for depth without using dark borders */
+  box-shadow: 0 2px 10px rgba(226, 0, 26, 0.15); 
 }
 
 .md-header__topic {
-  color: #333333;
+  color: #FFFFFF;
+  font-weight: 700;
 }
 
+/* SECTION 2: The Navigation Tabs (Light Mode) */
 .md-tabs {
-  background-color: var(--md-primary-fg-color);
-  color: #333333;
+  /* Using a very light grey instead of dark colors */
+  background-color: #F8F9FB; 
+  border-bottom: 1px solid #E0E4E8;
 }
 
 .md-tabs__link {
-  color: #333333;
+  /* Using a deep grey/blue for text - much softer than black */
+  color: #455A64; 
   opacity: 0.7;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.md-tabs__link:hover {
+  opacity: 1;
+  color: var(--md-primary-fg-color); /* Turns red on hover */
 }
 
 .md-tabs__link--active {
-  color: #333333;
+  color: var(--md-primary-fg-color); /* Red text for active page */
   opacity: 1;
+  font-weight: 700;
+  /* A bold red underline to match the logo style */
+  border-bottom: 3px solid var(--md-primary-fg-color); 
 }
