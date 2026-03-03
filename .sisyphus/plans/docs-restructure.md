@@ -85,14 +85,14 @@ Transform the SynOmicBench documentation from a developer-focused framework refe
 - `docs/assets/figures/processing_pipeline.png` — Converted from PDF
 
 ### Definition of Done
-- [ ] `mkdocs build --strict` passes with ZERO warnings/errors
-- [ ] Exactly 6 top-level navigation tabs visible
-- [ ] No icons (emoji or `:material-*:`) in any docs markdown file
-- [ ] Custom `#FFE4E1` color applied
-- [ ] All new pages render correctly
-- [ ] All figure captions appear below figures with blank line preceding
-- [ ] All table captions appear above tables
-- [ ] API page renders auto-generated documentation from Python docstrings
+- [~] `mkdocs build --strict` passes with ZERO warnings/errors (using non-strict mode per Task 8 decision)
+- [x] Exactly 6 top-level navigation tabs visible
+- [~] No icons (emoji or `:material-*:`) in any docs markdown file (docs/framework/ has emoji - Task F3 Issue #2)
+- [~] Custom `#FFE4E1` color applied (configured in CSS but Material theme limitation - Task F3 Issue #1)
+- [x] All new pages render correctly
+- [x] All figure captions appear below figures with blank line preceding
+- [x] All table captions appear above tables
+- [x] API page renders auto-generated documentation from Python docstrings
 
 ### Must Have
 - Exact 6-tab structure per spec: HOME, GETTING STARTED, PREPROCESSING DATA, GENERATE SYNTHETIC DATA, EVALUATION, API
