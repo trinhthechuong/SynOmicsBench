@@ -49,3 +49,47 @@
   /* A bold red underline to match the logo style */
   border-bottom: 3px solid var(--md-primary-fg-color); 
 }
+/* SECTION 3: Links in content */
+.md-content a {
+  color: #0D47A1;  /* Blue */
+  text-decoration: none;
+}
+
+.md-content a:hover {
+  color: #1565C0;  /* Lighter blue on hover */
+  text-decoration: underline;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.doc-card {
+  display: block;
+  padding: 20px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.doc-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.doc-card h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+}
+
+.doc-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
