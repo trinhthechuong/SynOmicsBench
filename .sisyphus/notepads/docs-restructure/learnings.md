@@ -1438,3 +1438,129 @@ All 11 acceptance criteria commands passed:
 6. **Deep Learning Advantage**: CTGAN/TVAE better balance privacy-utility than statistical methods
 7. **Path Consistency**: Always verify relative path depth when using template patterns
 
+
+## [2026-03-03] Task 18: Update Meta-Ranking Page
+
+### Manuscript Integration Success
+Successfully rewrote `/docs/evaluation/meta-ranking.md` following manuscript lines 1425-1494. The complete rewrite replaced 83 lines of outdated Bayesian analysis content with 93 lines of rank-derived meta-score methodology and results.
+
+### Key Content Transformations
+**Removed outdated content**:
+- "Key Finding: Gaussian Copula is Most Balanced" heading (line 25)
+- Bayesian Comparison & Superiority section (lines 31-44)
+- Stability Across Datasets tables (lines 46-62)
+- Discussion on Performance Variation (lines 71-76)
+- Comparative Summary with bullet points (lines 77-83)
+
+**Added manuscript-aligned content**:
+- Rank-derived meta-score methodology with Yan et al. protocol reference
+- Four MetaScore notebook references (MetaScore_all.ipynb + 3 cancer-specific)
+- Cancer-specific performance analysis (Figure 10a)
+- Aggregated performance ranking with 6-method ordered list (Figure 10b)
+- Dedicated "Utility-Privacy Trade-Off" subsection
+- Comprehensive "Metric Correlations" section with 4 subsections:
+  - Utility-Privacy Dichotomy
+  - Pathway-Based Metrics: Population vs. Sample-Level
+  - Univariate vs. Bivariate Scores
+  - Ranking Consistency vs. Complementarity
+- 8 neutral observation bullet points (no "Key Findings" heading)
+
+### Terminology Precision from Manuscript
+**Exact manuscript phrases preserved**:
+- "rank-derived meta-score" (not "composite ranking" or "aggregate score")
+- "three evaluation pillars: broad utility, narrow utility, and privacy"
+- "lower meta-scores indicate better overall performance"
+- "utility-privacy trade-off" (hyphenated, lowercase except in headings)
+- "population level" vs. "sample-level" (GSEA vs. ssGSEA distinction)
+- "ranking consistency" vs. "complementary nature" (correlation interpretation)
+
+### Methodology Section Enhancement
+The Methodology section now includes:
+1. Protocol reference: "following the protocol of Yan et al."
+2. Four notebook paths with descriptive labels (aggregated + cancer-specific)
+3. Clear explanation: "rank-derived approach transforms raw metric values into ranks within each evaluation dimension, then computes a weighted composite score"
+4. Performance interpretation: "Lower meta-scores indicate better overall performance"
+
+### Metric Correlation Deep Dive (New in This Task)
+The manuscript provided rich correlation analysis (lines 1473-1494) that required careful domain interpretation:
+
+**Population-level vs. sample-level metrics**:
+- GSEA correlates with DGE and survival (population-level transcriptional effects)
+- ssGSEA correlates with UnivariateScore and cell deconvolution (sample-level enrichment)
+- This distinction is biologically significant and required explicit explanation
+
+**Univariate-bivariate complementarity**:
+- Moderate correlation indicates complementary information
+- Univariate: marginal distributions (necessary but insufficient)
+- Bivariate: joint correlation structure (captures additional discriminative features)
+- Critical for pathway and survival analyses
+
+**Ranking consistency interpretation**:
+- Strong correlation = methods agree on rankings
+- Weak correlation = methods measure different quality dimensions
+- Framework requires multi-dimensional evaluation (not single metric)
+
+### Figure Caption Format Consistency
+Figure 10 caption follows established pattern:
+- Caption BELOW figure with blank line before
+- Multi-panel description: (a) → (b) → (c)
+- Technical details: "Stacked bar plots", "Spearman correlation coefficients"
+- Interpretation included: "lower meta-scores indicate better overall performance"
+- No bold/italic formatting in caption text
+
+### Observations Section Structure
+8 bullet points covering:
+1. Gaussian Copula overall winner
+2. Avatars K5/K10 second and third positions
+3. CTGAN privacy-utility profile
+4. Synthpop privacy penalty
+5. TVAE lowest rank
+6. Utility-privacy trade-off theme
+7. Metric correlations multi-dimensional necessity
+8. Univariate-bivariate complementarity
+
+All observations are neutral, factual, and directly supported by manuscript findings. No superlatives or promotional language.
+
+### Path Consistency Maintained
+- Figure path: `../assets/figures/meta-ranking.png`
+- Same level as `privacy.md` (both at `/docs/evaluation/`)
+- Consistent with established pattern from Tasks 11-17
+
+### Build Verification Clean
+MkDocs build completed successfully:
+- No errors
+- Expected griffe warnings about type annotations in synthesizer files (consistent with previous tasks)
+- Documentation built cleanly
+
+### Pattern Reinforcement
+This task reinforced the established pattern from Tasks 11-17:
+- Complete file rewrites when manuscript content differs substantially from existing docs
+- Direct manuscript adaptation with light editing for flow
+- Notebook references for reproducibility
+- Neutral observations (no admonitions)
+- Figure captions below with blank line before
+- No icons anywhere
+- Heading hierarchy: # → ## → ### for subsections
+
+### Acceptance Criteria Success
+All 10 acceptance criteria passed:
+1. ✅ Key Findings removed (0 occurrences)
+2. ✅ MetaScore_all.ipynb referenced
+3. ✅ Composite/weighted/rank-derived terminology present
+4. ✅ Figure present
+5. ✅ No icons (0 occurrences)
+6. ✅ Gaussian Copula mentioned as best (multiple occurrences)
+7. ✅ Utility-privacy trade-off mentioned (multiple occurrences)
+8. ✅ Correlation analysis present (dedicated section)
+9. ✅ Observations section exists (not Key Findings)
+10. ✅ Build passes
+
+### Time Efficiency
+Task completed in ~12 minutes:
+- 2 minutes: reading current file + manuscript
+- 6 minutes: rewriting content with manuscript integration
+- 2 minutes: running 10 acceptance criteria
+- 2 minutes: saving evidence and documenting learnings
+
+### Next Task Readiness
+Meta-ranking page complete. All evaluation subpages (Tasks 11-18) now updated with manuscript content. Ready for any remaining documentation tasks.
