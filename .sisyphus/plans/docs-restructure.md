@@ -825,7 +825,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 6. Create Preprocessing Data Page (docs/preprocessing/index.md)
+- [x] 6. Create Preprocessing Data Page (docs/preprocessing/index.md)
 
   **What to do**:
   - Replace the placeholder in `docs/preprocessing/index.md` with full content per `documentation_prompt.md` Section 4
@@ -923,7 +923,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 7. Create Generate Synthetic Data Page (docs/synthetic-data/index.md)
+- [x] 7. Create Generate Synthetic Data Page (docs/synthetic-data/index.md)
 
   **What to do**:
   - Replace placeholder in `docs/synthetic-data/index.md` with full content per `documentation_prompt.md` Section 5
@@ -1040,7 +1040,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 8. Create API Reference Page (docs/api/index.md)
+- [x] 8. Create API Reference Page (docs/api/index.md)
 
   **What to do**:
   - Replace placeholder in `docs/api/index.md` with mkdocstrings-powered API documentation per `documentation_prompt.md` Section 7
@@ -1152,7 +1152,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 9. Rewrite Evaluation Overview Page (docs/evaluation/index.md)
+- [x] 9. Rewrite Evaluation Overview Page (docs/evaluation/index.md)
 
   **What to do**:
   - Rewrite `docs/evaluation/index.md` following `documentation_prompt.md` Section 6
@@ -1246,7 +1246,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 10. Create Narrow Utility Section Index (docs/evaluation/narrow-utility/index.md)
+- [x] 10. Create Narrow Utility Section Index (docs/evaluation/narrow-utility/index.md)
 
   **What to do**:
   - Create `docs/evaluation/narrow-utility/index.md` as the section landing page
@@ -1315,7 +1315,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 11. Update Broad Utility Page (docs/evaluation/broad-utility.md)
+- [x] 11. Update Broad Utility Page (docs/evaluation/broad-utility.md)
 
   **What to do**:
   - Rewrite `docs/evaluation/broad-utility.md` to align with manuscript content and spec
@@ -1394,7 +1394,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 12. Update DGE Page (docs/evaluation/narrow-utility/dge.md)
+- [x] 12. Update DGE Page (docs/evaluation/narrow-utility/dge.md)
 
   **What to do**:
   - Rewrite `docs/evaluation/narrow-utility/dge.md` with manuscript content and spec references
@@ -1466,7 +1466,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 13. Update GSEA Page (docs/evaluation/narrow-utility/gsea.md)
+- [x] 13. Update GSEA Page (docs/evaluation/narrow-utility/gsea.md)
 
   **What to do**:
   - Rewrite `docs/evaluation/narrow-utility/gsea.md` with manuscript content and spec references
@@ -1535,7 +1535,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 14. Update ssGSEA Page (docs/evaluation/narrow-utility/ssgsea.md)
+- [x] 14. Update ssGSEA Page (docs/evaluation/narrow-utility/ssgsea.md)
 
   **What to do**:
   - Rewrite `docs/evaluation/narrow-utility/ssgsea.md` with manuscript content and spec references
@@ -1605,7 +1605,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 15. Update Cell Deconvolution Page (docs/evaluation/narrow-utility/cell-deconvolution.md)
+- [x] 15. Update Cell Deconvolution Page (docs/evaluation/narrow-utility/cell-deconvolution.md)
 
   **What to do**:
   - Rewrite `docs/evaluation/narrow-utility/cell-deconvolution.md` with manuscript content and spec references
@@ -1693,7 +1693,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 16. Update Survival Analysis Page (docs/evaluation/narrow-utility/survival-analysis.md)
+- [x] 16. Update Survival Analysis Page (docs/evaluation/narrow-utility/survival-analysis.md)
 
   **What to do**:
   - Rewrite `docs/evaluation/narrow-utility/survival-analysis.md` with manuscript content and spec references
@@ -1783,7 +1783,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 17. Update Privacy Page (docs/evaluation/privacy.md)
+- [x] 17. Update Privacy Page (docs/evaluation/privacy.md)
 
   **What to do**:
   - Rewrite `docs/evaluation/privacy.md` with manuscript content and spec references
@@ -1907,7 +1907,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 18. Update Meta-Ranking Page (docs/evaluation/meta-ranking.md)
+- [x] 18. Update Meta-Ranking Page (docs/evaluation/meta-ranking.md)
 
   **What to do**:
   - Rewrite `docs/evaluation/meta-ranking.md` with manuscript content and spec references
@@ -1996,7 +1996,7 @@ Max Concurrent: 8 (Wave 3)
 
 ---
 
-- [ ] 19. Full Build Verification (Wave 4 — Gate Check)
+- [x] 19. Full Build Verification (Wave 4 — Gate Check)
 
   **What to do**:
   - Run `mkdocs build --strict` and verify zero warnings/errors
@@ -2132,19 +2132,19 @@ Max Concurrent: 8 (Wave 3)
 
 > 4 review agents run in PARALLEL. ALL must APPROVE. Rejection → fix → re-run.
 
-- [ ] F1. **Plan Compliance Audit** — `oracle`
+- [x] F1. **Plan Compliance Audit** — `oracle`
   Read the plan end-to-end. For each "Must Have": verify implementation exists (read file, grep content, check nav). For each "Must NOT Have": search codebase for forbidden patterns — reject with file:line if found. Check evidence files exist in `.sisyphus/evidence/`. Compare deliverables against plan.
   Output: `Must Have [N/N] | Must NOT Have [N/N] | Tasks [N/N] | VERDICT: APPROVE/REJECT`
 
-- [ ] F2. **Code Quality Review** — `unspecified-high`
+- [x] F2. **Code Quality Review** — `unspecified-high`
   Run `mkdocs build --strict`. Review all changed markdown files for: broken links, orphaned images, inconsistent heading levels, missing captions, leftover icons/emoji, HTML validation issues. Check custom CSS loads correctly. Verify MathJax renders.
   Output: `Build [PASS/FAIL] | Links [N broken] | Files [N clean/N issues] | VERDICT`
 
-- [ ] F3. **Real Manual QA** — `unspecified-high` (+ `playwright` skill)
+- [x] F3. **Real Manual QA** — `unspecified-high` (+ `playwright` skill)
   Start `mkdocs serve` and use Playwright to navigate ALL 6 tabs. Verify: custom color renders in header, no icons visible, Figure 1 visible on HOME, all nav links work, API page has auto-generated content, all figures have captions below, Quick Example code renders. Take screenshots of each page. Save to `.sisyphus/evidence/final-qa/`.
   Output: `Pages [N/N pass] | Visual [N/N] | Navigation [N/N] | VERDICT`
 
-- [ ] F4. **Scope Fidelity Check** — `deep`
+- [x] F4. **Scope Fidelity Check** — `deep`
   For each task: read "What to do", verify actual file content matches. Check that `documentation_prompt.md` requirements are 1:1 matched. Verify: no extra pages created, no spec requirements missed, no content invented that's not in manuscript/spec. Flag unaccounted changes.
   Output: `Tasks [N/N compliant] | Spec Coverage [N/N requirements] | VERDICT`
 
