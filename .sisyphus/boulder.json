@@ -1,0 +1,16 @@
+{
+  "active_plan": "/Users/thechuongtrinh/Workspace/SynOmicBench/.sisyphus/plans/docs-restructure.md",
+  "started_at": "2026-03-02T21:59:58.599Z",
+  "completed_at": "2026-03-03T02:00:00.000Z",
+  "status": "complete",
+  "session_ids": [
+    "ses_34fa6637affe6YCgUpNvEpes8m"
+  ],
+  "plan_name": "docs-restructure",
+  "agent": "atlas",
+  "worktree_path": "/Users/thechuongtrinh/Workspace/SynOmicBench-docs-work",
+  "tasks_total": 23,
+  "tasks_completed": 23,
+  "final_reviews_passed": 4,
+  "evidence_files": 54
+}
