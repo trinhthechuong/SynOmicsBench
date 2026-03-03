@@ -1,0 +1,40 @@
+
+[31m │ ⚠ WARNING – MkDocs 2.0 is incompatible with Material for MkDocs[0m
+[31m │ [0m
+[31m │ [0m  MkDocs 1.x is unmaintained. We recommend switching to Zensical, our
+[31m │ [0m  new static site generator, as soon as possible. We're providing an
+[31m │ [0m  analysis of the situation in this article:
+[31m │ [0m  
+[31m │ [0m  [4mhttps://squidfunk.github.io/mkdocs-material/blog/2026/02/18/mkdocs-2.0/[0m
+[0m
+INFO    -  Cleaning site directory
+INFO    -  Building documentation to directory: /Users/thechuongtrinh/Workspace/SynOmicBench-docs-work/site
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/synthesizer/CTGANsynthesizer.py:53: No type or annotation for parameter '**kwargs'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/synthesizer/CTGANsynthesizer.py:56: No type or annotation for returned value 1
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/synthesizer/CTGANsynthesizer.py:107: No type or annotation for parameter '**kwargs'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/synthesizer/TVAEsynthesizer.py:56: No type or annotation for parameter '**kwargs'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/synthesizer/TVAEsynthesizer.py:59: No type or annotation for returned value 1
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/synthesizer/TVAEsynthesizer.py:116: No type or annotation for parameter '**kwargs'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/synthesizer/GaussianCopulasynthesizer.py:144: No type or annotation for parameter '**kwargs'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/synthesizer/GaussianCopulasynthesizer.py:182: No type or annotation for parameter '**kwargs'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/synthesizer/Synthpopsynthesizer.py:65: No type or annotation for parameter '**kwargs'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/processing/pipeline.py:28: No type or annotation for returned value 1
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/processing/pipeline.py:43: No type or annotation for returned value 1
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/processing/preprocessing.py:743: No type or annotation for parameter '**kwargs'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/processing/preprocessing.py:477: No type or annotation for parameter '**kwargs'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/processing/metadata.py:241: Parameter 'metadata_path' does not appear in the function signature
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/UnivariateSimilarity.py:90: No type or annotation for returned value 1
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/UnivariateSimilarity.py:47: Parameter 'metadata_path' does not appear in the function signature
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/UnivariateSimilarity.py:117: No type or annotation for returned value 'Figure'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/UnivariateSimilarity.py:136: No type or annotation for returned value 1
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/UnivariateSimilarity.py:104: No type or annotation for returned value 1
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/PairwiseSimilarity.py:24: No type or annotation for returned value 'PairwiseSimilarity'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/PairwiseSimilarity.py:213: No type or annotation for returned value 'dict'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/PairwiseSimilarity.py:280: No type or annotation for returned value 'dict'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/PairwiseSimilarity.py:523: No type or annotation for returned value 1
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/PairwiseSimilarity.py:188: No type or annotation for returned value 1
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/metrics/fidelity/PairwiseSimilarity.py:500: No type or annotation for returned value 1
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/utils/monitoring.py:72: No type or annotation for returned value 'callable'
+WARNING -  griffe: /Users/thechuongtrinh/Workspace/SynOmicBench/src/SynOmics/utils/monitoring.py:22: No type or annotation for returned value 1
+INFO    -  Doc file 'evaluation/broad-utility.md' contains an unrecognized relative link '../../site/notebooks/FigureBroadUtility/', it was left as is.
+INFO    -  Documentation built in 1.96 seconds

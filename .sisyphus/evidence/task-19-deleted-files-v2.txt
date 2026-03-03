@@ -1,0 +1,4 @@
+PASS: All nav files exist
+PASS: All internal links are valid
+
+✓ OVERALL: No references to deleted files

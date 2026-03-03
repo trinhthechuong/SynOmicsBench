@@ -1,0 +1,8 @@
+Navigation tabs count: 6
+PASS: Exactly 6 nav tabs configured
+  - Home
+  - Getting Started
+  - Preprocessing Data
+  - Generate Synthetic Data
+  - Evaluation
+  - API

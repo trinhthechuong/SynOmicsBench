@@ -1,0 +1,1 @@
+PASS: All figure captions positioned below figures
