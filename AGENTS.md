@@ -37,6 +37,12 @@ mkdocs build                                        # Build static site to site/
 mkdocs gh-deploy --force                            # Deploy to GitHub Pages
 ```
 
+### Lint / typecheck / tests
+
+- No dedicated lint/typecheck/test suite is configured.
+- Validation = `mkdocs build`.
+- Single test (if added later): `pytest path/to/test_file.py::test_name`.
+
 **CI** (`.github/workflows/docs.yml`): On push to `main` (paths: `docs/**`, `mkdocs.yml`),
 installs `mkdocs-material` and runs `mkdocs gh-deploy --force`.
 
@@ -46,50 +52,43 @@ installs `mkdocs-material` and runs `mkdocs gh-deploy --force`.
 
 ### Known Build Warnings
 
-- **griffe**: `**kwargs` and return values lacking type annotations — warnings only, non-blocking.
-- **Broken image links**: `evaluation/privacy.md` uses `../../assets/figures/` paths; should be
-  `../assets/figures/`. Fix if editing that file.
-- **MkDocs 2.0**: Material for MkDocs compatibility warning — informational only.
+- **griffe** missing type annotations — warnings only.
+- Some docs may have broken image links (fix paths if you touch those pages).
 
 ## Documentation Style Guide
 
 ### Markdown Conventions
 
-- `#` page title, `##` sections, `###` subsections
-- **Bold** key terms/method names on first mention; *italic* for figure captions below images
-- Tables: standard pipe tables with alignment (`:---`, `:---:`)
-- Math: `$...$` inline, `$$...$$` display (MathJax via `pymdownx.arithmatex`)
-- Admonitions: `!!! note`, `!!! warning`, `!!! tip` (pymdownx)
-- Code blocks: always specify language (` ```python `, ` ```bash `, ` ```text `)
-- Links: relative paths (`../evaluation/index.md`), never absolute URLs
-- Images: place in `docs/assets/figures/`, reference as `../assets/figures/filename.png`
-- Collapsible sections: `??? note "Title"` (pymdownx.details)
-- Tabbed content: `=== "Tab Name"` (pymdownx.tabbed)
+- Use headings `# / ## / ###`.
+- Use relative links and keep images under `docs/assets/figures/`.
+- Use admonitions (`!!! note`) and collapsibles (`??? note`) when helpful.
+- Always language-tag code blocks.
 
 ### Navigation
 
-Exactly **6 top-level tabs** in `mkdocs.yml`:
-Home, Getting Started, Preprocessing Data, Generate Synthetic Data, Evaluation, API.
-Do not add/rename top-level tabs without updating `mkdocs.yml`.
+Exactly **6 top-level tabs** in `mkdocs.yml`. If you add/rename tabs, update `mkdocs.yml`.
 
 ### API Documentation (mkdocstrings)
 
 ```markdown
-::: SynOmics.synthesizer.BaseSynthesizer.BaseSynthesizer
+::: SynOmics.processing.preprocessing.DataProcessor
 ```
 
-- `docstring_style: google` — Python docstrings must use **Google style**
-- `paths: [src]` — resolves imports from `src/`
-- `show_source: true` — source code displayed alongside docs
+- Google-style docstrings.
+- Imports resolve from `src/`.
+
+### Cursor/Copilot rules
+
+- No Cursor rules found (`.cursor/rules/`, `.cursorrules`).
+- No Copilot instructions found (`.github/copilot-instructions.md`).
 
 ### Custom Styling
 
-- Brand color: CEA red `#E2001A` — defined in `docs/stylesheets/extra.css`
-- Theme: Material for MkDocs with sticky nav tabs, search, code copy
+- Brand color: CEA red `#E2001A` in `docs/stylesheets/extra.css`.
 
 ## Python Source Code Style (`src/SynOmics/`)
 
-### Docstrings (Google Style — mandatory)
+### Docstrings (Google Style)
 
 ```python
 def method(self, data: pd.DataFrame, threshold: float = 0.5) -> pd.DataFrame:
@@ -120,29 +119,21 @@ from SynOmics.utils.monitoring import set_logger    # internal (absolute)
 from SynOmics.processing.metadata import MetaData
 ```
 
-- Always **absolute imports** from `SynOmics.*`
-- Group: stdlib → third-party → internal
-- Optional deps: `try: import miceforest as mf except ImportError: mf = None`
+- Absolute imports from `SynOmics.*`; group stdlib → third-party → internal.
 
-### Naming Conventions
+### Naming
 
-| Element           | Convention            | Example                              |
-|-------------------|-----------------------|--------------------------------------|
-| Classes           | PascalCase            | `BaseSynthesizer`, `DataProcessor`   |
-| Methods/functions | snake_case            | `get_univariate_score`               |
-| Private helpers   | `_leading_underscore` | `_detect_discrete_columns`           |
-| Constants         | UPPER_SNAKE           | `MB = 1024 * 1024`                   |
-| Files (classes)   | PascalCase            | `BaseSynthesizer.py`                 |
-| Files (utilities) | snake_case            | `preprocessing.py`                   |
-| Package dirs      | snake_case            | `metrics/fidelity/`, `narrow_utility/` |
+- Classes: `PascalCase` (e.g., `DataProcessor`)
+- Functions/methods: `snake_case`
+- Private helpers: `_leading_underscore`
+- Constants: `UPPER_SNAKE`
+- Files: keep existing conventions in `src/SynOmics/`
 
-### Class Architecture
+### Architecture
 
-- **Synthesizers**: inherit `BaseSynthesizer`, override `fit()`, `sample()`,
-  optionally `preprocess()` and `postprocess()`
-- **Metrics**: standalone classes with `__init__(output_dir)` and computation methods
-- **Processing**: `@staticmethod` methods on utility classes (`DataProcessor`, `MetaData`)
-- **Logging**: use `set_logger()` from `SynOmics.utils.monitoring` — never raw `print()`
+- Synthesizers inherit `BaseSynthesizer`.
+- Processing utilities are `@staticmethod` helpers (e.g., `DataProcessor`).
+- Use `set_logger()` for logs (avoid `print()` in library code).
 
 ### Error Handling
 
@@ -156,29 +147,16 @@ except Exception as e:
     raise ValueError(f"Error in <operation>: {e}")
 ```
 
-- Validate inputs early with `TypeError` / `ValueError`
-- Wrap complex ops in try/except, re-raise as `ValueError` or `RuntimeError`
-- Log errors via `self.logger.error(msg, exc_info=True)` before raising
-- Never silently swallow exceptions (no empty `except: pass`)
-- Optional deps: `try: import X except Exception: <fallback>`
+- Validate inputs early; no silent exceptions.
 
 ### Type Annotations
 
-- All public method signatures must have type annotations
-- Use `typing`: `Optional`, `List`, `Dict`, `Union`, `Sequence`, `Any`, `Tuple`
-- Return types annotated (common: `pd.DataFrame`, `float`, `Dict`, `None`)
-- Document `**kwargs` accepted keys in the docstring
+- Type annotate public APIs and returns.
 
 ## Quick Reference
 
-| Task                       | Command / Location                                     |
-|----------------------------|--------------------------------------------------------|
-| Serve docs locally         | `mkdocs serve`                                         |
-| Build docs                 | `mkdocs build`                                         |
-| Deploy to GitHub Pages     | `mkdocs gh-deploy --force`                             |
-| Add new doc page           | Create `.md` in `docs/`, add to `nav:` in `mkdocs.yml` |
-| Add API reference          | Add `::: SynOmics.module.Class` to `docs/api/index.md` |
-| Add image                  | Place in `docs/assets/figures/`, use relative link      |
-| Edit brand colors          | `docs/stylesheets/extra.css`                           |
-| CI workflow                | `.github/workflows/docs.yml`                           |
-| Python source for API docs | `src/SynOmics/` (resolved via `paths: [src]`)          |
+- Serve docs: `mkdocs serve`
+- Build docs: `mkdocs build`
+- Add doc page: create `.md` under `docs/` + add to `mkdocs.yml` nav
+- Add API page: add `:::` directive under `docs/api/`
+- Add images: `docs/assets/figures/` and reference relatively

@@ -64,6 +64,16 @@
   text-decoration: underline;
 }
 
+.md-typeset .grid.cards > ul > li {
+  border-left: 4px solid var(--md-primary-fg-color);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.md-typeset .grid.cards > ul > li:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
 /* --- SECTION 4: SIDEBAR & NAV (Tùy chỉnh thêm để đồng bộ) --- */
 .md-nav__link--active {
   color: var(--md-primary-fg-color) !important;
