@@ -1,0 +1,1808 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Synthetic data benchmarking for omics data">
+      
+      
+        <meta name="author" content="SynOmicBench Team">
+      
+      
+        <link rel="canonical" href="https://trinhthechuong.github.io/SynOmicBench/evaluation/privacy/">
+      
+      
+        <link rel="prev" href="../narrow-utility/predictive-modeling/">
+      
+      
+        <link rel="next" href="../meta-ranking/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
+    
+    
+      
+        <title>Privacy - SynOmicBench Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#privacy-risk-assessment" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="SynOmicBench Documentation" class="md-header__button md-logo" aria-label="SynOmicBench Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SynOmicBench Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Privacy
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/trinhthechuong/SynOmicBench" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SynOmicBench
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../framework/index.md" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Framework
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Evaluation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../resources/index.md" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Resources
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SynOmicBench Documentation" class="md-nav__button md-logo" aria-label="SynOmicBench Documentation" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    SynOmicBench Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/trinhthechuong/SynOmicBench" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SynOmicBench
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Framework
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Framework
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../framework/index.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../framework/processing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Processing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../framework/synthesizers/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Synthesizers
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Synthesizers
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../framework/synthesizers/base/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Base API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Evaluation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../broad-utility/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Broad Utility
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Narrow Utility
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Narrow Utility
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../narrow-utility/index.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../narrow-utility/dge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../narrow-utility/gsea/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSEA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../narrow-utility/ssgsea/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssGSEA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../narrow-utility/cell-deconvolution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cell Deconvolution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../narrow-utility/survival-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Survival Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../narrow-utility/predictive-modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Predictive Modeling
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Privacy
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Privacy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#privacy-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Privacy Metrics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Privacy Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-singling-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Singling-Out
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-linkability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Linkability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Inference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benchmark-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benchmark Results
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Benchmark Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overall-privacy-scores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overall Privacy Scores
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-findings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Findings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualizing-privacy-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualizing Privacy Risks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Visualizing Privacy Risks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#privacy-risk-overview-figure-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Privacy Risk Overview (Figure 9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detailed-metric-distributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detailed Metric Distributions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detailed Metric Distributions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overall-privacy-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overall Privacy Distribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inference-risk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inference Risk
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linkability-risk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linkability Risk
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#singling-out-risk-univariate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Singling-Out Risk (Univariate)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-example-evaluating-privacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code Example: Evaluating Privacy
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../meta-ranking/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Meta-ranking
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../computational-resources/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Computational Resources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../resources/index.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Resources
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#privacy-metrics" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Privacy Metrics
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Privacy Metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-singling-out" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. Singling-Out
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-linkability" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. Linkability
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-inference" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. Inference
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#benchmark-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Benchmark Results
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Benchmark Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overall-privacy-scores" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overall Privacy Scores
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#key-findings" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key Findings
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualizing-privacy-risks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualizing Privacy Risks
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Visualizing Privacy Risks">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#privacy-risk-overview-figure-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Privacy Risk Overview (Figure 9)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#detailed-metric-distributions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detailed Metric Distributions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Detailed Metric Distributions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#overall-privacy-distribution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Overall Privacy Distribution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#inference-risk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Inference Risk
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#linkability-risk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Linkability Risk
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#singling-out-risk-univariate" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Singling-Out Risk (Univariate)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#code-example-evaluating-privacy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Code Example: Evaluating Privacy
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="privacy-risk-assessment">Privacy Risk Assessment<a class="headerlink" href="#privacy-risk-assessment" title="Permanent link">&para;</a></h1>
+<p>Privacy is a critical dimension in the synthesis of omic and clinical data. SynOmicBench evaluates privacy risks following the principles outlined by the European Data Protection Board (EDPB), focusing on the three primary risks that successful anonymization must mitigate: Singling-Out, Linkability, and Inference.</p>
+<h2 id="privacy-metrics">Privacy Metrics<a class="headerlink" href="#privacy-metrics" title="Permanent link">&para;</a></h2>
+<p>We employ the <code>anonymeter</code> framework to quantify these risks, ensuring that synthetic datasets do not inadvertently reveal sensitive information about individuals in the original cohort.</p>
+<h3 id="1-singling-out">1. Singling-Out<a class="headerlink" href="#1-singling-out" title="Permanent link">&para;</a></h3>
+<p>Singling-out occurs when an attacker can identify a single individual in the dataset based on a combination of attributes. Even if names or direct identifiers are removed, unique combinations of clinical and molecular features (e.g., a specific rare mutation combined with an exact age and diagnosis date) can isolate an individual record.</p>
+<h3 id="2-linkability">2. Linkability<a class="headerlink" href="#2-linkability" title="Permanent link">&para;</a></h3>
+<p>Linkability is the ability to connect two or more records relating to the same individual, either within the same dataset or across different datasets. In the context of multi-omics, linkability risk assessment evaluates whether an attacker can reconnect split datasets (e.g., connecting a clinical record to its corresponding transcriptomic profile) using the synthetic data as a bridge.</p>
+<h3 id="3-inference">3. Inference<a class="headerlink" href="#3-inference" title="Permanent link">&para;</a></h3>
+<p>Inference risk refers to the possibility of deducing the value of a sensitive attribute with high probability by observing other attributes in the dataset. For example, if a synthetic model learns a strong correlation between certain gene expression levels and a specific clinical outcome, an attacker might infer a patient's sensitive health status by observing their gene expression.</p>
+<hr />
+<h2 id="benchmark-results">Benchmark Results<a class="headerlink" href="#benchmark-results" title="Permanent link">&para;</a></h2>
+<p>Our evaluation across multiple cancer types (ccRCC, Melanoma, NSCLC) reveals distinct privacy-utility trade-offs among different synthesis methods.</p>
+<h3 id="overall-privacy-scores">Overall Privacy Scores<a class="headerlink" href="#overall-privacy-scores" title="Permanent link">&para;</a></h3>
+<p>The following table summarizes the overall privacy scores across five different seeds. Higher scores indicate lower privacy risk (better protection).</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: center;">Seed 0</th>
+<th style="text-align: center;">Seed 1</th>
+<th style="text-align: center;">Seed 2</th>
+<th style="text-align: center;">Seed 3</th>
+<th style="text-align: center;">Seed 42</th>
+<th style="text-align: center;">Mean</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Avatars K5</strong></td>
+<td style="text-align: center;">0.771</td>
+<td style="text-align: center;">0.767</td>
+<td style="text-align: center;">0.773</td>
+<td style="text-align: center;">0.777</td>
+<td style="text-align: center;">0.771</td>
+<td style="text-align: center;">0.772</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Avatars K10</strong></td>
+<td style="text-align: center;">0.769</td>
+<td style="text-align: center;">0.774</td>
+<td style="text-align: center;">0.777</td>
+<td style="text-align: center;">0.783</td>
+<td style="text-align: center;">0.776</td>
+<td style="text-align: center;">0.776</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>CTGAN</strong></td>
+<td style="text-align: center;">0.931</td>
+<td style="text-align: center;">0.902</td>
+<td style="text-align: center;">0.903</td>
+<td style="text-align: center;">0.918</td>
+<td style="text-align: center;">0.917</td>
+<td style="text-align: center;">0.914</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Gaussian Copula</strong></td>
+<td style="text-align: center;">0.856</td>
+<td style="text-align: center;">0.862</td>
+<td style="text-align: center;">0.867</td>
+<td style="text-align: center;">0.866</td>
+<td style="text-align: center;">0.897</td>
+<td style="text-align: center;">0.870</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Synthpop</strong></td>
+<td style="text-align: center;">0.633</td>
+<td style="text-align: center;">0.666</td>
+<td style="text-align: center;">0.611</td>
+<td style="text-align: center;">0.618</td>
+<td style="text-align: center;">0.659</td>
+<td style="text-align: center;">0.637</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>TVAE</strong></td>
+<td style="text-align: center;">0.969</td>
+<td style="text-align: center;">0.919</td>
+<td style="text-align: center;">0.984</td>
+<td style="text-align: center;">0.935</td>
+<td style="text-align: center;">0.954</td>
+<td style="text-align: center;">0.952</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-findings">Key Findings<a class="headerlink" href="#key-findings" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Deep Learning Methods (TVAE, CTGAN):</strong> These methods generally exhibit the highest privacy scores, suggesting robust protection against the tested attacks. However, this often comes at the cost of capturing complex biological correlations.</li>
+<li><strong>Gaussian Copula:</strong> Provides a balanced trade-off, maintaining reasonable privacy while preserving essential statistical properties of the omic data.</li>
+<li><strong>K-anonymity based methods (Avatars):</strong> Show consistent privacy levels across seeds, influenced by the parameter <span class="arithmatex">\(k\)</span>.</li>
+<li><strong>Synthpop:</strong> In its default configuration, Synthpop often showed higher privacy risks compared to other methods, particularly in datasets with many unique attribute combinations.</li>
+</ul>
+<hr />
+<h2 id="visualizing-privacy-risks">Visualizing Privacy Risks<a class="headerlink" href="#visualizing-privacy-risks" title="Permanent link">&para;</a></h2>
+<p>The following figures illustrate the risk profiles for different metrics and synthesizers.</p>
+<h3 id="privacy-risk-overview-figure-9">Privacy Risk Overview (Figure 9)<a class="headerlink" href="#privacy-risk-overview-figure-9" title="Permanent link">&para;</a></h3>
+<p><img alt="Privacy Risk" src="../../assets/figures/privacy-risk.png" />
+<em>Figure 9: Comprehensive assessment of privacy risks across different synthesizers.</em></p>
+<h3 id="detailed-metric-distributions">Detailed Metric Distributions<a class="headerlink" href="#detailed-metric-distributions" title="Permanent link">&para;</a></h3>
+<p>The following plots from our evaluation notebooks provide deeper insights into the specific risks:</p>
+<h4 id="overall-privacy-distribution">Overall Privacy Distribution<a class="headerlink" href="#overall-privacy-distribution" title="Permanent link">&para;</a></h4>
+<p><img alt="Overall Privacy" src="../../assets/figures/OverallPrivacy.png" />
+<em>Distribution of overall privacy scores across evaluated methods.</em></p>
+<h4 id="inference-risk">Inference Risk<a class="headerlink" href="#inference-risk" title="Permanent link">&para;</a></h4>
+<p><img alt="Inference Risk" src="../../assets/figures/InferenceRisk.png" />
+<em>Assessment of the probability of inferring sensitive attributes from synthetic data.</em></p>
+<h4 id="linkability-risk">Linkability Risk<a class="headerlink" href="#linkability-risk" title="Permanent link">&para;</a></h4>
+<p><img alt="Linkability Risk" src="../../assets/figures/LinkabilityRisk.png" />
+<em>Evaluation of the risk of reconnecting records using synthetic data.</em></p>
+<h4 id="singling-out-risk-univariate">Singling-Out Risk (Univariate)<a class="headerlink" href="#singling-out-risk-univariate" title="Permanent link">&para;</a></h4>
+<p><img alt="Singling-Out Risk" src="../../assets/figures/SinglingOut_Uni.png" />
+<em>Risk of identifying unique records based on single attributes.</em></p>
+<hr />
+<h2 id="code-example-evaluating-privacy">Code Example: Evaluating Privacy<a class="headerlink" href="#code-example-evaluating-privacy" title="Permanent link">&para;</a></h2>
+<p>You can evaluate the privacy risk of your synthetic data using the integrated <code>anonymeter</code> wrappers. Below is an example of how to compute linkability and singling-out risks.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">anonymeter.evaluators</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinkabilityEvaluator</span><span class="p">,</span> <span class="n">SinglingOutEvaluator</span>
+
+<span class="c1"># Load original and synthetic data</span>
+<span class="n">ori_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;original_data.csv&quot;</span><span class="p">)</span>
+<span class="n">syn_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;synthetic_data.csv&quot;</span><span class="p">)</span>
+
+<span class="c1"># 1. Evaluate Singling-Out Risk</span>
+<span class="c1"># We use a subset of columns that an attacker might know</span>
+<span class="n">aux_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;Gender&#39;</span><span class="p">,</span> <span class="s1">&#39;Tumor_Stage&#39;</span><span class="p">]</span>
+<span class="n">so_eval</span> <span class="o">=</span> <span class="n">SinglingOutEvaluator</span><span class="p">(</span><span class="n">ori</span><span class="o">=</span><span class="n">ori_df</span><span class="p">,</span> 
+                               <span class="n">syn</span><span class="o">=</span><span class="n">syn_df</span><span class="p">,</span> 
+                               <span class="n">control</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># Optional control group</span>
+                               <span class="n">n_attacks</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">so_eval</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;multivariate&quot;</span><span class="p">)</span>
+<span class="n">so_risk</span> <span class="o">=</span> <span class="n">so_eval</span><span class="o">.</span><span class="n">risk</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Singling-out risk: </span><span class="si">{</span><span class="n">so_risk</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (CI: </span><span class="si">{</span><span class="n">so_risk</span><span class="o">.</span><span class="n">low</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">so_risk</span><span class="o">.</span><span class="n">high</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+
+<span class="c1"># 2. Evaluate Linkability Risk</span>
+<span class="c1"># Attacker has two datasets with partial information</span>
+<span class="n">aux_cols_link</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;Gender&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Tumor_Stage&#39;</span><span class="p">,</span> <span class="s1">&#39;Mutation_Count&#39;</span><span class="p">])</span>
+<span class="n">li_eval</span> <span class="o">=</span> <span class="n">LinkabilityEvaluator</span><span class="p">(</span><span class="n">ori</span><span class="o">=</span><span class="n">ori_df</span><span class="p">,</span> 
+                               <span class="n">syn</span><span class="o">=</span><span class="n">syn_df</span><span class="p">,</span> 
+                               <span class="n">aux_cols</span><span class="o">=</span><span class="n">aux_cols_link</span><span class="p">,</span>
+                               <span class="n">n_attacks</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
+<span class="n">li_eval</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+<span class="n">li_risk</span> <span class="o">=</span> <span class="n">li_eval</span><span class="o">.</span><span class="n">risk</span><span class="p">()</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Linkability risk: </span><span class="si">{</span><span class="n">li_risk</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>For more detailed analysis, refer to the <a href="../../site/notebooks/privacy/">Privacy Notebooks</a>.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.sections", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
