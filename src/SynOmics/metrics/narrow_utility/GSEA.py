@@ -92,6 +92,13 @@ class PCSAnalyzer:
         self.q_thr = q_thr
         self.w = w
 
+    @staticmethod
+    def _load_df(data: Union[str, "os.PathLike[str]", pd.DataFrame]) -> pd.DataFrame:
+        """Helper to load a CSV if a path is provided, otherwise return the DataFrame."""
+        if isinstance(data, pd.DataFrame):
+            return data
+        return pd.read_csv(data)
+
     def gsea_rank_score(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Compute pathway rank score = sign(NES) * -log10(FDR-q) with tiny jitter.
@@ -179,26 +186,24 @@ class PCSAnalyzer:
 
     def process_single_gsea_result(
         self,
-        gsea_ori: pd.DataFrame,
-        syn_path: Union[str, "os.PathLike[str]"],
+        gsea_ori: Union[str, "os.PathLike[str]", pd.DataFrame],
+        gsea_syn: Union[str, "os.PathLike[str]", pd.DataFrame],
     ) -> Tuple[np.ndarray, np.ndarray, PCSResult]:
         """
-        Process one synthetic GSEA CSV path against an original GSEA DataFrame.
+        Process original and synthetic GSEA results (paths or DataFrames).
 
         Args:
-            gsea_ori (pd.DataFrame): Original GSEA table.
-            syn_path (str | os.PathLike[str]): Synthetic GSEA CSV file path.
+            gsea_ori (str | PathLike | pd.DataFrame): Original GSEA table.
+            gsea_syn (str | PathLike | pd.DataFrame): Synthetic GSEA table.
 
         Returns:
             tuple[np.ndarray, np.ndarray, PCSResult]: (x, y, result).
-
-        Raises:
-            FileNotFoundError: If syn_path does not exist.
         """
-        gsea_syn = pd.read_csv(syn_path)
+        df_ori = self._load_df(gsea_ori)
+        df_syn = self._load_df(gsea_syn)
 
-        rnk_ori = self.gsea_rank_score(gsea_ori)
-        rnk_syn = self.gsea_rank_score(gsea_syn)
+        rnk_ori = self.gsea_rank_score(df_ori)
+        rnk_syn = self.gsea_rank_score(df_syn)
 
         aligned = self.align_rank_scores(rnk_ori, rnk_syn)
 
@@ -310,31 +315,31 @@ class PCSAnalyzer:
 
     def plot_gsea_datasets(
         self,
-        ori_path: Union[str, "os.PathLike[str]"],
-        dataset_dict: Mapping[str, Union[str, "os.PathLike[str]"]],
+        ori_data: Union[str, "os.PathLike[str]", pd.DataFrame],
+        dataset_dict: Mapping[str, Union[str, "os.PathLike[str]", pd.DataFrame]],
         figsize: Tuple[float, float] = (9, 10),
     ) -> Tuple[plt.Figure, Dict[str, float]]:
         """
         Plot multiple synthetic datasets against one original GSEA file.
 
         Args:
-            ori_path (str | os.PathLike[str]): Original GSEA CSV path.
-            dataset_dict (Mapping[str, str | os.PathLike[str]]): Tool name -> synthetic CSV path.
+            ori_data (str | PathLike | pd.DataFrame): Original GSEA data or path.
+            dataset_dict (Mapping[str, str | PathLike | pd.DataFrame]): Tool name -> synthetic data or path.
             figsize (tuple[float, float]): Figure size.
 
         Returns:
             tuple[matplotlib.figure.Figure, dict[str, float]]: (fig, pcs_dict).
         """
-        gsea_ori = pd.read_csv(ori_path)
+        df_ori = self._load_df(ori_data)
 
         fig, axes = plt.subplots(3, 2, figsize=figsize, constrained_layout=True)
         axes = axes.flatten()
 
         pcs_dict: Dict[str, float] = {}
 
-        for idx, (tool, path) in enumerate(dataset_dict.items()):
+        for idx, (tool, data) in enumerate(dataset_dict.items()):
             try:
-                x, y, result = self.process_single_gsea_result(gsea_ori, path)
+                x, y, result = self.process_single_gsea_result(df_ori, data)
 
                 row = idx // 2
                 is_bottom = row == 2

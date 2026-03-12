@@ -4,7 +4,7 @@ import sys
 parent_dir = "/mnt/digphat/syntheticDataBenchmark/Chuong_pipeline"
 sys.path.append(parent_dir)
 from SynOmics.utils.monitoring import monitor_resources
-from linkability_evaluator import LinkabilityEvaluator
+from linkability_evaluator import LinkabilityEvaluator #this one the code base from Anonymeter
 
 @monitor_resources
 def eval_genes_clinical(ori, syns, num_clinical, n_neighbors):

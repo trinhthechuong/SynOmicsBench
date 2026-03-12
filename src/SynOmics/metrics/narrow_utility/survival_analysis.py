@@ -61,7 +61,8 @@ class SurvivalEvaluator:
         dataset_colors: Optional[Dict[str, str]] = None,
         group_colors: Optional[Dict[str, str]] = None,
         font_scale: float = 1.0,
-        is_pdf: bool = False
+        is_pdf: bool = False,
+        original_name: str = "Origin"
     ) -> None:
         """
         Initialize SurvivalGridEvaluator for grid-based survival comparison.
@@ -76,6 +77,7 @@ class SurvivalEvaluator:
             group_colors (Dict[str, str], optional): Colors for phenotype groups.
             font_scale (float): Plot font scaling.
             is_pdf (boolean): save as pdf or png.
+            original_name (str): Name of the reference dataset (default: "Origin").
 
         Returns:
             None
@@ -100,6 +102,7 @@ class SurvivalEvaluator:
         self.group_colors = group_colors or GROUP_COLORS.copy()
         self.font_scale = font_scale
         self.is_pdf = is_pdf
+        self.original_name = original_name
         self.dataset_names = self._get_dataset_order()
         self.summary_df = None
 
@@ -120,7 +123,7 @@ class SurvivalEvaluator:
             if missing:
                 raise ValueError(f"dataset_order contains datasets absent from datasets_dict: {missing}")
             order = self.dataset_order
-        order = [d for d in ["Origin"] if d in order] + [d for d in order if d != "Origin"]
+        order = [d for d in [self.original_name] if d in order] + [d for d in order if d != self.original_name]
         return order
 
     def compute_survival_metrics(self) -> pd.DataFrame:
@@ -197,12 +200,13 @@ class SurvivalEvaluator:
         self.summary_df = summary_df
         return summary_df
 
-    def compute_cindex_scores(self, original_name: str = "Origin") -> pd.DataFrame:
+    def compute_cindex_scores(self, original_name: Optional[str] = None) -> pd.DataFrame:
         """
-        Compute C-index similarity scores between the reference ("Origin") and synthetic datasets.
+        Compute C-index similarity scores between the reference and synthetic datasets.
 
         Args:
-            original_name (str): Reference dataset for score calculation.
+            original_name (Optional[str]): Reference dataset for score calculation. 
+                If None, uses self.original_name.
 
         Returns:
             pd.DataFrame: DataFrame with additional column 'C-index_score'.
@@ -214,10 +218,11 @@ class SurvivalEvaluator:
         if self.summary_df is None:
             raise RuntimeError("Must call compute_survival_metrics() before scoring.")
         df = self.summary_df.copy()
+        ref_name = original_name or self.original_name
         if "Dataset" not in df.columns:
             raise KeyError("'Dataset' column not found.")
-        if original_name not in df["Dataset"].values:
-            raise KeyError(f"Original dataset '{original_name}' not found in summary dataframe.")
+        if ref_name not in df["Dataset"].values:
+            raise KeyError(f"Reference dataset '{ref_name}' not found in summary dataframe.")
         parsed_cindex = []
         for val in df["C-index"]:
             try:
@@ -228,7 +233,7 @@ class SurvivalEvaluator:
                 f = np.nan
             parsed_cindex.append(f)
         df["_cindex_parsed"] = parsed_cindex
-        c_orig = df.loc[df["Dataset"] == original_name, "_cindex_parsed"].iloc[0]
+        c_orig = df.loc[df["Dataset"] == ref_name, "_cindex_parsed"].iloc[0]
         scores = []
         for c_syn in df["_cindex_parsed"]:
             if pd.isna(c_orig) or pd.isna(c_syn):
@@ -297,7 +302,7 @@ class SurvivalEvaluator:
                 ax = fig.add_subplot(gs[r, c])
                 axes_small.append(ax)
         max_small_axes = len(axes_small)
-        synthetic_names = [d for d in self.dataset_names if d != "Origin"]
+        synthetic_names = [d for d in self.dataset_names if d != self.original_name]
         color_A = self.group_colors.get("GroupA", "#0072B2")
         color_B = self.group_colors.get("GroupB", "#D55E00")
 
@@ -403,7 +408,7 @@ class SurvivalEvaluator:
                 fig_indiv.savefig(outpath, dpi=300)
                 plt.close(fig_indiv)
 
-        _plot_single("Origin", ax_origin, is_large=True, save=bool(save_dir))
+        _plot_single(self.original_name, ax_origin, is_large=True, save=bool(save_dir))
         for i, ds_name in enumerate(synthetic_names):
             if i >= max_small_axes:
                 break

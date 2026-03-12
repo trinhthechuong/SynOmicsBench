@@ -15,16 +15,16 @@
         <link rel="canonical" href="https://trinhthechuong.github.io/SynOmicBench/evaluation/privacy/">
       
       
-        <link rel="prev" href="../narrow-utility/predictive-modeling/">
+        <link rel="prev" href="../biological-results/">
       
       
-        <link rel="next" href="../meta-ranking/">
+        <link rel="next" href="../../api/">
       
       
         
       
       
-      <link rel="icon" href="../../assets/images/favicon.png">
+      <link rel="icon" href="../../assets/logo.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
@@ -55,6 +55,10 @@
       
     
     
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -69,7 +73,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="indigo">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="indigo">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -78,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#privacy-risk-assessment" class="md-skip">
+        <a href="#privacy-assessment" class="md-skip">
           Skip to content
         </a>
       
@@ -96,8 +100,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="SynOmicBench Documentation" class="md-header__button md-logo" aria-label="SynOmicBench Documentation" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../../assets/logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -150,6 +153,8 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
       
     </form>
     <div class="md-search__output">
@@ -230,20 +235,36 @@
   
   
   
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../framework/index.md" class="md-tabs__link">
-          
+    <li class="md-tabs__item">
+      <a href="../../preprocessing/" class="md-tabs__link">
+        
   
   
     
   
-  Framework
+  Preprocessing Data
 
-        </a>
-      </li>
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../synthetic-data/" class="md-tabs__link">
+        
+  
+  
     
+  
+  Generate Synthetic Data
+
+      </a>
+    </li>
   
 
       
@@ -277,13 +298,13 @@
   
   
     <li class="md-tabs__item">
-      <a href="../../resources/index.md" class="md-tabs__link">
+      <a href="../../api/" class="md-tabs__link">
         
   
   
     
   
-  Resources
+  API
 
       </a>
     </li>
@@ -320,8 +341,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="SynOmicBench Documentation" class="md-nav__button md-logo" aria-label="SynOmicBench Documentation" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../../assets/logo.png" alt="logo">
 
     </a>
     SynOmicBench Documentation
@@ -401,75 +421,15 @@
   
   
   
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Framework
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Framework
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
-      <a href="../../framework/index.md" class="md-nav__link">
+      <a href="../../preprocessing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Overview
+    Preprocessing Data
   
 
     
@@ -481,23 +441,22 @@
     </li>
   
 
-              
-            
-              
-                
+    
+      
+      
   
   
   
   
     <li class="md-nav__item">
-      <a href="../../framework/processing/" class="md-nav__link">
+      <a href="../../synthetic-data/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Processing
+    Generate Synthetic Data
   
 
     
@@ -509,119 +468,6 @@
     </li>
   
 
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../../framework/synthesizers/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Synthesizers
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Synthesizers
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../framework/synthesizers/base/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Base API
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
     
       
       
@@ -646,8 +492,6 @@
       
         
       
-        
-      
     
     
     
@@ -655,8 +499,6 @@
         
         
       
-      
-        
       
     
     
@@ -664,7 +506,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
           <div class="md-nav__link md-nav__container">
@@ -686,14 +528,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -712,14 +554,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../broad-utility/" class="md-nav__link">
+      <a href="../statistical-fidelity/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Broad Utility
+    Statistical Fidelity
   
 
     
@@ -752,37 +594,28 @@
       
         
       
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
         
-      
         
-      
-    
-    
-    
-      
-      
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
         
           
-          
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Narrow Utility
+    Biological Utility
   
 
     
@@ -793,12 +626,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Narrow Utility
+    Biological Utility
   
 
           </label>
@@ -811,35 +644,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../narrow-utility/index.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Overview
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../narrow-utility/dge/" class="md-nav__link">
+      <a href="../biological-utility/dge/" class="md-nav__link">
         
   
   
@@ -867,7 +672,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../narrow-utility/gsea/" class="md-nav__link">
+      <a href="../biological-utility/gsea/" class="md-nav__link">
         
   
   
@@ -895,7 +700,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../narrow-utility/ssgsea/" class="md-nav__link">
+      <a href="../biological-utility/ssgsea/" class="md-nav__link">
         
   
   
@@ -923,14 +728,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../narrow-utility/cell-deconvolution/" class="md-nav__link">
+      <a href="../biological-utility/cell-deconvolution/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Cell Deconvolution
+    Cell Type Deconvolution
   
 
     
@@ -951,7 +756,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../narrow-utility/survival-analysis/" class="md-nav__link">
+      <a href="../biological-utility/survival-analysis/" class="md-nav__link">
         
   
   
@@ -972,6 +777,14 @@
 
               
             
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
               
                 
   
@@ -979,14 +792,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../narrow-utility/predictive-modeling/" class="md-nav__link">
+      <a href="../biological-results/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Predictive Modeling
+    Biological Results
   
 
     
@@ -995,14 +808,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -1075,152 +880,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#privacy-metrics" class="md-nav__link">
+  <a href="#singling-out-risk" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Privacy Metrics
+        Singling Out Risk
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Privacy Metrics">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-singling-out" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Singling-Out
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-linkability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Linkability
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-inference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Inference
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#benchmark-results" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Benchmark Results
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Benchmark Results">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#overall-privacy-scores" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overall Privacy Scores
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#key-findings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Findings
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#visualizing-privacy-risks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Visualizing Privacy Risks
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Visualizing Privacy Risks">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#privacy-risk-overview-figure-9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Privacy Risk Overview (Figure 9)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#detailed-metric-distributions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Detailed Metric Distributions
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Detailed Metric Distributions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#overall-privacy-distribution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overall Privacy Distribution
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#inference-risk" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Inference Risk
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#linkability-risk" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1230,33 +900,23 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#singling-out-risk-univariate" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#inference-risk" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Singling-Out Risk (Univariate)
+        Inference Risk
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
-  <a href="#code-example-evaluating-privacy" class="md-nav__link">
+  <a href="#overall-privacy-score" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Code Example: Evaluating Privacy
+        Overall Privacy Score
       
     </span>
   </a>
@@ -1267,62 +927,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../meta-ranking/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Meta-ranking
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../computational-resources/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Computational Resources
-  
-
-    
-  </span>
-  
-  
-
-      </a>
     </li>
   
 
@@ -1342,14 +946,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../../resources/index.md" class="md-nav__link">
+      <a href="../../api/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Resources
+    API
   
 
     
@@ -1389,152 +993,17 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#privacy-metrics" class="md-nav__link">
+  <a href="#singling-out-risk" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Privacy Metrics
+        Singling Out Risk
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="Privacy Metrics">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-singling-out" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Singling-Out
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-linkability" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Linkability
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-inference" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Inference
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#benchmark-results" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Benchmark Results
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Benchmark Results">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#overall-privacy-scores" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overall Privacy Scores
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#key-findings" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Key Findings
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#visualizing-privacy-risks" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Visualizing Privacy Risks
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Visualizing Privacy Risks">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#privacy-risk-overview-figure-9" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Privacy Risk Overview (Figure 9)
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#detailed-metric-distributions" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Detailed Metric Distributions
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Detailed Metric Distributions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#overall-privacy-distribution" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Overall Privacy Distribution
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#inference-risk" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Inference Risk
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#linkability-risk" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1544,33 +1013,23 @@
   </a>
   
 </li>
-        
-          <li class="md-nav__item">
-  <a href="#singling-out-risk-univariate" class="md-nav__link">
+      
+        <li class="md-nav__item">
+  <a href="#inference-risk" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Singling-Out Risk (Univariate)
+        Inference Risk
       
     </span>
   </a>
   
 </li>
-        
-      </ul>
-    </nav>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
       
         <li class="md-nav__item">
-  <a href="#code-example-evaluating-privacy" class="md-nav__link">
+  <a href="#overall-privacy-score" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Code Example: Evaluating Privacy
+        Overall Privacy Score
       
     </span>
   </a>
@@ -1597,152 +1056,101 @@
   
 
 
-<h1 id="privacy-risk-assessment">Privacy Risk Assessment<a class="headerlink" href="#privacy-risk-assessment" title="Permanent link">&para;</a></h1>
-<p>Privacy is a critical dimension in the synthesis of omic and clinical data. SynOmicBench evaluates privacy risks following the principles outlined by the European Data Protection Board (EDPB), focusing on the three primary risks that successful anonymization must mitigate: Singling-Out, Linkability, and Inference.</p>
-<h2 id="privacy-metrics">Privacy Metrics<a class="headerlink" href="#privacy-metrics" title="Permanent link">&para;</a></h2>
-<p>We employ the <code>anonymeter</code> framework to quantify these risks, ensuring that synthetic datasets do not inadvertently reveal sensitive information about individuals in the original cohort.</p>
-<h3 id="1-singling-out">1. Singling-Out<a class="headerlink" href="#1-singling-out" title="Permanent link">&para;</a></h3>
-<p>Singling-out occurs when an attacker can identify a single individual in the dataset based on a combination of attributes. Even if names or direct identifiers are removed, unique combinations of clinical and molecular features (e.g., a specific rare mutation combined with an exact age and diagnosis date) can isolate an individual record.</p>
-<h3 id="2-linkability">2. Linkability<a class="headerlink" href="#2-linkability" title="Permanent link">&para;</a></h3>
-<p>Linkability is the ability to connect two or more records relating to the same individual, either within the same dataset or across different datasets. In the context of multi-omics, linkability risk assessment evaluates whether an attacker can reconnect split datasets (e.g., connecting a clinical record to its corresponding transcriptomic profile) using the synthetic data as a bridge.</p>
-<h3 id="3-inference">3. Inference<a class="headerlink" href="#3-inference" title="Permanent link">&para;</a></h3>
-<p>Inference risk refers to the possibility of deducing the value of a sensitive attribute with high probability by observing other attributes in the dataset. For example, if a synthetic model learns a strong correlation between certain gene expression levels and a specific clinical outcome, an attacker might infer a patient's sensitive health status by observing their gene expression.</p>
+<h1 id="privacy-assessment">Privacy Assessment<a class="headerlink" href="#privacy-assessment" title="Permanent link">&para;</a></h1>
+<p>Privacy evaluation quantifies the risk that synthetic data may inadvertently expose information about individuals in the original dataset. Following the European Data Protection Board (EDPB) framework, we assess three independent privacy risks using the Anonymeter library: <strong>singling out</strong>, <strong>linkability</strong>, and <strong>inference</strong>.</p>
 <hr />
-<h2 id="benchmark-results">Benchmark Results<a class="headerlink" href="#benchmark-results" title="Permanent link">&para;</a></h2>
-<p>Our evaluation across multiple cancer types (ccRCC, Melanoma, NSCLC) reveals distinct privacy-utility trade-offs among different synthesis methods.</p>
-<h3 id="overall-privacy-scores">Overall Privacy Scores<a class="headerlink" href="#overall-privacy-scores" title="Permanent link">&para;</a></h3>
-<p>The following table summarizes the overall privacy scores across five different seeds. Higher scores indicate lower privacy risk (better protection).</p>
-<table>
-<thead>
-<tr>
-<th style="text-align: left;">Method</th>
-<th style="text-align: center;">Seed 0</th>
-<th style="text-align: center;">Seed 1</th>
-<th style="text-align: center;">Seed 2</th>
-<th style="text-align: center;">Seed 3</th>
-<th style="text-align: center;">Seed 42</th>
-<th style="text-align: center;">Mean</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align: left;"><strong>Avatars K5</strong></td>
-<td style="text-align: center;">0.771</td>
-<td style="text-align: center;">0.767</td>
-<td style="text-align: center;">0.773</td>
-<td style="text-align: center;">0.777</td>
-<td style="text-align: center;">0.771</td>
-<td style="text-align: center;">0.772</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Avatars K10</strong></td>
-<td style="text-align: center;">0.769</td>
-<td style="text-align: center;">0.774</td>
-<td style="text-align: center;">0.777</td>
-<td style="text-align: center;">0.783</td>
-<td style="text-align: center;">0.776</td>
-<td style="text-align: center;">0.776</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>CTGAN</strong></td>
-<td style="text-align: center;">0.931</td>
-<td style="text-align: center;">0.902</td>
-<td style="text-align: center;">0.903</td>
-<td style="text-align: center;">0.918</td>
-<td style="text-align: center;">0.917</td>
-<td style="text-align: center;">0.914</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Gaussian Copula</strong></td>
-<td style="text-align: center;">0.856</td>
-<td style="text-align: center;">0.862</td>
-<td style="text-align: center;">0.867</td>
-<td style="text-align: center;">0.866</td>
-<td style="text-align: center;">0.897</td>
-<td style="text-align: center;">0.870</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>Synthpop</strong></td>
-<td style="text-align: center;">0.633</td>
-<td style="text-align: center;">0.666</td>
-<td style="text-align: center;">0.611</td>
-<td style="text-align: center;">0.618</td>
-<td style="text-align: center;">0.659</td>
-<td style="text-align: center;">0.637</td>
-</tr>
-<tr>
-<td style="text-align: left;"><strong>TVAE</strong></td>
-<td style="text-align: center;">0.969</td>
-<td style="text-align: center;">0.919</td>
-<td style="text-align: center;">0.984</td>
-<td style="text-align: center;">0.935</td>
-<td style="text-align: center;">0.954</td>
-<td style="text-align: center;">0.952</td>
-</tr>
-</tbody>
-</table>
-<h3 id="key-findings">Key Findings<a class="headerlink" href="#key-findings" title="Permanent link">&para;</a></h3>
+<h2 id="singling-out-risk">Singling Out Risk<a class="headerlink" href="#singling-out-risk" title="Permanent link">&para;</a></h2>
+<p>Singling out measures the ability to isolate a specific individual in the dataset using unique predicates derived from synthetic data. Two attack modes are evaluated:</p>
 <ul>
-<li><strong>Deep Learning Methods (TVAE, CTGAN):</strong> These methods generally exhibit the highest privacy scores, suggesting robust protection against the tested attacks. However, this often comes at the cost of capturing complex biological correlations.</li>
-<li><strong>Gaussian Copula:</strong> Provides a balanced trade-off, maintaining reasonable privacy while preserving essential statistical properties of the omic data.</li>
-<li><strong>K-anonymity based methods (Avatars):</strong> Show consistent privacy levels across seeds, influenced by the parameter <span class="arithmatex">\(k\)</span>.</li>
-<li><strong>Synthpop:</strong> In its default configuration, Synthpop often showed higher privacy risks compared to other methods, particularly in datasets with many unique attribute combinations.</li>
+<li><strong>Univariate</strong>: predicates from single features</li>
+<li><strong>Multivariate</strong>: predicates from multiple attribute combinations.</li>
 </ul>
 <hr />
-<h2 id="visualizing-privacy-risks">Visualizing Privacy Risks<a class="headerlink" href="#visualizing-privacy-risks" title="Permanent link">&para;</a></h2>
-<p>The following figures illustrate the risk profiles for different metrics and synthesizers.</p>
-<h3 id="privacy-risk-overview-figure-9">Privacy Risk Overview (Figure 9)<a class="headerlink" href="#privacy-risk-overview-figure-9" title="Permanent link">&para;</a></h3>
-<p><img alt="Privacy Risk" src="../../assets/figures/privacy-risk.png" />
-<em>Figure 9: Comprehensive assessment of privacy risks across different synthesizers.</em></p>
-<h3 id="detailed-metric-distributions">Detailed Metric Distributions<a class="headerlink" href="#detailed-metric-distributions" title="Permanent link">&para;</a></h3>
-<p>The following plots from our evaluation notebooks provide deeper insights into the specific risks:</p>
-<h4 id="overall-privacy-distribution">Overall Privacy Distribution<a class="headerlink" href="#overall-privacy-distribution" title="Permanent link">&para;</a></h4>
-<p><img alt="Overall Privacy" src="../../assets/figures/OverallPrivacy.png" />
-<em>Distribution of overall privacy scores across evaluated methods.</em></p>
-<h4 id="inference-risk">Inference Risk<a class="headerlink" href="#inference-risk" title="Permanent link">&para;</a></h4>
-<p><img alt="Inference Risk" src="../../assets/figures/InferenceRisk.png" />
-<em>Assessment of the probability of inferring sensitive attributes from synthetic data.</em></p>
-<h4 id="linkability-risk">Linkability Risk<a class="headerlink" href="#linkability-risk" title="Permanent link">&para;</a></h4>
-<p><img alt="Linkability Risk" src="../../assets/figures/LinkabilityRisk.png" />
-<em>Evaluation of the risk of reconnecting records using synthetic data.</em></p>
-<h4 id="singling-out-risk-univariate">Singling-Out Risk (Univariate)<a class="headerlink" href="#singling-out-risk-univariate" title="Permanent link">&para;</a></h4>
-<p><img alt="Singling-Out Risk" src="../../assets/figures/SinglingOut_Uni.png" />
-<em>Risk of identifying unique records based on single attributes.</em></p>
-<hr />
-<h2 id="code-example-evaluating-privacy">Code Example: Evaluating Privacy<a class="headerlink" href="#code-example-evaluating-privacy" title="Permanent link">&para;</a></h2>
-<p>You can evaluate the privacy risk of your synthetic data using the integrated <code>anonymeter</code> wrappers. Below is an example of how to compute linkability and singling-out risks.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">anonymeter.evaluators</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinkabilityEvaluator</span><span class="p">,</span> <span class="n">SinglingOutEvaluator</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.privacy.singling_out</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">eval_singling_out_univariate</span><span class="p">,</span>
+    <span class="n">eval_singling_out_multivariate</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.postprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">post_masking</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="c1"># Load original and synthetic data</span>
-<span class="n">ori_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;original_data.csv&quot;</span><span class="p">)</span>
-<span class="n">syn_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;synthetic_data.csv&quot;</span><span class="p">)</span>
+<span class="c1"># Load and preprocess data</span>
+<span class="n">original</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;original_data.csv&quot;</span><span class="p">)</span>
 
-<span class="c1"># 1. Evaluate Singling-Out Risk</span>
-<span class="c1"># We use a subset of columns that an attacker might know</span>
-<span class="n">aux_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;Gender&#39;</span><span class="p">,</span> <span class="s1">&#39;Tumor_Stage&#39;</span><span class="p">]</span>
-<span class="n">so_eval</span> <span class="o">=</span> <span class="n">SinglingOutEvaluator</span><span class="p">(</span><span class="n">ori</span><span class="o">=</span><span class="n">ori_df</span><span class="p">,</span> 
-                               <span class="n">syn</span><span class="o">=</span><span class="n">syn_df</span><span class="p">,</span> 
-                               <span class="n">control</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="c1"># Optional control group</span>
-                               <span class="n">n_attacks</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-<span class="n">so_eval</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;multivariate&quot;</span><span class="p">)</span>
-<span class="n">so_risk</span> <span class="o">=</span> <span class="n">so_eval</span><span class="o">.</span><span class="n">risk</span><span class="p">()</span>
+<span class="n">syn</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;synthetic_data.csv&quot;</span><span class="p">)</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Singling-out risk: </span><span class="si">{</span><span class="n">so_risk</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> (CI: </span><span class="si">{</span><span class="n">so_risk</span><span class="o">.</span><span class="n">low</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">so_risk</span><span class="o">.</span><span class="n">high</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="c1"># Univariate singling-out</span>
+<span class="n">uni_results</span> <span class="o">=</span> <span class="n">eval_singling_out_univariate</span><span class="p">(</span>
+    <span class="n">ori</span><span class="o">=</span><span class="n">original</span><span class="p">,</span>
+    <span class="n">syns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Gaussian Copula&quot;</span><span class="p">:</span> <span class="n">syn</span><span class="p">},</span>
+    <span class="n">n_attacks</span><span class="o">=</span><span class="mi">10_000</span><span class="p">,</span>
+    <span class="n">proportions</span><span class="o">=</span><span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.50</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="c1"># 25%, 50%, 75%, 100% of attributes</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<span class="p">)</span>
 
-<span class="c1"># 2. Evaluate Linkability Risk</span>
-<span class="c1"># Attacker has two datasets with partial information</span>
-<span class="n">aux_cols_link</span> <span class="o">=</span> <span class="p">([</span><span class="s1">&#39;Age&#39;</span><span class="p">,</span> <span class="s1">&#39;Gender&#39;</span><span class="p">],</span> <span class="p">[</span><span class="s1">&#39;Tumor_Stage&#39;</span><span class="p">,</span> <span class="s1">&#39;Mutation_Count&#39;</span><span class="p">])</span>
-<span class="n">li_eval</span> <span class="o">=</span> <span class="n">LinkabilityEvaluator</span><span class="p">(</span><span class="n">ori</span><span class="o">=</span><span class="n">ori_df</span><span class="p">,</span> 
-                               <span class="n">syn</span><span class="o">=</span><span class="n">syn_df</span><span class="p">,</span> 
-                               <span class="n">aux_cols</span><span class="o">=</span><span class="n">aux_cols_link</span><span class="p">,</span>
-                               <span class="n">n_attacks</span><span class="o">=</span><span class="mi">500</span><span class="p">)</span>
-<span class="n">li_eval</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
-<span class="n">li_risk</span> <span class="o">=</span> <span class="n">li_eval</span><span class="o">.</span><span class="n">risk</span><span class="p">()</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Linkability risk: </span><span class="si">{</span><span class="n">li_risk</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="c1"># Print risk at each proportion</span>
+<span class="k">for</span> <span class="n">evaluator</span> <span class="ow">in</span> <span class="n">uni_results</span><span class="p">[</span><span class="s2">&quot;Gaussian Copula&quot;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Risk: </span><span class="si">{</span><span class="n">evaluator</span><span class="o">.</span><span class="n">risk</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p>For more detailed analysis, refer to the <a href="../../site/notebooks/privacy/">Privacy Notebooks</a>.</p>
+<hr />
+<h2 id="linkability-risk">Linkability Risk<a class="headerlink" href="#linkability-risk" title="Permanent link">&para;</a></h2>
+<p>Linkability assesses whether an attacker can use synthetic data to connect disjoint attribute sets (clinical features and gene expression) belonging to the same individual, using Gower-distance nearest neighbors.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.privacy.linkability</span><span class="w"> </span><span class="kn">import</span> <span class="n">eval_linkability_genes_clinical</span>
+
+<span class="c1"># Example: define clinical and transcriptomic column indices or names</span>
+<span class="n">clinical_features</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>  <span class="c1"># or column names: [&quot;age&quot;, &quot;sex&quot;, &quot;stage&quot;, &quot;grade&quot;]</span>
+<span class="n">gene_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">ori</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>  <span class="c1"># or column names: [&quot;GeneA&quot;, &quot;GeneB&quot;, ...]</span>
+
+<span class="c1"># Link gene expression to clinical attributes</span>
+<span class="n">link_results</span> <span class="o">=</span> <span class="n">eval_linkability_genes_clinical</span><span class="p">(</span>
+    <span class="n">ori</span><span class="o">=</span><span class="n">ori</span><span class="p">,</span>
+    <span class="n">syns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Gaussian Copula&quot;</span><span class="p">:</span> <span class="n">syn</span><span class="p">},</span>
+    <span class="n">clinical_cols</span><span class="o">=</span><span class="n">clinical_features</span><span class="p">,</span>
+    <span class="n">transcriptomic_cols</span><span class="o">=</span><span class="n">gene_features</span><span class="p">,</span>
+    <span class="n">n_neighbors</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">proportions</span><span class="o">=</span><span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.50</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>  <span class="c1"># 25%, 50%, 75%, 100% of gene features</span>
+    <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">evaluator</span> <span class="ow">in</span> <span class="n">link_results</span><span class="p">[</span><span class="s2">&quot;Gaussian Copula&quot;</span><span class="p">]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Linkability risk: </span><span class="si">{</span><span class="n">evaluator</span><span class="o">.</span><span class="n">risk</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="inference-risk">Inference Risk<a class="headerlink" href="#inference-risk" title="Permanent link">&para;</a></h2>
+<p>Inference quantifies the ability to deduce sensitive clinical attributes from auxiliary gene expression features using k-nearest neighbor prediction.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.privacy.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">eval_inference_genes_clinical</span>
+
+<span class="c1"># Example: define clinical and transcriptomic column indices or names</span>
+<span class="n">clinical_features</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>  <span class="c1"># or column names: [&quot;age&quot;, &quot;sex&quot;, &quot;stage&quot;, &quot;grade&quot;]</span>
+<span class="n">gene_features</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">ori</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>  <span class="c1"># or column names: [&quot;GeneA&quot;, &quot;GeneB&quot;, ...]</span>
+
+<span class="c1"># Evaluate inference risk for each clinical variable</span>
+<span class="n">inf_results</span> <span class="o">=</span> <span class="n">eval_inference_genes_clinical</span><span class="p">(</span>
+    <span class="n">ori</span><span class="o">=</span><span class="n">ori</span><span class="p">,</span>
+    <span class="n">syns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;Gaussian Copula&quot;</span><span class="p">:</span> <span class="n">syn</span><span class="p">},</span>
+    <span class="n">clinical_cols</span><span class="o">=</span><span class="n">clinical_features</span><span class="p">,</span>
+    <span class="n">transcriptomic_cols</span><span class="o">=</span><span class="n">gene_features</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">for</span> <span class="n">secret_name</span><span class="p">,</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">inf_results</span><span class="p">[</span><span class="s2">&quot;Gaussian Copula&quot;</span><span class="p">]:</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">secret_name</span><span class="si">}</span><span class="s2">: ERROR - </span><span class="si">{</span><span class="n">result</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">secret_name</span><span class="si">}</span><span class="s2">: risk = </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">risk</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="overall-privacy-score">Overall Privacy Score<a class="headerlink" href="#overall-privacy-score" title="Permanent link">&para;</a></h2>
+<p>For each attack configuration <span class="arithmatex">\(c\)</span>, the effective risk accounts for failed attacks:</p>
+<div class="arithmatex">\[R(c) = \max\bigl(R_\text{attack}(c),\; R_\text{naive}(c)\bigr)\]</div>
+<p>For each privacy category <span class="arithmatex">\(m\)</span>, the risk is averaged over all configurations:</p>
+<div class="arithmatex">\[\bar{R}_m = \frac{1}{|C_m|}\sum_{c \in C_m} R_m(c)\]</div>
+<p>The overall privacy risk aggregates four categories (univariate singling-out, multivariate singling-out, linkability, inference):</p>
+<div class="arithmatex">\[R_\text{overall} = \frac{1}{4}\sum_{m=1}^{4} \bar{R}_m\]</div>
+<div class="arithmatex">\[\textbf{Privacy Score} = 1 - R_\text{overall}\]</div>
+<p>Higher values indicate stronger privacy preservation.</p>
+<p>Example notebooks:</p>
+<ul>
+<li><a href="../../assets/examples/OveralScore_Bayesian.ipynb">Overall Privacy Score</a> for a complete example of privacy overall score evaluation.</li>
+</ul>
 
 
 
@@ -1798,10 +1206,14 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.sections", "navigation.top", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.top", "search.highlight", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

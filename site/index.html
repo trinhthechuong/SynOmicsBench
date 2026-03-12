@@ -22,7 +22,7 @@
         
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="assets/logo.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
@@ -53,6 +53,10 @@
       
     
     
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
     <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -67,7 +71,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="indigo">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="indigo">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -76,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#synomicbench-a-unified-benchmark-for-synthetic-cancer-omics" class="md-skip">
+        <a href="#synomicbench-a-unified-benchmark-of-synthetic-data-generation-for-clinical-and-transcriptomic-cancer-data" class="md-skip">
           Skip to content
         </a>
       
@@ -94,8 +98,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="." title="SynOmicBench Documentation" class="md-header__button md-logo" aria-label="SynOmicBench Documentation" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="assets/logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -148,6 +151,8 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
       
     </form>
     <div class="md-search__output">
@@ -230,20 +235,36 @@
   
   
   
-    
-    
-      <li class="md-tabs__item">
-        <a href="framework/index.md" class="md-tabs__link">
-          
+    <li class="md-tabs__item">
+      <a href="preprocessing/" class="md-tabs__link">
+        
   
   
     
   
-  Framework
+  Preprocessing Data
 
-        </a>
-      </li>
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="synthetic-data/" class="md-tabs__link">
+        
+  
+  
     
+  
+  Generate Synthetic Data
+
+      </a>
+    </li>
   
 
       
@@ -275,13 +296,13 @@
   
   
     <li class="md-tabs__item">
-      <a href="resources/index.md" class="md-tabs__link">
+      <a href="api/" class="md-tabs__link">
         
   
   
     
   
-  Resources
+  API
 
       </a>
     </li>
@@ -318,8 +339,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href="." title="SynOmicBench Documentation" class="md-nav__button md-logo" aria-label="SynOmicBench Documentation" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="assets/logo.png" alt="logo">
 
     </a>
     SynOmicBench Documentation
@@ -406,10 +426,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#framework-overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🔬 Framework Overview
+        Framework Overview
       
     </span>
   </a>
@@ -420,7 +451,7 @@
   <a href="#benchmarked-datasets" class="md-nav__link">
     <span class="md-ellipsis">
       
-        📊 Benchmarked Datasets
+        Benchmarked Datasets
       
     </span>
   </a>
@@ -428,10 +459,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sdg-methods-evaluated" class="md-nav__link">
+  <a href="#synthetic-data-generation-sdg-pipeline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🤖 SDG Methods Evaluated
+        Synthetic Data Generation (SDG) Pipeline
       
     </span>
   </a>
@@ -442,19 +473,19 @@
   <a href="#evaluation-pillars" class="md-nav__link">
     <span class="md-ellipsis">
       
-        📐 Evaluation Pillars
+        Evaluation Pillars
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="📐 Evaluation Pillars">
+    <nav class="md-nav" aria-label="Evaluation Pillars">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-broad-utility-statistical-fidelity" class="md-nav__link">
+  <a href="#1statistical-fidelity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Broad Utility (Statistical Fidelity)
+        1.Statistical Fidelity
       
     </span>
   </a>
@@ -503,7 +534,7 @@
   <a href="#citation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        📝 Citation
+        Citation
       
     </span>
   </a>
@@ -551,75 +582,15 @@
   
   
   
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Framework
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Framework
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
-      <a href="framework/index.md" class="md-nav__link">
+      <a href="preprocessing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Overview
+    Preprocessing Data
   
 
     
@@ -631,23 +602,22 @@
     </li>
   
 
-              
-            
-              
-                
+    
+      
+      
   
   
   
   
     <li class="md-nav__item">
-      <a href="framework/processing/" class="md-nav__link">
+      <a href="synthetic-data/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Processing
+    Generate Synthetic Data
   
 
     
@@ -659,10 +629,9 @@
     </li>
   
 
-              
-            
-              
-                
+    
+      
+      
   
   
   
@@ -676,12 +645,16 @@
       
         
       
-    
-    
-    
-      
+        
       
         
+      
+        
+      
+    
+    
+    
+      
       
     
     
@@ -689,127 +662,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="framework/synthesizers/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Synthesizers
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Synthesizers
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="framework/synthesizers/base/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Base API
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -831,14 +684,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -857,14 +710,14 @@
   
   
     <li class="md-nav__item">
-      <a href="evaluation/broad-utility/" class="md-nav__link">
+      <a href="evaluation/statistical-fidelity/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Broad Utility
+    Statistical Fidelity
   
 
     
@@ -897,16 +750,10 @@
       
         
       
-        
-      
-        
-      
     
     
     
       
-      
-        
       
     
     
@@ -914,17 +761,17 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
         
           
-          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Narrow Utility
+    Biological Utility
   
 
     
@@ -935,12 +782,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Narrow Utility
+    Biological Utility
   
 
           </label>
@@ -953,35 +800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="evaluation/narrow-utility/index.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Overview
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="evaluation/narrow-utility/dge/" class="md-nav__link">
+      <a href="evaluation/biological-utility/dge/" class="md-nav__link">
         
   
   
@@ -1009,7 +828,7 @@
   
   
     <li class="md-nav__item">
-      <a href="evaluation/narrow-utility/gsea/" class="md-nav__link">
+      <a href="evaluation/biological-utility/gsea/" class="md-nav__link">
         
   
   
@@ -1037,7 +856,7 @@
   
   
     <li class="md-nav__item">
-      <a href="evaluation/narrow-utility/ssgsea/" class="md-nav__link">
+      <a href="evaluation/biological-utility/ssgsea/" class="md-nav__link">
         
   
   
@@ -1065,14 +884,14 @@
   
   
     <li class="md-nav__item">
-      <a href="evaluation/narrow-utility/cell-deconvolution/" class="md-nav__link">
+      <a href="evaluation/biological-utility/cell-deconvolution/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Cell Deconvolution
+    Cell Type Deconvolution
   
 
     
@@ -1093,7 +912,7 @@
   
   
     <li class="md-nav__item">
-      <a href="evaluation/narrow-utility/survival-analysis/" class="md-nav__link">
+      <a href="evaluation/biological-utility/survival-analysis/" class="md-nav__link">
         
   
   
@@ -1114,6 +933,14 @@
 
               
             
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
               
                 
   
@@ -1121,14 +948,14 @@
   
   
     <li class="md-nav__item">
-      <a href="evaluation/narrow-utility/predictive-modeling/" class="md-nav__link">
+      <a href="evaluation/biological-results/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Predictive Modeling
+    Biological Results
   
 
     
@@ -1137,14 +964,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -1178,62 +997,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="evaluation/meta-ranking/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Meta-ranking
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="evaluation/computational-resources/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Computational Resources
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1248,14 +1011,14 @@
   
   
     <li class="md-nav__item">
-      <a href="resources/index.md" class="md-nav__link">
+      <a href="api/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Resources
+    API
   
 
     
@@ -1295,10 +1058,21 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#abstract" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Abstract
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#framework-overview" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🔬 Framework Overview
+        Framework Overview
       
     </span>
   </a>
@@ -1309,7 +1083,7 @@
   <a href="#benchmarked-datasets" class="md-nav__link">
     <span class="md-ellipsis">
       
-        📊 Benchmarked Datasets
+        Benchmarked Datasets
       
     </span>
   </a>
@@ -1317,10 +1091,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#sdg-methods-evaluated" class="md-nav__link">
+  <a href="#synthetic-data-generation-sdg-pipeline" class="md-nav__link">
     <span class="md-ellipsis">
       
-        🤖 SDG Methods Evaluated
+        Synthetic Data Generation (SDG) Pipeline
       
     </span>
   </a>
@@ -1331,19 +1105,19 @@
   <a href="#evaluation-pillars" class="md-nav__link">
     <span class="md-ellipsis">
       
-        📐 Evaluation Pillars
+        Evaluation Pillars
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="📐 Evaluation Pillars">
+    <nav class="md-nav" aria-label="Evaluation Pillars">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#1-broad-utility-statistical-fidelity" class="md-nav__link">
+  <a href="#1statistical-fidelity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        1. Broad Utility (Statistical Fidelity)
+        1.Statistical Fidelity
       
     </span>
   </a>
@@ -1392,7 +1166,7 @@
   <a href="#citation" class="md-nav__link">
     <span class="md-ellipsis">
       
-        📝 Citation
+        Citation
       
     </span>
   </a>
@@ -1419,116 +1193,176 @@
   
 
 
-<h1 id="synomicbench-a-unified-benchmark-for-synthetic-cancer-omics">SynOmicBench: A Unified Benchmark for Synthetic Cancer Omics<a class="headerlink" href="#synomicbench-a-unified-benchmark-for-synthetic-cancer-omics" title="Permanent link">&para;</a></h1>
-<p>Welcome to the <strong>SynOmicBench</strong> documentation. This platform provides a comprehensive framework for the generation, evaluation, and benchmarking of synthetic clinical and transcriptomic data in the context of precision oncology.</p>
-<p>Achieving an appropriate trade-off between <strong>biological utility</strong> and <strong>patient privacy</strong> remains a critical challenge for secure data sharing when applying high-dimensional omics datasets to artificial intelligence. SynOmicBench introduces the first disease-agnostic benchmarking study tailored to this domain, comparing state-of-the-art synthetic data generation (SDG) methods across multiple cancer types.</p>
+<h1 id="synomicbench-a-unified-benchmark-of-synthetic-data-generation-for-clinical-and-transcriptomic-cancer-data"><strong>SynOmicBench</strong>: A unified benchmark of synthetic data generation for clinical and transcriptomic cancer data<a class="headerlink" href="#synomicbench-a-unified-benchmark-of-synthetic-data-generation-for-clinical-and-transcriptomic-cancer-data" title="Permanent link">&para;</a></h1>
+<p>Welcome to the <strong>SynOmicBench</strong> documentation. This project provides a comprehensive framework for the generation, evaluation, and benchmarking of synthetic clinical and transcriptomic data in the context of precision oncology.</p>
+<h2 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link">&para;</a></h2>
+<p>Achieving an appropriate trade-off between biological utility and patient privacy remains a key challenge for secure data sharing when applying transcriptomic clinical datasets to artificial intelligence in precision oncology. Here, we introduce the first disease-agnostic benchmarking study tailored to high-dimensional clinical transcriptomic cancer data, comparing synthetic data generation methods across three cancer types. The proposed pipeline combines standardized preprocessing with multidimensional evaluation, prioritizing downstream biological validation alongside statistical fidelity and attack-based privacy assessment. Results indicate that no single method dominated all dimensions, with Gaussian Copula achieving the most balanced performance, and demonstrate that metric-based similarity alone is insufficient to ensure preservation of higher-order molecular dependencies. Synthetic data consistently reproduced signal directionality but with attenuated effect sizes, supporting their use for hypothesis generation. Collectively, this framework provides a reproducible decision-support tool for method selection and promotes biologically informed, privacy-aware adoption of synthetic data in precision oncology.</p>
 <hr />
-<h2 id="framework-overview">🔬 Framework Overview<a class="headerlink" href="#framework-overview" title="Permanent link">&para;</a></h2>
-<p><img alt="Project Overview" src="assets/figures/overview-project.png" />
-<em>Figure 1: Overview of the SynOmicBench benchmarking protocol. (a) Data sensitivity and high-dimensionality of clinical-transcriptomic profiles. (b) Case studies across three cancer types (ccRCC, Melanoma, NSCLC). (c) Standardized generation pipeline. (d) Multidimensional evaluation framework covering Broad Utility, Narrow Utility, and Privacy Risk.</em></p>
+<h2 id="framework-overview">Framework Overview<a class="headerlink" href="#framework-overview" title="Permanent link">&para;</a></h2>
+<p><img alt="Framework Overview" src="assets/figures/Figure_1_Graphical_abstract.png" /></p>
+<p><em><strong>Figure 1</strong>: Overview of the SynOmicBench benchmarking protocol. (a) Data sensitivity and high-dimensionality of clinical-transcriptomic profiles. (b) Case studies across three cancer types (ccRCC, Melanoma, NSCLC). (c) Standardized generation pipeline. (d) Multidimensional evaluation framework covering Broad Utility, Narrow Utility, and Privacy Risk.</em></p>
 <p>The SynOmicBench pipeline combines standardized preprocessing with a multidimensional evaluation suite, prioritizing downstream biological validation alongside statistical fidelity and attack-based privacy assessment.</p>
-<div class="admonition abstract">
-<p class="admonition-title">Key Findings</p>
-<p>Our results indicate that <strong>no single method dominated all dimensions</strong>. However, <strong>Gaussian Copula</strong> achieved the most balanced performance across fidelity, utility, and privacy metrics. While synthetic data consistently reproduced signal directionality, it often exhibited attenuated effect sizes, supporting its primary use for hypothesis generation and model pre-training.</p>
-</div>
 <hr />
-<h2 id="benchmarked-datasets">📊 Benchmarked Datasets<a class="headerlink" href="#benchmarked-datasets" title="Permanent link">&para;</a></h2>
-<p>SynOmicBench utilizes three diverse cancer cohorts treated with immune checkpoint blockade (ICB), reflecting realistic heterogeneity in sample size and transcriptomic dimensionality.</p>
+<h2 id="benchmarked-datasets">Benchmarked Datasets<a class="headerlink" href="#benchmarked-datasets" title="Permanent link">&para;</a></h2>
+<p>SynOmicBench utilizes three diverse cancer cohorts treated with immune checkpoint blockade (ICB), reflecting realistic heterogeneity in sample size and transcriptomic dimensionality (Figure 1b).</p>
+<p><em><strong>Table 1</strong>: Overview of benchmarked cancer datasets.</em></p>
 <table>
 <thead>
 <tr>
-<th style="text-align: left;">Dataset</th>
-<th style="text-align: center;">Patients</th>
-<th style="text-align: center;">Clinical Features</th>
-<th style="text-align: center;">Omics Features</th>
-<th style="text-align: center;">Expression Level</th>
-<th style="text-align: left;">Study Source</th>
+<th>Dataset characteristic</th>
+<th>Sub-category</th>
+<th>ccRCC</th>
+<th>Melanoma</th>
+<th>NSCLC</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td style="text-align: left;"><strong>ccRCC</strong></td>
-<td style="text-align: center;">311</td>
-<td style="text-align: center;">52</td>
-<td style="text-align: center;">40,934</td>
-<td style="text-align: center;">TPM</td>
-<td style="text-align: left;">Braun et al. (2020)</td>
+<td><strong>Number of patients</strong></td>
+<td></td>
+<td>311</td>
+<td>121</td>
+<td>152</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>Melanoma</strong></td>
-<td style="text-align: center;">121</td>
-<td style="text-align: center;">47</td>
-<td style="text-align: center;">18,760</td>
-<td style="text-align: center;">TPM</td>
-<td style="text-align: left;">Liu et al. (2019)</td>
+<td><strong>Number of clinical features</strong></td>
+<td></td>
+<td>52</td>
+<td>47</td>
+<td>14</td>
 </tr>
 <tr>
-<td style="text-align: left;"><strong>NSCLC</strong></td>
-<td style="text-align: center;">152</td>
-<td style="text-align: center;">14</td>
-<td style="text-align: center;">21,969</td>
-<td style="text-align: center;">TPM</td>
-<td style="text-align: left;">Ravi et al. (2023)</td>
+<td><strong>Number of transcriptomics features</strong></td>
+<td></td>
+<td>40,934</td>
+<td>18,760</td>
+<td>21,969</td>
+</tr>
+<tr>
+<td><strong>Gene expression level</strong></td>
+<td></td>
+<td>Transcripts Per Kilobase Million (TPM)</td>
+<td>TPM</td>
+<td>TPM</td>
+</tr>
+<tr>
+<td><strong>Age (year), median (range)</strong></td>
+<td></td>
+<td>63 (30-88)</td>
+<td>—</td>
+<td>64 (40-89)</td>
+</tr>
+<tr>
+<td><strong>Sex</strong></td>
+<td>Male</td>
+<td>229</td>
+<td>71</td>
+<td>87</td>
+</tr>
+<tr>
+<td></td>
+<td>Female</td>
+<td>82</td>
+<td>50</td>
+<td>65</td>
+</tr>
+<tr>
+<td><strong>Clinical outcomes</strong></td>
+<td>Partial Response/Complete Response (PR/CR)</td>
+<td>44</td>
+<td>47</td>
+<td>60</td>
+</tr>
+<tr>
+<td></td>
+<td>Progressive Disease (PD)</td>
+<td>106</td>
+<td>56</td>
+<td>50</td>
+</tr>
+<tr>
+<td></td>
+<td>Stable Disease (SD)</td>
+<td>131</td>
+<td>16</td>
+<td>42</td>
+</tr>
+<tr>
+<td></td>
+<td>Others</td>
+<td>30</td>
+<td>2</td>
+<td>0</td>
+</tr>
+<tr>
+<td><strong>Study source</strong></td>
+<td></td>
+<td><a href="https://www.nature.com/articles/s41591-020-0839-y">Braun et al. (2020)</a></td>
+<td><a href="https://www.nature.com/articles/s41591-019-0654-5">Liu et al. (2019)</a></td>
+<td><a href="https://www.nature.com/articles/s41591-020-0839-y">Ravi et al. (2023)</a></td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="sdg-methods-evaluated">🤖 SDG Methods Evaluated<a class="headerlink" href="#sdg-methods-evaluated" title="Permanent link">&para;</a></h2>
-<p>We benchmarked six configurations representing three major categories of synthetic data generation:</p>
-<ol>
-<li><strong>Gaussian Copula</strong>: A statistical approach that models multivariate dependencies using copula functions.</li>
-<li><strong>CTGAN</strong>: Conditional Tabular Generative Adversarial Networks, designed specifically for tabular data.</li>
-<li><strong>TVAE</strong>: Tabular Variational Autoencoders, an adaptation of VAEs for mixed-type tabular datasets.</li>
-<li><strong>Synthpop</strong>: A regression-based synthesis tool using sequential conditional distributions.</li>
-<li><strong>Avatars (K5 &amp; K10)</strong>: A k-anonymity based approach that generates synthetic "avatars" from local patient neighborhoods.</li>
-</ol>
-<hr />
-<h2 id="evaluation-pillars">📐 Evaluation Pillars<a class="headerlink" href="#evaluation-pillars" title="Permanent link">&para;</a></h2>
-<p>SynOmicBench evaluates synthetic data through three primary lenses to ensure a comprehensive understanding of the utility-privacy trade-off:</p>
-<h3 id="1-broad-utility-statistical-fidelity">1. Broad Utility (Statistical Fidelity)<a class="headerlink" href="#1-broad-utility-statistical-fidelity" title="Permanent link">&para;</a></h3>
-<p>Validates the preservation of global statistical properties by comparing:
-*   <strong>Univariate Similarity</strong>: Marginal distributions of individual attributes.
-*   <strong>Bivariate Similarity</strong>: Inter-variable relationships and correlation structures.</p>
+<h2 id="synthetic-data-generation-sdg-pipeline">Synthetic Data Generation (SDG) Pipeline<a class="headerlink" href="#synthetic-data-generation-sdg-pipeline" title="Permanent link">&para;</a></h2>
+<p>As illustrated in Figure 1c, clinical and transcriptomic data were harmonized and integrated through a standardized data processing pipeline. This process ensured consistency and compatibility across SDG methods. The processed dataset was subsequently used to train SDG models (Gaussian Copula, CTGAN, TVAE, Synthpop and Avatars (K5/K10)), which generated patient-level synthetic multimodal datasets. </p>
+<h2 id="evaluation-pillars">Evaluation Pillars<a class="headerlink" href="#evaluation-pillars" title="Permanent link">&para;</a></h2>
+<p>SynOmicBench evaluates synthetic data through three primary lenses (Figure 1d):</p>
+<h3 id="1statistical-fidelity">1.Statistical Fidelity<a class="headerlink" href="#1statistical-fidelity" title="Permanent link">&para;</a></h3>
+<p>Validates the preservation of global statistical properties by comparing:</p>
+<ul>
+<li><strong>Univariate Similarity</strong>: Marginal distributions of individual attributes.</li>
+<li><strong>Bivariate Similarity</strong>: Inter-variable relationships and correlation structures.</li>
+</ul>
 <h3 id="2-narrow-utility-biological-signal">2. Narrow Utility (Biological Signal)<a class="headerlink" href="#2-narrow-utility-biological-signal" title="Permanent link">&para;</a></h3>
-<p>Evaluates task-specific performance in clinically relevant downstream analyses:
-*   <strong>Differential Gene Expression (DGE)</strong>: Preservation of fold-changes and p-values.
-*   <strong>Gene Set Enrichment (GSEA/ssGSEA)</strong>: Recovery of biological pathway activities.
-*   <strong>Cell Deconvolution</strong>: Consistency in estimated immune cell fractions.
-*   <strong>Survival Analysis</strong>: Preservation of Kaplan-Meier curves and Hazard Ratios.
-*   <strong>Predictive Modeling</strong>: Transferability of classification models.</p>
+<p>Evaluates task-specific performance in clinically relevant downstream analyses:</p>
+<ul>
+<li><strong>Differential Gene Expression (DGE)</strong>: Preservation of fold-changes and p-values of gene expression.</li>
+<li><strong>Gene Set Enrichment (GSEA/ssGSEA)</strong>: Recovery of biological pathway activities.</li>
+<li><strong>Cell Type Deconvolution</strong>: Consistency in estimated cell fractions.</li>
+<li><strong>Survival Analysis</strong>: Preservation of Kaplan-Meier curves and C-index.</li>
+<li><strong>Predictive Modeling</strong>: Transferability of classification models.</li>
+</ul>
 <h3 id="3-privacy-risk">3. Privacy Risk<a class="headerlink" href="#3-privacy-risk" title="Permanent link">&para;</a></h3>
-<p>Quantifies disclosure vulnerability aligned with EDPB regulatory principles:
-*   <strong>Singling-Out</strong>: Risk of isolating a unique individual.
-*   <strong>Linkability</strong>: Risk of connecting records from multiple datasets.
-*   <strong>Inference</strong>: Risk of deducing sensitive attribute values.</p>
+<p>Quantifies disclosure vulnerability aligned with the European Data Protection Board (EDPB) regulatory principles:</p>
+<ul>
+<li><strong>Singling-Out</strong>: Risk of isolating a unique individual.</li>
+<li><strong>Linkability</strong>: Risk of connecting records from multiple datasets.</li>
+<li><strong>Inference</strong>: Risk of deducing sensitive attribute values.</li>
+</ul>
 <hr />
 <h2 id="explore-the-documentation">🚀 Explore the Documentation<a class="headerlink" href="#explore-the-documentation" title="Permanent link">&para;</a></h2>
 <div class="grid cards">
 <ul>
 <li>
-<p>:material-rocket-launch:{ .lg .middle } <strong><a href="getting-started/">Getting Started</a></strong></p>
-<p>Learn how to install the framework and run your first benchmark.</p>
+<p><strong><a href="getting-started/">Getting Started</a></strong></p>
+<p>Learn how to install and run your first benchmark.</p>
 </li>
 <li>
-<p>:material-layers-outline:{ .lg .middle } <strong><a href="framework/index.md">Framework Documentation</a></strong></p>
-<p>Detailed explanation of the preprocessing and SDG algorithms.</p>
+<p><strong><a href="preprocessing/">Preprocessing Data</a></strong></p>
+<p>Data integration and cleaning pipeline.</p>
 </li>
 <li>
-<p>:material-chart-bar:{ .lg .middle } <strong><a href="evaluation/">Evaluation Results</a></strong></p>
-<p>In-depth analysis of the benchmarking results across all metrics.</p>
+<p><strong><a href="synthetic-data/">Generate Synthetic Data</a></strong></p>
+<p>SDG methods and adaptations.</p>
+</li>
+<li>
+<p><strong><a href="evaluation/">Evaluation Results</a></strong></p>
+<p>Benchmarking results across all metrics.</p>
+</li>
+<li>
+<p><strong><a href="api/">API Reference</a></strong></p>
+<p>Auto-generated API documentation.</p>
 </li>
 </ul>
 </div>
 <hr />
-<h2 id="citation">📝 Citation<a class="headerlink" href="#citation" title="Permanent link">&para;</a></h2>
+<h2 id="citation">Citation<a class="headerlink" href="#citation" title="Permanent link">&para;</a></h2>
 <p>If you use SynOmicBench in your research, please cite our manuscript:</p>
 <blockquote>
 <p>Trinh, T. C., Woillard, J. B., Uguzzoni, G., &amp; Battail, C. (2024). <strong>A unified benchmark of synthetic data generation for clinical and transcriptomic cancer data.</strong></p>
 </blockquote>
-<div class="admonition info">
-<p class="admonition-title">Manuscript Status</p>
 <p>This framework is currently described in a manuscript under preparation/submission. Check back for updated citation details.</p>
-</div>
 <hr />
 
 
@@ -1585,10 +1419,14 @@
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.sections", "navigation.top", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": ".", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.top", "search.highlight", "search.suggest", "content.code.copy"], "search": "assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

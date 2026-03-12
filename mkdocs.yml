@@ -5,22 +5,23 @@ site_url: https://trinhthechuong.github.io/SynOmicBench/
 repo_url: https://github.com/trinhthechuong/SynOmicBench
 repo_name: SynOmicBench
 
-# Theme
+# Theme configuration
 theme:
   name: material
+  logo: assets/logo.png
+  favicon: assets/logo.png
   palette:
-    scheme: default
-    primary: teal
-    accent: indigo
+    primary: custom
   features:
     - navigation.tabs
     - navigation.tabs.sticky
     - navigation.indexes
-    - navigation.sections
     - navigation.top
+    - search.highlight
+    - search.suggest
     - content.code.copy
 
-# Markdown Extensions
+# Markdown extensions
 markdown_extensions:
   - admonition
   - attr_list
@@ -38,32 +39,24 @@ markdown_extensions:
   - toc:
       permalink: true
 
-# Navigation Structure
-# Navigation Structure
+# Navigation Structure (EXACTLY 6 top-level tabs)
 nav:
   - Home: index.md
   - Getting Started: getting-started/index.md
-  - Framework:
-      - Overview: framework/index.md
-      - Processing: framework/processing.md
-      - Synthesizers:
-          - Overview: framework/synthesizers/index.md
-          - Base API: framework/synthesizers/base.md
+  - Preprocessing Data: preprocessing/index.md
+  - Generate Synthetic Data: synthetic-data/index.md
   - Evaluation:
       - evaluation/index.md
-      - Broad Utility: evaluation/broad-utility.md
-      - Narrow Utility:
-          - Overview: evaluation/narrow-utility/index.md
-          - DGE: evaluation/narrow-utility/dge.md
-          - GSEA: evaluation/narrow-utility/gsea.md
-          - ssGSEA: evaluation/narrow-utility/ssgsea.md
-          - Cell Deconvolution: evaluation/narrow-utility/cell-deconvolution.md
-          - Survival Analysis: evaluation/narrow-utility/survival-analysis.md
-          - Predictive Modeling: evaluation/narrow-utility/predictive-modeling.md
+      - Statistical Fidelity: evaluation/statistical-fidelity.md
+      - Biological Utility:
+          - DGE: evaluation/biological-utility/dge.md
+          - GSEA: evaluation/biological-utility/gsea.md
+          - ssGSEA: evaluation/biological-utility/ssgsea.md
+          - Cell Type Deconvolution: evaluation/biological-utility/cell-deconvolution.md
+          - Survival Analysis: evaluation/biological-utility/survival-analysis.md
+      - Biological Results: evaluation/biological-results.md
       - Privacy: evaluation/privacy.md
-      - Meta-ranking: evaluation/meta-ranking.md
-      - Computational Resources: evaluation/computational-resources.md
-  - Resources: resources/index.md
+  - API: api/index.md
 
 # Documentation Directory
 docs_dir: docs
@@ -71,3 +64,21 @@ docs_dir: docs
 # Plugins
 plugins:
   - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            docstring_style: google
+            show_source: true
+            show_root_heading: true
+            show_root_full_path: false
+            heading_level: 2
+
+# Custom CSS and JavaScript
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js

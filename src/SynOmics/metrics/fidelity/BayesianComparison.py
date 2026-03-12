@@ -93,7 +93,7 @@ class BaycompStyle:
     fontsize: int = 11
     nature_font: Dict[str, Sequence[str]] = field(default_factory=lambda: dict(_FONT))
     plot_colors: Dict[str, str] = field(default_factory=lambda: dict(STABILITY_PLOT_COLORS))
-    pbetter_cmap: LinearSegmentedColormap = PBETTER_FOCUS_CMAP
+    pbetter_cmap: LinearSegmentedColormap = field(default_factory=lambda: PBETTER_FOCUS_CMAP)
     cancer_colors: Dict[str, str] = field(default_factory=lambda: dict(CANCER_COLORS))
 
     def __post_init__(self) -> None:

@@ -1,47 +1,56 @@
 # SynOmicBench
 
-SynOmicBench is a comprehensive benchmarking framework for evaluating synthetic data generation in omics and clinical contexts. It provides tools for data preprocessing, multi-omic integration, synthetic data generation using various state-of-the-art models, and a suite of utility metrics to assess the fidelity and utility of generated datasets.
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg)](https://trinhthechuong.github.io/SynOmicBench/)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-red.svg)](https://www.python.org/downloads/release/python-3110/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## Core Modules
+**SynOmicBench** is a unified benchmarking framework for synthetic data generation (SDG) tailored to high-dimensional clinical and transcriptomic cancer data.
 
-### Pipeline & Processing
-- **DataIntegrationPipeline**: Manages the end-to-end workflow of cleaning, normalizing, and merging clinical and transcriptomics datasets.
-- **DataProcessor**: Provides low-level utilities for duplicate removal, missing value handling (KNN and MICE imputation), encoding (dummy and ordinal), and standardization.
-- **MetaData**: Automatically classifies feature types (numerical, categorical, ordinal) to guide downstream synthesis and evaluation.
-- **GeneQuery**: Maps Ensembl IDs to HUGO symbols and handles gene-level metadata.
+Achieving a trade-off between **biological utility** and **patient privacy** is critical for precision oncology. Meta-analysis of synthetic data often lacks rigorous biological validation. SynOmicBench fills this gap by providing a reproducible pipeline for generating, evaluating, and benchmarking synthetic multi-omic datasets.
 
-### Synthesizers
-The framework supports multiple synthesis engines through a unified `BaseSynthesizer` interface:
-- **CTGAN / TVAE**: Deep learning-based generative adversarial networks and variational autoencoders.
-- **GaussianCopula**: Statistical model for capturing multivariate dependencies.
-- **Synthpop**: Tree-based synthesis specifically designed for sensitive health data.
-- **MICE**: Multiple Imputation by Chained Equations adapted for synthesis.
+---
 
-### Metrics & Evaluation
-SynOmicBench evaluates synthetic data across several dimensions:
-- **Fidelity**: Distributional similarity, pairwise correlations, and visualization (PCA, UMAP).
-- **Narrow Utility**: Performance on specific downstream tasks like Differential Gene Expression (DGE) analysis, Survival Analysis, and Gene Set Enrichment Analysis (GSEA).
-- **Privacy**: Assessment of membership inference risks and attribute disclosure.
+## 🚀 Key Features
 
-## Installation
+- **Standardized Preprocessing**: Automated pipeline for data filtering, harmonization, and integration.
+- **State-of-the-Art SDG Methods**: Integrated support for CTGAN, TVAE, Gaussian Copula, Synthpop, and Avatars.
+- **Multidimensional Evaluation**:
+    - **Broad Utility**: Statistical fidelity and structural similarity (KS tests, PCA/UMAP).
+    - **Narrow Utility**: Biological signal preservation (DGE, GSEA, Cell Deconvolution, Survival).
+    - **Privacy Risk**: Rigorous assessment based on EDPB principles (Singling-out, Linkability, Inference).
+- **Bayesian Comparison**: Rigorous meta-ranking of methods across multiple cancer cohorts and replicates.
+
+---
+
+## 📖 Quick Links
+
+- [**Full Documentation**](https://trinhthechuong.github.io/SynOmicBench/)
+- [**Getting Started**](https://trinhthechuong.github.io/SynOmicBench/getting-started/)
+- [**SDG Methods**](https://trinhthechuong.github.io/SynOmicBench/synthetic-data/)
+- [**Evaluation Framework**](https://trinhthechuong.github.io/SynOmicBench/evaluation/)
+
+---
+
+## 🛠️ Installation
 
 ```bash
+git clone https://github.com/trinhthechuong/SynOmicBench.git
+cd SynOmicBench
 pip install -e .
 ```
 
-## Quick Start
+For detailed usage examples, see the [Getting Started](https://trinhthechuong.github.io/SynOmicBench/getting-started/) guide.
 
-```python
-from SynOmics.pipeline.DataIntegration import DataIntegrationPipeline
+---
 
-# Initialize pipeline
-pipeline = DataIntegrationPipeline(output_dir="./output")
+## ⚖️ Citation
 
-# Run integration and preprocessing
-results = pipeline.run_pipeline(
-    clinical_data=clinical_df,
-    transcriptomics_data=transcriptomics_df,
-    clinical_id_column="PatientID",
-    transcriptomics_id_column="SampleID"
-)
-```
+If you use SynOmicBench in your research, please cite:
+
+> Trinh, T. C., Woillard, J. B., Uguzzoni, G., & Battail, C. (2024). **A unified benchmark of synthetic data generation for clinical and transcriptomic cancer data.** (Manuscript in preparation)
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.

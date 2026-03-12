@@ -1,4 +1,4 @@
-from linkability_evaluator import LinkabilityEvaluator
+# from linkability_evaluator import LinkabilityEvaluator
 from link_genes_clinical import eval_genes_clinical
 import pandas as pd
 import numpy as np

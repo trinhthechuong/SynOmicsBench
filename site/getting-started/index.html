@@ -18,13 +18,13 @@
         <link rel="prev" href="..">
       
       
-        <link rel="next" href="../framework/processing/">
+        <link rel="next" href="../preprocessing/">
       
       
         
       
       
-      <link rel="icon" href="../assets/images/favicon.png">
+      <link rel="icon" href="../assets/logo.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.3">
     
     
@@ -55,6 +55,10 @@
       
     
     
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
     <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
@@ -69,7 +73,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="teal" data-md-color-accent="indigo">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="indigo">
   
     
     <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
@@ -78,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#getting-started-with-synomicbench" class="md-skip">
+        <a href="#getting-started" class="md-skip">
           Skip to content
         </a>
       
@@ -96,8 +100,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="SynOmicBench Documentation" class="md-header__button md-logo" aria-label="SynOmicBench Documentation" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -150,6 +153,8 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
         </button>
       </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
       
     </form>
     <div class="md-search__output">
@@ -232,20 +237,36 @@
   
   
   
-    
-    
-      <li class="md-tabs__item">
-        <a href="../framework/index.md" class="md-tabs__link">
-          
+    <li class="md-tabs__item">
+      <a href="../preprocessing/" class="md-tabs__link">
+        
   
   
     
   
-  Framework
+  Preprocessing Data
 
-        </a>
-      </li>
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../synthetic-data/" class="md-tabs__link">
+        
+  
+  
     
+  
+  Generate Synthetic Data
+
+      </a>
+    </li>
   
 
       
@@ -277,13 +298,13 @@
   
   
     <li class="md-tabs__item">
-      <a href="../resources/index.md" class="md-tabs__link">
+      <a href="../api/" class="md-tabs__link">
         
   
   
     
   
-  Resources
+  API
 
       </a>
     </li>
@@ -320,8 +341,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="SynOmicBench Documentation" class="md-nav__button md-logo" aria-label="SynOmicBench Documentation" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/logo.png" alt="logo">
 
     </a>
     SynOmicBench Documentation
@@ -458,10 +478,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dependencies" class="md-nav__link">
+  <a href="#from-singularity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dependencies
+        From Singularity
       
     </span>
   </a>
@@ -481,78 +501,6 @@
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-by-step-walkthrough" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step-by-Step Walkthrough
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Step-by-Step Walkthrough">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-load-and-clean-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Load and Clean Data
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-prepare-metadata" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Prepare Metadata
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-initialize-the-synthesizer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Initialize the Synthesizer
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-generate-synthetic-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Generate Synthetic Data
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-evaluate-fidelity" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Evaluate Fidelity
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -581,75 +529,15 @@
   
   
   
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Framework
-  
-
-    
-  </span>
-  
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Framework
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
     <li class="md-nav__item">
-      <a href="../framework/index.md" class="md-nav__link">
+      <a href="../preprocessing/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Overview
+    Preprocessing Data
   
 
     
@@ -661,23 +549,22 @@
     </li>
   
 
-              
-            
-              
-                
+    
+      
+      
   
   
   
   
     <li class="md-nav__item">
-      <a href="../framework/processing/" class="md-nav__link">
+      <a href="../synthetic-data/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Processing
+    Generate Synthetic Data
   
 
     
@@ -689,10 +576,9 @@
     </li>
   
 
-              
-            
-              
-                
+    
+      
+      
   
   
   
@@ -706,12 +592,16 @@
       
         
       
-    
-    
-    
-      
+        
       
         
+      
+        
+      
+    
+    
+    
+      
       
     
     
@@ -719,127 +609,7 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
-        
-          
-          <div class="md-nav__link md-nav__container">
-            <a href="../framework/synthesizers/" class="md-nav__link ">
-              
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Synthesizers
-  
-
-    
-  </span>
-  
-  
-
-            </a>
-            
-              
-              <label class="md-nav__link " for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
-                <span class="md-nav__icon md-icon"></span>
-              </label>
-            
-          </div>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
-            <span class="md-nav__icon md-icon"></span>
-            
-  
-    Synthesizers
-  
-
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../framework/synthesizers/base/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Base API
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-          
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
           <div class="md-nav__link md-nav__container">
@@ -861,14 +631,14 @@
             </a>
             
               
-              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
                 <span class="md-nav__icon md-icon"></span>
               </label>
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
   
@@ -887,14 +657,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluation/broad-utility/" class="md-nav__link">
+      <a href="../evaluation/statistical-fidelity/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Broad Utility
+    Statistical Fidelity
   
 
     
@@ -927,16 +697,10 @@
       
         
       
-        
-      
-        
-      
     
     
     
       
-      
-        
       
     
     
@@ -944,17 +708,17 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
         
           
-          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
             
   
   
   <span class="md-ellipsis">
     
   
-    Narrow Utility
+    Biological Utility
   
 
     
@@ -965,12 +729,12 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
             <span class="md-nav__icon md-icon"></span>
             
   
-    Narrow Utility
+    Biological Utility
   
 
           </label>
@@ -983,35 +747,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluation/narrow-utility/index.md" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Overview
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../evaluation/narrow-utility/dge/" class="md-nav__link">
+      <a href="../evaluation/biological-utility/dge/" class="md-nav__link">
         
   
   
@@ -1039,7 +775,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluation/narrow-utility/gsea/" class="md-nav__link">
+      <a href="../evaluation/biological-utility/gsea/" class="md-nav__link">
         
   
   
@@ -1067,7 +803,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluation/narrow-utility/ssgsea/" class="md-nav__link">
+      <a href="../evaluation/biological-utility/ssgsea/" class="md-nav__link">
         
   
   
@@ -1095,14 +831,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluation/narrow-utility/cell-deconvolution/" class="md-nav__link">
+      <a href="../evaluation/biological-utility/cell-deconvolution/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Cell Deconvolution
+    Cell Type Deconvolution
   
 
     
@@ -1123,7 +859,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluation/narrow-utility/survival-analysis/" class="md-nav__link">
+      <a href="../evaluation/biological-utility/survival-analysis/" class="md-nav__link">
         
   
   
@@ -1144,6 +880,14 @@
 
               
             
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
               
                 
   
@@ -1151,14 +895,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../evaluation/narrow-utility/predictive-modeling/" class="md-nav__link">
+      <a href="../evaluation/biological-results/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Predictive Modeling
+    Biological Results
   
 
     
@@ -1167,14 +911,6 @@
   
 
       </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
     </li>
   
 
@@ -1208,62 +944,6 @@
 
               
             
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../evaluation/meta-ranking/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Meta-ranking
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../evaluation/computational-resources/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Computational Resources
-  
-
-    
-  </span>
-  
-  
-
-      </a>
-    </li>
-  
-
-              
-            
           </ul>
         </nav>
       
@@ -1278,14 +958,14 @@
   
   
     <li class="md-nav__item">
-      <a href="../resources/index.md" class="md-nav__link">
+      <a href="../api/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     
   
-    Resources
+    API
   
 
     
@@ -1348,10 +1028,10 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#dependencies" class="md-nav__link">
+  <a href="#from-singularity" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Dependencies
+        From Singularity
       
     </span>
   </a>
@@ -1371,78 +1051,6 @@
       
     </span>
   </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#step-by-step-walkthrough" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Step-by-Step Walkthrough
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Step-by-Step Walkthrough">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#1-load-and-clean-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        1. Load and Clean Data
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#2-prepare-metadata" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        2. Prepare Metadata
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#3-initialize-the-synthesizer" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        3. Initialize the Synthesizer
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#4-generate-synthetic-data" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        4. Generate Synthetic Data
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#5-evaluate-fidelity" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        5. Evaluate Fidelity
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1477,136 +1085,72 @@
   
 
 
-<h1 id="getting-started-with-synomicbench">Getting Started with SynOmicBench<a class="headerlink" href="#getting-started-with-synomicbench" title="Permanent link">&para;</a></h1>
-<p>This tutorial provides an end-to-end guide to using SynOmicBench for generating and evaluating synthetic multi-omics data. You will learn how to install the framework, prepare your data, and run a complete synthesis pipeline.</p>
+<h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
 <p>You can install SynOmicBench directly from source to ensure you have the latest features and research benchmarks.</p>
 <h3 id="from-source">From Source<a class="headerlink" href="#from-source" title="Permanent link">&para;</a></h3>
 <p>Clone the repository and install the dependencies:</p>
-<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/SynOmicBench/SynOmicBench.git
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/trinhthechuong/SynOmicBench.git
 <span class="nb">cd</span><span class="w"> </span>SynOmicBench
 pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </code></pre></div>
-<h3 id="dependencies">Dependencies<a class="headerlink" href="#dependencies" title="Permanent link">&para;</a></h3>
-<p>SynOmicBench requires Python 3.9+ and several scientific computing libraries including:
-- <code>pandas</code> and <code>numpy</code> for data manipulation
-- <code>scikit-learn</code> for preprocessing and encoding
-- <code>sdmetrics</code> for evaluation metrics
-- <code>miceforest</code> for MICE imputation</p>
-<h2 id="quick-example">Quick Example<a class="headerlink" href="#quick-example" title="Permanent link">&para;</a></h2>
-<p>Here's a minimal example showing how to synthesize data using the Gaussian Copula model.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.synthesizer.GaussianCopulasynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianCopulasynthesizer</span>
-
-<span class="c1"># 1. Load your data</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;your_omics_data.csv&quot;</span><span class="p">)</span>
-
-<span class="c1"># 2. Define column types (metadata)</span>
-<span class="c1"># Types: &quot;numerical&quot;, &quot;dummy_categorical&quot;, &quot;ordinal_categorical&quot;, &quot;missing_categorical&quot;</span>
-<span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="s2">&quot;numerical&quot;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="p">}</span>
-
-<span class="c1"># 3. Initialize and run the pipeline</span>
-<span class="n">synthesizer</span> <span class="o">=</span> <span class="n">GaussianCopulasynthesizer</span><span class="p">(</span><span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;./results&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
-<span class="n">synthetic_data</span> <span class="o">=</span> <span class="n">synthesizer</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
-    <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
-    <span class="n">n_samples</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span>
-    <span class="n">output_filename</span><span class="o">=</span><span class="s2">&quot;synthetic_output.csv&quot;</span>
-<span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generated synthetic data with shape: </span><span class="si">{</span><span class="n">synthetic_data</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-</code></pre></div>
+<p><strong>Python Version</strong>: 3.9 </p>
+<p>A <code>requirements.txt</code> file is provided in the repository root for reference.</p>
+<h3 id="from-singularity">From Singularity<a class="headerlink" href="#from-singularity" title="Permanent link">&para;</a></h3>
+<p>Singularity container instructions coming soon.</p>
 <hr />
-<h2 id="step-by-step-walkthrough">Step-by-Step Walkthrough<a class="headerlink" href="#step-by-step-walkthrough" title="Permanent link">&para;</a></h2>
-<p>Let's dive deeper into the full pipeline, from raw data to evaluation.</p>
-<h3 id="1-load-and-clean-data">1. Load and Clean Data<a class="headerlink" href="#1-load-and-clean-data" title="Permanent link">&para;</a></h3>
-<p>Omics datasets are often high-dimensional and contain many zeros or missing values. We'll use the <code>DataProcessor</code> utility to handle these.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataProcessor</span>
+<h2 id="quick-example">Quick Example<a class="headerlink" href="#quick-example" title="Permanent link">&para;</a></h2>
+<p>Here's a complete example showing how to generate synthetic data using GaussianCopula and evaluate fidelity:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.synthesizer.GaussianCopulasynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianCopulasynthesizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.fidelity.UnivariateSimilarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnivariateSimilarity</span> 
 
-<span class="c1"># Load a sample transcriptomics dataset (e.g., ccRCC)</span>
-<span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;ccRCC_data.csv&quot;</span><span class="p">)</span>
+<span class="c1"># Load your clinical-transcriptomic dataset</span>
+<span class="n">original_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;your_original_data.csv&quot;</span><span class="p">)</span>
 
-<span class="c1"># Remove genes with near-zero variance or no expression</span>
-<span class="n">df_cleaned</span> <span class="o">=</span> <span class="n">DataProcessor</span><span class="o">.</span><span class="n">remove_low_expression_genes</span><span class="p">(</span>
-    <span class="n">df</span><span class="p">,</span> 
-    <span class="n">variance_threshold</span><span class="o">=</span><span class="mf">0.0005</span>
+<span class="c1"># Identify ordinal features for specialized handling</span>
+<span class="n">ordinal_features</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Mstage&quot;</span><span class="p">,</span> <span class="s2">&quot;Tx_Start_ECOG&quot;</span><span class="p">,</span> <span class="s2">&quot;numPriorTherapies&quot;</span><span class="p">,</span> <span class="s2">&quot;biopsyContext&quot;</span><span class="p">]</span>
+
+<span class="c1"># Create metadata object to specify feature types and properties</span>
+<span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">original_data</span><span class="p">,</span>
+    <span class="n">ordinal_features</span><span class="o">=</span><span class="n">ordinal_features</span>
 <span class="p">)</span>
 
-<span class="c1"># Handle missing values using MICE imputation</span>
-<span class="n">df_imputed</span> <span class="o">=</span> <span class="n">DataProcessor</span><span class="o">.</span><span class="n">mice_imputation</span><span class="p">(</span>
-    <span class="n">df_cleaned</span><span class="p">,</span> 
-    <span class="n">iterations</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> 
-    <span class="n">add_indicators</span><span class="o">=</span><span class="kc">True</span>
-<span class="p">)</span>
-</code></pre></div>
-<h3 id="2-prepare-metadata">2. Prepare Metadata<a class="headerlink" href="#2-prepare-metadata" title="Permanent link">&para;</a></h3>
-<p>SynOmicBench uses a metadata dictionary to understand how to treat each column during synthesis and post-processing.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Identify feature types</span>
-<span class="c1"># In transcriptomics, most features are numerical</span>
-<span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="s2">&quot;numerical&quot;</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">df_imputed</span><span class="o">.</span><span class="n">columns</span><span class="p">}</span>
+<span class="c1"># Initialize and run the synthesizer</span>
+<span class="n">output_path</span> <span class="o">=</span> <span class="s2">&quot;./results&quot;</span>
+<span class="n">synth</span> <span class="o">=</span> <span class="n">GaussianCopulasynthesizer</span><span class="p">(</span><span class="n">output_path</span><span class="o">=</span><span class="n">output_path</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
 
-<span class="c1"># If you have clinical data, specify categorical columns</span>
-<span class="c1"># metadata[&quot;gender&quot;] = &quot;dummy_categorical&quot;</span>
-<span class="c1"># metadata[&quot;stage&quot;] = &quot;ordinal_categorical&quot;</span>
-</code></pre></div>
-<h3 id="3-initialize-the-synthesizer">3. Initialize the Synthesizer<a class="headerlink" href="#3-initialize-the-synthesizer" title="Permanent link">&para;</a></h3>
-<p>Initialize a synthesizer by providing an output directory where logs, models, and synthetic datasets will be saved.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.synthesizer.GaussianCopulasynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianCopulasynthesizer</span>
-
-<span class="n">output_dir</span> <span class="o">=</span> <span class="s2">&quot;./syn_results&quot;</span>
-<span class="n">synthesizer</span> <span class="o">=</span> <span class="n">GaussianCopulasynthesizer</span><span class="p">(</span>
-    <span class="n">output_path</span><span class="o">=</span><span class="n">output_dir</span><span class="p">,</span> 
-    <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span>
+<span class="n">synthetic_data</span> <span class="o">=</span> <span class="n">synth</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">original_data</span><span class="p">,</span> 
+    <span class="n">n_samples</span><span class="o">=</span><span class="n">original_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> 
+    <span class="n">output_filename</span><span class="o">=</span><span class="s2">&quot;synthetic_data.csv&quot;</span>
 <span class="p">)</span>
-</code></pre></div>
-<h3 id="4-generate-synthetic-data">4. Generate Synthetic Data<a class="headerlink" href="#4-generate-synthetic-data" title="Permanent link">&para;</a></h3>
-<p>The <code>generate()</code> method handles the entire workflow: preprocessing, model fitting, sampling, and post-processing (rounding and min-max clipping).</p>
-<div class="highlight"><pre><span></span><code><span class="n">synthetic_df</span> <span class="o">=</span> <span class="n">synthesizer</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
-    <span class="n">data</span><span class="o">=</span><span class="n">df_imputed</span><span class="p">,</span>
-    <span class="n">n_samples</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>            <span class="c1"># Number of rows to generate</span>
-    <span class="n">enforce_rounding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>    <span class="c1"># Ensure output matches original precision</span>
-    <span class="n">enforce_min_max</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>     <span class="c1"># Clip values to original range</span>
-    <span class="n">output_filename</span><span class="o">=</span><span class="s2">&quot;ccRCC_synthetic.csv&quot;</span>
-<span class="p">)</span>
-</code></pre></div>
-<p><strong>Expected Console Output:</strong>
-<div class="highlight"><pre><span></span><code>========== Synthesizer Initialized ==========
-Class: GaussianCopulasynthesizer
-Output path: ./syn_results
-Log file: ./syn_results/GaussianCopulasynthesizer_12345.log
-============================================
-Pipeline started for GaussianCopulasynthesizer (n_samples=300, ...)
-Preprocessed data shape: (311, 2000)
-Model fit complete.
-Generated 300 synthetic samples with Gaussian Copula
-Saved synthetic data to ./syn_results/ccRCC_synthetic.csv
-Pipeline complete.
-</code></pre></div></p>
-<h3 id="5-evaluate-fidelity">5. Evaluate Fidelity<a class="headerlink" href="#5-evaluate-fidelity" title="Permanent link">&para;</a></h3>
-<p>After generation, it's crucial to verify that the synthetic data preserves the statistical properties of the original data. We use <code>UnivariateSimilarity</code> to compare column distributions.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.fidelity.UnivariateSimilarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnivariateSimilarity</span>
 
-<span class="c1"># Initialize evaluator</span>
+<span class="c1"># Evaluate fidelity using Univariate Similarity</span>
 <span class="n">evaluator</span> <span class="o">=</span> <span class="n">UnivariateSimilarity</span><span class="p">(</span><span class="n">output_dir</span><span class="o">=</span><span class="s2">&quot;./evaluation_results&quot;</span><span class="p">)</span>
-
-<span class="c1"># Compute univariate similarity score (0 to 1)</span>
 <span class="n">score</span> <span class="o">=</span> <span class="n">evaluator</span><span class="o">.</span><span class="n">get_univariate_score</span><span class="p">(</span>
-    <span class="n">original_data</span><span class="o">=</span><span class="n">df_imputed</span><span class="p">,</span>
-    <span class="n">synthetic_data</span><span class="o">=</span><span class="n">synthetic_df</span><span class="p">,</span>
-    <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span>
+    <span class="n">original_data</span><span class="o">=</span><span class="n">original_data</span><span class="p">,</span> 
+    <span class="n">synthetic_data</span><span class="o">=</span><span class="n">synthetic_data</span><span class="p">,</span> 
+    <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">,</span> 
     <span class="n">save</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Overall Fidelity Score: </span><span class="si">{</span><span class="n">score</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 </code></pre></div>
-<p>This will generate:
-1. <code>Detail_score_UnivariateSimilarity.csv</code>: Individual scores for every gene.
-2. <code>UnivariateSimilarity.png</code>: A histogram visualizing the score distribution.</p>
+<hr />
 <h2 id="next-steps">Next Steps<a class="headerlink" href="#next-steps" title="Permanent link">&para;</a></h2>
-<p>Now that you've completed your first synthesis, explore more advanced topics:</p>
+<p>Now that you've completed your first synthesis, explore more advanced topics:
+- <a href="../preprocessing/">Preprocessing Data</a>:How to harmonize and integrate multimodal data.</p>
 <ul>
-<li><a href="../framework/index.md">Framework Overview</a>: Understand the <code>BaseSynthesizer</code> architecture.</li>
-<li><a href="../evaluation/">Evaluation Metrics</a>: Learn about Multivariate similarity and Privacy metrics.</li>
-<li><a href="../processing/index.md">Preprocessing Details</a>: Advanced imputation and feature engineering.</li>
+<li>
+<p><a href="../synthetic-data/">Generate Synthetic Data</a>: Detailed descriptions of each synthesis method and their adaptations.</p>
+</li>
+<li>
+<p><a href="../evaluation/">Evaluation Metrics</a>: Deep dive into Statistical fidelity, Biology utility and Privacy metrics.</p>
+</li>
 </ul>
 
 
@@ -1663,10 +1207,14 @@ Pipeline complete.
     
       
       
-      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.sections", "navigation.top", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.top", "search.highlight", "search.suggest", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
       
     
   </body>

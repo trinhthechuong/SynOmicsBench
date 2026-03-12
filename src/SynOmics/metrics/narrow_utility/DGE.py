@@ -96,12 +96,19 @@ class GCSAnalyzer:
         self.q_thr = q_thr
         self.w = w
 
-    def gsea_rank_score(self, df: pd.DataFrame) -> pd.DataFrame:
+    @staticmethod
+    def _load_df(data: Union[str, "os.PathLike[str]", pd.DataFrame]) -> pd.DataFrame:
+        """Helper to load a CSV if a path is provided, otherwise return the DataFrame."""
+        if isinstance(data, pd.DataFrame):
+            return data
+        return pd.read_csv(data)
+
+    def compute_rank_score(self, df: pd.DataFrame) -> pd.DataFrame:
         """
         Compute rank score = sign(Log2FC) * -log10(Q-value) with tiny jitter.
 
         Args:
-            df (pd.DataFrame): GSEA-like results table.
+            df (pd.DataFrame): DGE results table.
 
         Returns:
             pd.DataFrame: Ranked table indexed by term_col with columns rank_score and qval.
@@ -184,25 +191,26 @@ class GCSAnalyzer:
 
         return gcs, n_sign, n_non_sign, m
 
-    def process_single_gsea_result(
+    def process_single_dge_result(
         self,
-        gsea_ori: pd.DataFrame,
-        syn_path: Union[str, "os.PathLike[str]"],
+        dge_ori: Union[str, "os.PathLike[str]", pd.DataFrame],
+        dge_syn: Union[str, "os.PathLike[str]", pd.DataFrame],
     ) -> Tuple[np.ndarray, np.ndarray, float, int, int, int, int, float, int, int, int]:
         """
-        Process one synthetic dataset CSV path against provided original DataFrame.
+        Process original and synthetic DGE results (paths or DataFrames).
 
         Args:
-            gsea_ori (pd.DataFrame): Original GSEA-like table.
-            syn_path (str | os.PathLike[str]): Path to synthetic GSEA-like CSV file.
+            dge_ori (str | PathLike | pd.DataFrame): Original DGE table/path.
+            dge_syn (str | PathLike | pd.DataFrame): Synthetic DGE table/path.
 
         Returns:
             tuple: (x, y, GCS, n_zone1, n_zone2, n_zone3, n_zone4, M, ori_rank_size, aligned_size, seed_used).
         """
-        gsea_syn = pd.read_csv(syn_path)
+        df_ori = self._load_df(dge_ori)
+        df_syn = self._load_df(dge_syn)
 
-        rnk_ori = self.gsea_rank_score(gsea_ori)
-        rnk_syn = self.gsea_rank_score(gsea_syn)
+        rnk_ori = self.compute_rank_score(df_ori)
+        rnk_syn = self.compute_rank_score(df_syn)
 
         ori_rank_size = int(len(rnk_ori))
 
@@ -237,7 +245,7 @@ class GCSAnalyzer:
             int(self.seed),
         )
 
-    def plot_single_gsea_panel(
+    def plot_single_gcs_panel(
         self,
         ax: plt.Axes,
         x: np.ndarray,
@@ -251,7 +259,7 @@ class GCSAnalyzer:
         m: float,
     ) -> None:
         """
-        Plot single GSEA comparison panel (identical logic and styling to original code).
+        Plot single GCS comparison panel (identical logic and styling to original code).
 
         Args:
             ax (matplotlib.axes.Axes): Target axis.
@@ -323,31 +331,31 @@ class GCSAnalyzer:
 
         ax.grid(True)
 
-    def plot_gsea_datasets(
+    def plot_gcs_datasets(
         self,
-        ori_path: Union[str, "os.PathLike[str]"],
-        dataset_dict: Mapping[str, Union[str, "os.PathLike[str]"]],
+        ori_data: Union[str, "os.PathLike[str]", pd.DataFrame],
+        dataset_dict: Mapping[str, Union[str, "os.PathLike[str]", pd.DataFrame]],
         figsize: Tuple[int, int] = (18, 10),
     ) -> Tuple[plt.Figure, Dict[str, float]]:
         """
-        Plot all datasets in a grid (same structure as original function).
+        Plot all datasets in a grid.
 
         Args:
-            ori_path (str | os.PathLike[str]): Path to original CSV.
-            dataset_dict (Mapping[str, str | os.PathLike[str]]): Tool name -> synthetic CSV path.
+            ori_data (str | PathLike | pd.DataFrame): Path to original CSV or DataFrame.
+            dataset_dict (Mapping[str, str | PathLike | pd.DataFrame]): Tool name -> path or DataFrame.
             figsize (tuple[int, int]): Figure size.
 
         Returns:
             tuple[matplotlib.figure.Figure, dict[str, float]]: (figure, gcs_dict).
         """
-        gsea_ori = pd.read_csv(ori_path)
+        df_ori = self._load_df(ori_data)
 
         fig, axes = plt.subplots(2, 3, figsize=figsize)
         axes = axes.flatten()
 
         gcs_dict: Dict[str, float] = {}
 
-        for idx, (tool, path) in enumerate(dataset_dict.items()):
+        for idx, (tool, data) in enumerate(dataset_dict.items()):
             try:
                 (
                     x,
@@ -361,9 +369,9 @@ class GCSAnalyzer:
                     _ori_rank_size,
                     _aligned_size,
                     _seed_used,
-                ) = self.process_single_gsea_result(gsea_ori, path)
+                ) = self.process_single_dge_result(df_ori, data)
 
-                self.plot_single_gsea_panel(
+                self.plot_single_gcs_panel(
                     axes[idx],
                     x,
                     y,
