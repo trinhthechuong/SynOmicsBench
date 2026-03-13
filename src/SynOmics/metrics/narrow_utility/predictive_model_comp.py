@@ -1,3 +1,15 @@
+"""
+Predictive model comparison module for evaluating synthetic data utility.
+
+This module provides utilities for comparing the performance of predictive models
+trained on original vs synthetic data, assessing whether synthetic data can be used
+for downstream machine learning tasks.
+
+Functions:
+    compare_cross_validation: Compare CV scores between real and synthetic data
+    SyntheticDataClassificationComparator: Main comparator class
+"""
+
 from __future__ import annotations
 
 from typing import Any, Dict, Optional, Sequence, Tuple

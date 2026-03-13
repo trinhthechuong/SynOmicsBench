@@ -12,7 +12,7 @@ Achieving an appropriate trade-off between biological utility and patient privac
 
 ![Framework Overview](assets/figures/Figure_1_Graphical_abstract.png)
 
-***Figure 1**: Overview of the SynOmicBench benchmarking protocol. (a) Data sensitivity and high-dimensionality of clinical-transcriptomic profiles. (b) Case studies across three cancer types (ccRCC, Melanoma, NSCLC). (c) Standardized generation pipeline. (d) Multidimensional evaluation framework covering Broad Utility, Narrow Utility, and Privacy Risk.*
+***Figure 1**: Overview of the SynOmicBench benchmarking protocol. (a) Data sensitivity and high-dimensionality of clinical-transcriptomic profiles. (b) Case studies across three cancer types (ccRCC, Melanoma, NSCLC). (c) Standardized generation pipeline. (d) Multidimensional evaluation framework covering Statistical Fidelity, Biological Utility, and Privacy Risk.*
 
 The SynOmicBench pipeline combines standardized preprocessing with a multidimensional evaluation suite, prioritizing downstream biological validation alongside statistical fidelity and attack-based privacy assessment.
 
@@ -57,7 +57,7 @@ Validates the preservation of global statistical properties by comparing:
 *   **Univariate Similarity**: Marginal distributions of individual attributes.
 *   **Bivariate Similarity**: Inter-variable relationships and correlation structures.
 
-### 2. Narrow Utility (Biological Signal)
+### 2. Biological Utility (Biological Signal)
 
 Evaluates task-specific performance in clinically relevant downstream analyses:
 

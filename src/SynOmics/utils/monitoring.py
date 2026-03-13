@@ -1,3 +1,13 @@
+"""
+Monitoring and logging utilities for SynOmics.
+
+This module provides logging configuration and system monitoring utilities
+for tracking experiment progress and resource usage.
+
+Functions:
+    set_logger: Configure and return a logger with file and console handlers
+"""
+
 import logging
 import os
 import sys

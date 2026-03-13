@@ -48,7 +48,7 @@ The `metrics.fidelity` module provides assessment tools for evaluating the distr
 
 ::: SynOmics.metrics.fidelity.visualization
 
-## Metrics: Narrow Utility
+## Metrics: Biological Utility
 
 The `metrics.narrow_utility` module evaluates the capability of synthetic data in downstream bioinformatics tasks.
 
