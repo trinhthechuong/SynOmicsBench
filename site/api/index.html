@@ -2110,10 +2110,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#metrics-narrow-utility" class="md-nav__link">
+  <a href="#metrics-biological-utility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Metrics: Narrow Utility
+        Metrics: Biological Utility
       
     </span>
   </a>
@@ -4147,10 +4147,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#metrics-narrow-utility" class="md-nav__link">
+  <a href="#metrics-biological-utility" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Metrics: Narrow Utility
+        Metrics: Biological Utility
       
     </span>
   </a>
@@ -34910,7 +34910,7 @@ If None, uses the union of methods in insertion order.</p>
 
     </div>
 
-</div><h2 id="metrics-narrow-utility">Metrics: Narrow Utility<a class="headerlink" href="#metrics-narrow-utility" title="Permanent link">&para;</a></h2>
+</div><h2 id="metrics-biological-utility">Metrics: Biological Utility<a class="headerlink" href="#metrics-biological-utility" title="Permanent link">&para;</a></h2>
 <p>The <code>metrics.narrow_utility</code> module evaluates the capability of synthetic data in downstream bioinformatics tasks.</p>
 
 
@@ -42378,6 +42378,40 @@ If None, uses self.original_name.</p>
 
     <div class="doc doc-contents first">
 
+        <p>Predictive model comparison module for evaluating synthetic data utility.</p>
+<p>This module provides utilities for comparing the performance of predictive models
+trained on original vs synthetic data, assessing whether synthetic data can be used
+for downstream machine learning tasks.</p>
+
+
+<p><span class="doc-section-title">Functions:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><span title="SynOmics.metrics.narrow_utility.predictive_model_comp.compare_cross_validation">compare_cross_validation</span></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Compare CV scores between real and synthetic data</p>
+                </div>
+              </td>
+            </tr>
+            <tr class="doc-section-item">
+              <td><code><span title="SynOmics.metrics.narrow_utility.predictive_model_comp.SyntheticDataClassificationComparator">SyntheticDataClassificationComparator</span></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Main comparator class</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+
 
 
 
@@ -46060,6 +46094,31 @@ all remaining columns not in <code>clinical_cols</code>.</p>
 
     <div class="doc doc-contents first">
 
+        <p>Monitoring and logging utilities for SynOmics.</p>
+<p>This module provides logging configuration and system monitoring utilities
+for tracking experiment progress and resource usage.</p>
+
+
+<p><span class="doc-section-title">Functions:</span></p>
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+            <tr class="doc-section-item">
+              <td><code><a class="autorefs autorefs-internal" title="set_logger(logger_name, output_path, log_file_name='activity.log') (SynOmics.utils.monitoring.set_logger)" href="#SynOmics.utils.monitoring.set_logger">set_logger</a></code></td>
+              <td>
+                <div class="doc-md-description">
+                  <p>Configure and return a logger with file and console handlers</p>
+                </div>
+              </td>
+            </tr>
+      </tbody>
+    </table>
+
 
 
 
@@ -46172,17 +46231,7 @@ all remaining columns not in <code>clinical_cols</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/SynOmics/utils/monitoring.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 65</span>
-<span class="normal"> 66</span>
-<span class="normal"> 67</span>
-<span class="normal"> 68</span>
-<span class="normal"> 69</span>
-<span class="normal"> 70</span>
-<span class="normal"> 71</span>
-<span class="normal"> 72</span>
-<span class="normal"> 73</span>
-<span class="normal"> 74</span>
-<span class="normal"> 75</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 75</span>
 <span class="normal"> 76</span>
 <span class="normal"> 77</span>
 <span class="normal"> 78</span>
@@ -46244,7 +46293,17 @@ all remaining columns not in <code>clinical_cols</code>.</p>
 <span class="normal">134</span>
 <span class="normal">135</span>
 <span class="normal">136</span>
-<span class="normal">137</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">monitor_resources</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">monitor_resources</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to monitor CPU, RAM, and GPU (NVIDIA via nvidia-ml-py) resources during function execution.</span>
 
 <span class="sd">    Args:</span>
@@ -46424,17 +46483,7 @@ all remaining columns not in <code>clinical_cols</code>.</p>
 
             <details class="mkdocstrings-source">
               <summary>Source code in <code>src/SynOmics/utils/monitoring.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">13</span>
-<span class="normal">14</span>
-<span class="normal">15</span>
-<span class="normal">16</span>
-<span class="normal">17</span>
-<span class="normal">18</span>
-<span class="normal">19</span>
-<span class="normal">20</span>
-<span class="normal">21</span>
-<span class="normal">22</span>
-<span class="normal">23</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">23</span>
 <span class="normal">24</span>
 <span class="normal">25</span>
 <span class="normal">26</span>
@@ -46467,7 +46516,17 @@ all remaining columns not in <code>clinical_cols</code>.</p>
 <span class="normal">53</span>
 <span class="normal">54</span>
 <span class="normal">55</span>
-<span class="normal">56</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_logger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;activity.log&quot;</span><span class="p">):</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">set_logger</span><span class="p">(</span><span class="n">logger_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">output_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">log_file_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;activity.log&quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Configures a logger with both file and console handlers and returns it.</span>
 
