@@ -1,7 +1,6 @@
 # SynOmicBench
 
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg)](https://trinhthechuong.github.io/SynOmicBench/)
-[![Test Coverage](https://img.shields.io/badge/coverage-17%25-orange.svg)](#)
 [![Docstring Coverage](https://img.shields.io/badge/docstrings-77%25-yellowgreen.svg)](#)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-red.svg)](https://www.python.org/downloads/release/python-3110/)
