@@ -44,7 +44,7 @@ The `metrics.fidelity` module provides assessment tools for evaluating the distr
 
 ::: SynOmics.metrics.fidelity.BayesianComparison
 
-::: SynOmics.metrics.fidelity.NarrowTasks.ClassificationComparator.SyntheticDataClassificationComparator
+<!-- ::: SynOmics.metrics.fidelity.NarrowTasks.ClassificationComparator.SyntheticDataClassificationComparator -->
 
 ::: SynOmics.metrics.fidelity.visualization
 

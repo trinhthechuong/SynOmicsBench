@@ -1,0 +1,49 @@
+[project]
+name = "synomics"
+version = "1.0.0"
+# description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "anonymeter>=1.0.0",
+    "baycomp>=1.0.3",
+    "codecarbon>=3.2.5",
+    "copulas>=0.12.0",
+    "ctgan>=0.10.2",
+    "deptry>=0.25.1",
+    "gseapy>=1.1.12",
+    "ipykernel>=7.2.0",
+    "joblib>=1.5.3",
+    "jupyter>=1.1.1",
+    "lab>=8.9",
+    "lifelines>=0.30.3",
+    "lightgbm>=4.6.0",
+    "matplotlib>=3.10.8",
+    "memory-profiler>=0.61.0",
+    "miceforest>=6.0.5",
+    "missingno>=0.5.2",
+    "mpl-tools>=0.4.1",
+    "mygene>=3.2.2",
+    "numba>=0.64.0",
+    "numpy>=1.26.4",
+    "pandas>=2.3.3",
+    "polar>=0.0.127",
+    "polars>=1.39.2",
+    "scienceplots>=2.2.1",
+    "scikit-bio>=0.7.0",
+    "scikit-learn>=1.8.0",
+    "scipy>=1.17.1",
+    "sdmetrics>=0.18.0",
+    "sdv>=1.18.0",
+    "seaborn>=0.13.2",
+    "statsmodels>=0.14.6",
+    "torch>=2.10.0",
+    "tqdm>=4.67.3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/SynOmics"]
