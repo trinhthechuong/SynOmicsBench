@@ -2,58 +2,58 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/api/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/evaluation/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/evaluation/biological-results/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/evaluation/privacy/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/evaluation/statistical-fidelity/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/evaluation/biological-utility/cell-deconvolution/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/evaluation/biological-utility/dge/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/evaluation/biological-utility/gsea/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/evaluation/biological-utility/ssgsea/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/evaluation/biological-utility/survival-analysis/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/getting-started/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/preprocessing/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
     <url>
          <loc>https://trinhthechuong.github.io/SynOmicBench/synthetic-data/</loc>
-         <lastmod>2026-03-13</lastmod>
+         <lastmod>2026-03-23</lastmod>
     </url>
 </urlset>
