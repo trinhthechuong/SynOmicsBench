@@ -160,10 +160,10 @@ class SynthpopSynthesizer(BaseSynthesizer):
             # Assign dimnames (row and column names) to the matrix
             r_matrix.do_slot_assign(
                 "dimnames",
-                robjects.ListVector({
-                    None: robjects.StrVector(row_names),  # Row names
-                    None: robjects.StrVector(col_names)   # Column names
-                })
+                robjects.ListVector([
+                    robjects.StrVector(row_names),  # First element: Row names
+                    robjects.StrVector(col_names)   # Second element: Column names
+                ])
             )
             
             r_predictor_matrix = r_matrix
