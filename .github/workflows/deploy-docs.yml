@@ -9,6 +9,9 @@ on:
 permissions:
   contents: write
 
+env:
+  RPY2_CFFI_MODE: ABI
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
