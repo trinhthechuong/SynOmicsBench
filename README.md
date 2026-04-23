@@ -15,7 +15,7 @@ Achieving a trade-off between **biological utility** and **patient privacy** is 
 
 ## 🔬 Framework Overview
 
-![Framework Overview](docs/assets/figures/Figure_1_Graphical_abstract.png)
+![Framework Overview](https://github.com/user-attachments/assets/2cf2423c-dc24-4f85-b97f-2160bfc9ebf4)
 
 SynOmicsBench compares synthetic data generation methods using a standardized pipeline that combines:
 
