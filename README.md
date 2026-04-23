@@ -1,138 +1,119 @@
-# SynOmicBench
+# SynOmicsBench
 
-[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg)](https://trinhthechuong.github.io/SynOmicBench/)
-[![Docstring Coverage](https://img.shields.io/badge/docstrings-77%25-yellowgreen.svg)](#)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19660703.svg)](https://zenodo.org/records/19660703)
+[![CI](https://github.com/trinhthechuong/SynOmicsBench/actions/workflows/ci.yml/badge.svg)](https://github.com/trinhthechuong/SynOmicsBench/actions/workflows/ci.yml)
+[![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg)](https://trinhthechuong.github.io/SynOmicsBench/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.11+](https://img.shields.io/badge/python-3.11+-red.svg)](https://www.python.org/downloads/release/python-3110/)
+[![Python 3.12+](https://img.shields.io/badge/python-3.12+-red.svg)](https://www.python.org/downloads/release/python-3120/)
 
-**SynOmicBench** is a unified benchmarking framework for synthetic data generation (SDG) tailored to high-dimensional clinical and transcriptomic cancer data.
 
-Achieving a trade-off between **biological utility** and **patient privacy** is critical for precision oncology. Meta-analysis of synthetic data often lacks rigorous biological validation. SynOmicBench fills this gap by providing a reproducible pipeline for generating, evaluating, and benchmarking synthetic multi-omic datasets.
+**SynOmicsBench** is a unified benchmarking framework for synthetic data generation (SDG) tailored to high-dimensional clinical and transcriptomic cancer data.
 
----
-
-## Overview
-
-SynOmicBench is the first disease-agnostic benchmarking study tailored to high-dimensional clinical transcriptomic cancer data. It compares synthetic data generation methods across three cancer types (ccRCC, Melanoma, NSCLC) using a standardized pipeline that combines:
-
-- **Standardized Preprocessing**: Automated data filtering, harmonization, and integration
-- **Multidimensional Evaluation**: Statistical fidelity, biological utility, and privacy risk assessment
-- **Bayesian Comparison**: Rigorous meta-ranking across multiple cohorts and replicates
+Achieving a trade-off between **biological utility** and **patient privacy** is critical for secure data sharing when applying transcriptomic clinical datasets to artificial intelligence in precision oncology. Meta-analysis of synthetic data often lacks rigorous biological validation. SynOmicsBench fills this gap by providing a reproducible, multidimensional pipeline for generating, evaluating, and benchmarking synthetic multi-omic datasets.
 
 ---
 
-## Key Features
+## 🔬 Framework Overview
 
-- **Standardized Preprocessing**: Automated pipeline for data filtering, harmonization, and integration of clinical and transcriptomic data
-- **State-of-the-Art SDG Methods**: Integrated support for:
-  - CTGAN
-  - TVAE
-  - Gaussian Copula
-  - Synthpop
-  - Avatars (K5/K10)
-- **Comprehensive Evaluation Framework**:
-  - **Statistical Fidelity**: Univariate/bivariate similarity, KS tests, PCA/UMAP
-  - **Biological Utility**: DGE, GSEA, ssGSEA, Cell Type Deconvolution, Survival Analysis
-  - **Privacy Risk**: Singling-out, Linkability, Inference (EDPB-aligned)
-- **Biological Validation**: Downstream bioinformatics tasks to ensure synthetic data supports real research
-- **Bayesian Comparison**: Uncertainty-aware method comparison across replicates
+![Framework Overview](docs/assets/figures/Figure_1_Graphical_abstract.png)
+
+SynOmicsBench is the first disease-agnostic benchmarking study tailored to high-dimensional clinical transcriptomic cancer data. It compares synthetic data generation methods across three cancer types using a standardized pipeline that combines:
+
+- **Standardized Preprocessing**: Automated data filtering, harmonization, and integration.
+- **Multidimensional Evaluation**: Assessing Statistical Fidelity, Downstream Biological Utility, and Privacy Risk.
+- **State-of-the-Art SDG Methods**: Native support for **CTGAN, TVAE, Gaussian Copula, Synthpop, and Avatars (K5/K10)**.
 
 ---
 
-## Benchmarked Datasets
+## 🛠 Installation
 
-| Characteristic | ccRCC | Melanoma | NSCLC |
-|---------------|-------|----------|-------|
-| Number of patients | 311 | 121 | 152 |
-| Clinical features | 52 | 47 | 14 |
-| Transcriptomics features | 40,934 | 18,760 | 21,969 |
-| Study source | Braun et al. (2020) | Liu et al. (2019) | Ravi et al. (2023) |
+SynOmicsBench can be installed in three different ways depending on your environment. **Python 3.12+** is required.
 
----
-
-## Installation
-
+### Option 1: From PyPI (Recommended)
+You can easily install the latest stable release via pip:
 ```bash
-git clone https://github.com/trinhthechuong/SynOmicBench.git
-cd SynOmicBench
+pip install synomicsbench
+```
+
+### Option 2: From Source (GitHub)
+For developers or if you want the very latest features. We strongly suggest using [`uv`](https://docs.astral.sh/uv/) for the fastest dependency resolution:
+```bash
+git clone https://github.com/trinhthechuong/SynOmicsBench.git
+cd SynOmicsBench
+
+# With uv (Fastest)
+uv sync
+source .venv/bin/activate
+
+# Or with traditional pip
 pip install -e .
 ```
 
+### Option 3: Pre-built Container (Apptainer/Singularity)
+For HPC environments or reproducible workflows, you can pull our fully prepared Apptainer container which contains all dependencies (including heavy ML frameworks and R):
+
+```bash
+# Pull the latest SynOmicsBench container
+apptainer pull synomicsbench.sif oras://ghcr.io/trinhthechuong/synomicsbench:latest
+
+# Verify the container is working and the package is ready
+apptainer exec synomicsbench.sif python -c "import synomicsbench; print('OK: SynOmicsBench is ready!')"
+```
+*(To use the container for your scripts, simply mount your directories via `--bind` and run your Python scripts using `apptainer exec`)*
+
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
-### 1. Preprocess Your Data
-
-```python
-from synomicsbench.processing.pipeline import DataIntegrationPipeline
-
-pipeline = DataIntegrationPipeline(output_dir="./output", logger="my_pipeline")
-results = pipeline.run_pipeline(
-    clinical_data=clinical_df,
-    transcriptomics_data=omics_df,
-    clinical_id_column="Patient_ID",
-    transcriptomics_id_column="Sample",
-    integration_id_column="Patient_ID"
-)
-```
-
-### 2. Generate Synthetic Data
+Here is a brief example of how to generate synthetic data with Gaussian Copula and evaluate its statistical fidelity:
 
 ```python
+import pandas as pd
 from synomicsbench.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
+from synomicsbench.processing.metadata import MetaData
+from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity 
 
+# 1. Load Data & Prepare Metadata
+original_data = pd.read_csv("your_clinical_transcriptomic_data.csv")
+ordinal_features = ["Mstage", "Tx_Start_ECOG", "numPriorTherapies"]
+metadata = MetaData.get_metadata(data=original_data, ordinal_features=ordinal_features)
+
+# 2. Generate Synthetic Data
 synth = GaussianCopulasynthesizer(output_path="./results", metadata=metadata)
 synthetic_data = synth.generate(
-    data=original_data,
-    n_samples=original_data.shape[0],
-    seed=42
+    data=original_data, 
+    n_samples=original_data.shape[0]
 )
-```
 
-### 3. Evaluate
-
-```python
-from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
-
-uni = UnivariateSimilarity(output_dir="./evaluation")
-score = uni.get_univariate_score(
-    original_data=original,
-    synthetic_data=synthetic,
-    metadata=metadata
+# 3. Evaluate Fidelity
+evaluator = UnivariateSimilarity(output_dir="./evaluation_results")
+score = evaluator.get_univariate_score(
+    original_data=original_data, 
+    synthetic_data=synthetic_data, 
+    metadata=metadata, 
+    save=True
 )
+print(f"Overall Fidelity Score: {score:.4f}")
 ```
 
 ---
 
-## Documentation
+## 📚 Documentation
 
-- [**Full Documentation**](https://trinhthechuong.github.io/SynOmicBench/)
-- [**Getting Started**](https://trinhthechuong.github.io/SynOmicBench/getting-started/)
-- [**Preprocessing Pipeline**](https://trinhthechuong.github.io/SynOmicBench/preprocessing/)
-- [**SDG Methods**](https://trinhthechuong.github.io/SynOmicBench/synthetic-data/)
-- [**Evaluation Framework**](https://trinhthechuong.github.io/SynOmicBench/evaluation/)
-- [**API Reference**](https://trinhthechuong.github.io/SynOmicBench/api/)
+For complete API references, tutorials, and full benchmarking results, check out the **[SynOmicsBench Official Documentation](https://trinhthechuong.github.io/SynOmicsBench/)**:
 
----
-
-## Key Results
-
-- **No single method dominated all dimensions** — Gaussian Copula achieved the most balanced performance
-- **Metric-based similarity alone is insufficient** to ensure preservation of higher-order molecular dependencies
-- **Synthetic data consistently reproduced signal directionality** but with attenuated effect sizes
-- Synthetic data can support biological hypothesis generation when carefully validated
+- [**Getting Started**](https://trinhthechuong.github.io/SynOmicsBench/getting-started/): Step-by-step setup guides.
+- [**Preprocessing Pipeline**](https://trinhthechuong.github.io/SynOmicsBench/preprocessing/): Harmonizing multimodal data.
+- [**SDG Methods**](https://trinhthechuong.github.io/SynOmicsBench/synthetic-data/): Deep dive into generation models.
+- [**Evaluation Framework**](https://trinhthechuong.github.io/SynOmicsBench/evaluation/): Understand our metrics for Privacy and Biological signal preservation.
 
 ---
 
-## Citation
+## 📝 Citation
 
-If you use SynOmicBench in your research, please cite:
+If you use SynOmicsBench in your research, please cite:
 
-> Trinh, T. C., Woillard, J. B., Uguzzoni, G., & Battail, C. (2024). **A unified benchmark of synthetic data generation for clinical and transcriptomic cancer data.** (Manuscript in preparation)
+> Trinh, T. C., Woillard, J. B., Uguzzoni, G., & Battail, C. (2024). **A unified benchmark of synthetic data generation for clinical and transcriptomic cancer data.** *(Manuscript in preparation)*
 
----
-
-## License
-
-This project is licensed under the MIT License.
+## 📄 License
+This project is open-sourced under the MIT License.

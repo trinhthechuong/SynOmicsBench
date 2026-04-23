@@ -2,7 +2,7 @@
 
 ## Installation
 
-SynOmicBench can be installed in multiple ways depending on your use case and environment. Choose the method that best fits your workflow.
+SynOmicsBench can be installed in multiple ways depending on your use case and environment. Choose the method that best fits your workflow.
 
 ### Prerequisites
 
@@ -30,8 +30,8 @@ irm https://astral.sh/uv/install.ps1 | iex
 #### Clone and Install
 
 ```bash
-git clone https://github.com/trinhthechuong/SynOmicBench.git
-cd SynOmicBench
+git clone https://github.com/trinhthechuong/SynOmicsBench.git
+cd SynOmicsBench
 
 # Sync dependencies from uv.lock and install package
 uv sync
@@ -61,8 +61,8 @@ python -c "import synomicsbench; print('synomicsbench successfully installed!')"
 For traditional pip-based installation:
 
 ```bash
-git clone https://github.com/trinhthechuong/SynOmicBench.git
-cd SynOmicBench
+git clone https://github.com/trinhthechuong/SynOmicsBench.git
+cd SynOmicsBench
 
 # Create virtual environment (recommended)
 python -m venv venv

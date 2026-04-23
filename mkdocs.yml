@@ -1,9 +1,9 @@
-site_name: SynOmicBench Documentation
+site_name: SynOmicsBench Documentation
 site_description: Synthetic data benchmarking for omics data
-site_author: SynOmicBench Team
-site_url: https://trinhthechuong.github.io/SynOmicBench/
-repo_url: https://github.com/trinhthechuong/SynOmicBench
-repo_name: SynOmicBench
+site_author: SynOmicsBench Team
+site_url: https://trinhthechuong.github.io/SynOmicsBench/
+repo_url: https://github.com/trinhthechuong/SynOmicsBench
+repo_name: SynOmicsBench
 
 # Theme configuration
 theme:

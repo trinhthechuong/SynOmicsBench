@@ -57,7 +57,7 @@ Naive fitting of synthetic data generation methods often fails on high-dimension
 - Synthpop requires a custom predictor matrix optimization to handle high-dimensional data.
 - Avatars requires a feature clustering to partition the features into batch before submitting to the API.
 
-Detail description of each adaptation is provided in the manuscript of this work and [GitHub repository](https://github.com/thechuongtrinh/SynOmicBench).
+Detail description of each adaptation is provided in the manuscript of this work and [GitHub repository](https://github.com/thechuongtrinh/SynOmicsBench).
 
 ---
 
@@ -156,7 +156,7 @@ synthetic_data = synth.generate(
 ### 5. Avatars
 
 > [!NOTE] 
-> Avatars requires a proprietary Octopize license. The example below highlights the specialized adaptations (data block chunking and feature clustering) used in SynOmicBench to handle high-dimensional omic data over the API.
+> Avatars requires a proprietary Octopize license. The example below highlights the specialized adaptations (data block chunking and feature clustering) used in SynOmicsBench to handle high-dimensional omic data over the API.
 
 ```python
 import pandas as pd
