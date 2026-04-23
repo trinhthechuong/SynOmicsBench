@@ -161,8 +161,8 @@ class SynthpopSynthesizer(BaseSynthesizer):
             r_matrix.do_slot_assign(
                 "dimnames",
                 robjects.ListVector({
-                    "row.names": robjects.StrVector(row_names),
-                    "col.names": robjects.StrVector(col_names)
+                    None: robjects.StrVector(row_names),  # Row names
+                    None: robjects.StrVector(col_names)   # Column names
                 })
             )
             
