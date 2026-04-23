@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import random
 import numpy as np
-from typing import Any, Callable, Dict, List, Optional, Sequence, Union
+from typing import Optional
 from synomicsbench.synthesizer.BaseSynthesizer import BaseSynthesizer
 
 class CTGANsynthesizer(BaseSynthesizer):

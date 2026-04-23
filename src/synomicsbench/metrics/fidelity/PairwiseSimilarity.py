@@ -1,4 +1,3 @@
-import sys
 import os
 import pandas as pd
 import numpy as np
@@ -8,7 +7,6 @@ from typing import List, Tuple, Union, Optional
 from synomicsbench.processing.metadata import MetaData
 from synomicsbench.processing.preprocessing import DataProcessor
 from synomicsbench.utils.correlations import MixedCorrelation
-from tqdm import tqdm
 from synomicsbench.utils.monitoring import monitor_resources
 
 class PairwiseSimilarity:
@@ -637,7 +635,7 @@ class PairwiseSimilarity:
         )
         
         if self.verbose:
-            print(f"\nCross-group association summary:")
+            print("\nCross-group association summary:")
             print(f"  Total pairs: {len(results_df)}")
             print(f"  Mean score: {results_df['Score'].mean():.4f}")
             print(f"  Median score: {results_df['Score'].median():.4f}")

@@ -1,14 +1,10 @@
 import pandas as pd
 import numpy as np
 import os 
-import logging
-import json
-from datetime import datetime
 from sklearn.preprocessing import OrdinalEncoder
 from synomicsbench.synthesizer.GaussianMultivariate_Parallel import GaussianMultivariate_Parallel
-from synomicsbench.utils.monitoring import set_logger
 from synomicsbench.synthesizer.BaseSynthesizer import BaseSynthesizer
-from typing import Any, Callable, Dict, List, Optional, Sequence, Union
+from typing import Any, List, Optional, Sequence
 import pickle
 
 class GaussianCopulasynthesizer(BaseSynthesizer):

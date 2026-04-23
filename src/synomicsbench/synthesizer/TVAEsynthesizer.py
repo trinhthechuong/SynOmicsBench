@@ -4,7 +4,7 @@ from ctgan import TVAE
 from synomicsbench.synthesizer.BaseSynthesizer import BaseSynthesizer
 import random
 import numpy as np
-from typing import Any, Callable, Dict, List, Optional, Sequence, Union
+from typing import Optional
 
 
 class TVAEsynthesizer(BaseSynthesizer):

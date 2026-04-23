@@ -1,11 +1,9 @@
 from typing import Dict, Optional, Tuple, Union, List, Sequence
-import itertools
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
-from scipy import stats
-from matplotlib.colors import LinearSegmentedColormap, TwoSlopeNorm
+from matplotlib.colors import LinearSegmentedColormap
 
 
 METHOD_COLOR_SCHEME = {

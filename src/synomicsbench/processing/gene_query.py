@@ -1,7 +1,6 @@
 import mygene
 import pandas as pd
 import os
-import logging
 import json
 from typing import List, Tuple, Dict, Any
 from tqdm import tqdm
@@ -158,7 +157,7 @@ class GeneQuery:
 
             # Log unfound and unmapped genes
             if "notfound" in gene_info_df.columns:
-                unfound_genes = gene_info_df[gene_info_df["notfound"] == True]["query"].tolist()
+                unfound_genes = gene_info_df[gene_info_df["notfound"]]["query"].tolist()
                 unfound_names = ", ".join(unfound_genes) if unfound_genes else "None"
                 self.logger.debug(f"Unfound genes: {len(unfound_genes)} ({unfound_names})")
 

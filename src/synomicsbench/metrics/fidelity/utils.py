@@ -1,15 +1,9 @@
-import json
 import sys
-import os
-import logging
 import pandas as pd
 import numpy as np
-from numba import njit, prange
 sys.path.append("../../")
-from typing import List, Optional
 from sklearn.preprocessing import LabelEncoder
 from synomicsbench.processing.preprocessing import DataProcessor 
-from synomicsbench.processing.postprocessing import post_masking
 
 
 def check_column_consistency(
@@ -189,7 +183,6 @@ def np_encoder(obj):
     Raises:
         TypeError: If the object type is not supported for conversion.
     """
-    import numpy as np
 
     if isinstance(obj, (np.integer,)):
         return int(obj)

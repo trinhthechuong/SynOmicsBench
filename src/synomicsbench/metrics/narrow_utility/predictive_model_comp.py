@@ -1,13 +1,10 @@
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Sequence, Tuple
 
 import numpy as np
-import pandas as pd
 from joblib import Parallel, delayed
 from sklearn.base import clone
 from sklearn.metrics import get_scorer
-from sklearn.model_selection import BaseCrossValidator
 from scipy.stats import wilcoxon
 
 
@@ -20,7 +17,8 @@ DATA_COLORS = {
 
 def _statistical_test(a,b):
     diff = np.array(a)-np.array(b)
-    if np.all(diff==0): return 1.0
+    if np.all(diff == 0):
+        return 1.0
     _, p = wilcoxon(a,b,alternative="two-sided")
     return p
 

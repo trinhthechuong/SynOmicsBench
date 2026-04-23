@@ -9,7 +9,7 @@ heatmap with a matched horizontal boxplot summarising cross-seed variability.
 
 from __future__ import annotations
 
-from typing import Dict, List, Mapping, Optional, Sequence, Tuple, Union
+from typing import Dict, List, Mapping, Optional, Tuple, Union
 
 import matplotlib.colors as mcolors
 import matplotlib.patches as mpatches

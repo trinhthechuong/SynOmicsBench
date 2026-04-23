@@ -2,7 +2,6 @@ import os
 from typing import List, Optional, Union
 import pandas as pd
 import warnings
-import os
 # os.environ["R_HOME"] = "/opt/R/4.4.1/lib/R"
 from rpy2.robjects import conversion, default_converter
 import rpy2.robjects as robjects
@@ -162,8 +161,8 @@ class SynthpopSynthesizer(BaseSynthesizer):
             r_matrix.do_slot_assign(
                 "dimnames",
                 robjects.ListVector({
-                    None: robjects.StrVector(row_names),  # Row names
-                    None: robjects.StrVector(col_names)   # Column names
+                    "row.names": robjects.StrVector(row_names),
+                    "col.names": robjects.StrVector(col_names)
                 })
             )
             

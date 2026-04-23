@@ -26,7 +26,7 @@ def MissingValue_Similarity(
                 real_data=origin_data[target_col], synthetic_data=synthetic_data[target_col]
             )
             MissingValue_dict[target_col] = simi_score
-        except Exception as e:
+        except Exception:
             # Continue but note error in dict
             MissingValue_dict[target_col] = None
     return MissingValue_dict

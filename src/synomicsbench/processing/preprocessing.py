@@ -1,10 +1,6 @@
 import pandas as pd
 import numpy as np
-import os
-import json
 import warnings
-
-warnings.filterwarnings("ignore")
 from typing import Optional, List, Dict, Any, Tuple
 from sklearn.impute import MissingIndicator
 from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
@@ -12,6 +8,8 @@ from sklearn.base import BaseEstimator
 from sklearn.preprocessing import OrdinalEncoder
 from sklearn.impute import KNNImputer
 from synomicsbench.processing.metadata import MetaData
+
+warnings.filterwarnings("ignore")
 
 # Optional dependency: miceforest (MICE imputation)
 try:

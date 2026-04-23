@@ -9,7 +9,7 @@ same individual.
 from __future__ import annotations
 
 import random
-from typing import Dict, List, Sequence
+from typing import Dict, List, Tuple, Optional, Sequence, Union
 
 import pandas as pd
 # from linkability_evaluator import LinkabilityEvaluator # if it's slow, import directly the script from Anonymeter repo

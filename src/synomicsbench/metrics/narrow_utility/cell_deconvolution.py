@@ -11,7 +11,7 @@ after multiplicative replacement of zeros and geometric mean centering.
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional, Sequence, Tuple, Union
+from typing import List
 from skbio.stats.composition import clr, multi_replace
 from scipy.spatial.distance import euclidean
 import numpy as np

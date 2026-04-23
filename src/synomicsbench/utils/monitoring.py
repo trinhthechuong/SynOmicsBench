@@ -1,12 +1,10 @@
 import logging
 import os
 import sys
-import time
 import platform
 import psutil
 import datetime
 import getpass
-# import nvidia_smi
 import functools
 
 
@@ -74,7 +72,7 @@ def monitor_resources(func):
     Raises:
         Exception: Re-raises any exception from the wrapped function after reporting.
     """
-    import functools, datetime, getpass, platform, psutil, time
+    import time
 
     def _decode_bytes(s):
         # nvidia-ml-py returns str, so this is a no-op but kept for compatibility

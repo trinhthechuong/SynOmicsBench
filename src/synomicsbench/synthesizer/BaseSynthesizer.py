@@ -20,7 +20,7 @@ Raises:
 """
 
 import os
-from typing import Any, Callable, Dict, List, Optional, Sequence, Union
+from typing import Any, Dict, List, Optional, Sequence, Union
 
 import pandas as pd
 
@@ -44,8 +44,6 @@ except Exception:
     def _monitor_resources(func):
         return func
 
-from memory_profiler import profile
-from codecarbon import track_emissions 
 
 class BaseSynthesizer:
     """

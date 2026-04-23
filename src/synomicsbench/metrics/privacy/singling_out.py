@@ -9,7 +9,7 @@ feature-sampling proportions.
 from __future__ import annotations
 
 import random
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Sequence
 
 import pandas as pd
 from anonymeter.evaluators import SinglingOutEvaluator

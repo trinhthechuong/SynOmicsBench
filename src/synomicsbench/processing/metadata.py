@@ -1,10 +1,9 @@
 import pandas as pd
 import numpy as np
-from typing import Optional, List, Any
+from typing import Optional, List
 import warnings
 import json
 import os
-from synomicsbench.utils.monitoring import set_logger
 
 class MetaData:
     def __init__(self):
@@ -92,7 +91,7 @@ class MetaData:
             ordinal_features=ordinal_features,
             binary_values=binary_values
         )
-        if transcriptomic_cols == None:
+        if transcriptomic_cols is None:
             transcriptomic_cols = []
             
         for col in features:
@@ -153,7 +152,6 @@ class MetaData:
         ordinal_cat_cols = []
         num_cols = []
         missing_indicator_cols = []
-        columns_as_types = {}
         for k, v in metadata.items():
             if k in data.columns:
                 if v == "numerical":

@@ -8,7 +8,7 @@ dataset.
 from __future__ import annotations
 
 import logging
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 from anonymeter.evaluators import InferenceEvaluator

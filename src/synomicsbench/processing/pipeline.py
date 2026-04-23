@@ -2,7 +2,6 @@ import os
 import json
 import time
 import pandas as pd
-import numpy as np
 from typing import Optional, Dict, List, Any
 
 from synomicsbench.processing.gene_query import GeneQuery
