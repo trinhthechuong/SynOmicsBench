@@ -11,21 +11,17 @@ SynOmicsBench can be installed in multiple ways depending on your use case and e
 
 ---
 
-### Method 1: From Source with uv (Recommended)
-
-We recommend using [uv](https://docs.astral.sh/uv/) for fast, reliable dependency management. This method uses the provided `uv.lock` file to ensure reproducible installations.
-
-#### Install uv
-
-If you don't have uv installed:
+### Option 1: From PyPI (Recommended)
 
 ```bash
-# macOS/Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Windows (PowerShell)
-irm https://astral.sh/uv/install.ps1 | iex
+pip install synomicsbench
 ```
+
+---
+
+### Option 2: From Source (GitHub)
+
+We recommend using [uv](https://docs.astral.sh/uv/) for fast, reliable dependency management. This method uses the provided `uv.lock` file to ensure reproducible installations.
 
 #### Clone and Install
 
@@ -33,61 +29,25 @@ irm https://astral.sh/uv/install.ps1 | iex
 git clone https://github.com/trinhthechuong/SynOmicsBench.git
 cd SynOmicsBench
 
-# Sync dependencies from uv.lock and install package
+# With uv (Fastest)
 uv sync
-```
-
-This will:
-
-- Create a virtual environment automatically
-- Install exact dependencies from `uv.lock` for reproducibility
-- Install synomicsbench in editable mode for development
-- Work without requiring pip or any other package manager
-
-#### Activate the Environment
-
-```bash
-# Activate the uv-managed virtual environment
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-# Verify installation
-python -c "import synomicsbench; print('synomicsbench successfully installed!')"
-```
-
----
-
-### Method 2: From Source with pip
-
-For traditional pip-based installation:
-
-```bash
-git clone https://github.com/trinhthechuong/SynOmicsBench.git
-cd SynOmicsBench
-
-# Create virtual environment (recommended)
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install package
+# Or with traditional pip
 pip install -e .
 ```
 
-The package dependencies are defined in `pyproject.toml` and will be installed automatically.
-
 ---
 
-### Method 3: Using Singularity/Apptainer Container
+### Option 3: Pre-built Container (Apptainer/Singularity)
 
-For HPC environments or reproducible containerized workflows, we provide a pre-built Singularity/Apptainer container with synomicsbench and all dependencies pre-installed.
+For HPC environments or reproducible workflows, you can pull our fully prepared Apptainer container which contains all dependencies (including heavy ML frameworks and R):
 
 #### Pull the Container
 
 ```bash
-# Using Apptainer (recommended for newer systems)
-apptainer pull synomicsbench_public_test.sif oras://ghcr.io/trinhthechuong/synomicsbench:v20250319
-
-# Or using Singularity (legacy)
-singularity pull synomicsbench_public_test.sif oras://ghcr.io/trinhthechuong/synomicsbench:v20250319
+# Pull the latest SynOmicsBench container
+apptainer pull synomicsbench.sif oras://ghcr.io/trinhthechuong/synomicsbench:latest
 ```
 
 #### Launch Interactive Shell
@@ -96,52 +56,26 @@ Open a shell session inside the container with your workspace mounted:
 
 ```bash
 # Mount your workspace directory to /mnt inside the container
-singularity shell --bind /path/to/your/workspace:/mnt --writable synomicsbench_public_test.sif
+apptainer shell --bind /path/to/your/workspace:/mnt synomicsbench.sif
 ```
-
-Replace `/path/to/your/workspace` with your actual workspace path. For example:
-
-```bash
-# Example: Mounting a project directory
-singularity shell --bind /bettik/PROJECTS/pr-ai4drug/trinhtc/workspace:/mnt --writable synomicsbench_public_test.sif
-```
-
-#### Using the Container
-
-Once inside the container shell:
-
-```bash
-# Navigate to your mounted workspace
-cd /mnt
-
-# synomicsbench is already installed and available
-python -c "import synomicsbench; print(synomicsbench.__version__)"
-
-# Run your analysis scripts
-python your_analysis.py
-```
-
-The container includes:
-
-- **Pre-installed synomicsbench** package with all dependencies
-- **uv** package manager for additional dependencies
-- **Python 3.12+** environment ready to use
-- All required system libraries and tools
 
 #### Running Scripts Directly
 
 You can also execute scripts directly without entering the shell:
 
 ```bash
-singularity exec --bind /path/to/your/workspace:/mnt synomicsbench_public_test.sif python /mnt/your_script.py
+# Verify the container is working and the package is ready
+apptainer exec synomicsbench.sif python -c "import synomicsbench; print('OK: SynOmicsBench is ready!')"
+
+# Run your analysis scripts and mount directories
+apptainer exec --bind /path/to/your/workspace:/mnt synomicsbench.sif python /mnt/your_script.py
 ```
 
 #### Container Best Practices
 
 - **Data Persistence**: Always use `--bind` to mount your data directories. Changes inside the container (outside mounted paths) are ephemeral.
-- **Writable Mode**: Use `--writable` flag if you need to install additional packages or modify the environment.
 - **HPC Integration**: Most HPC systems support Singularity/Apptainer natively. Check your cluster documentation for specific submission scripts.
-- **GPU Access**: Add `--nv` flag for NVIDIA GPU access: `singularity shell --nv --bind ... synomicsbench_public_test.sif`
+- **GPU Access**: Add `--nv` flag for NVIDIA GPU access: `apptainer shell --nv --bind ... synomicsbench.sif`
 
 ---
 
