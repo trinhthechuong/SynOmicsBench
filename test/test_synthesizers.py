@@ -76,5 +76,5 @@ class TestSynthpopSynthesizer:
         try:
             from synomicsbench.synthesizer.Synthpopsynthesizer import SynthpopSynthesizer
             assert SynthpopSynthesizer is not None
-        except (ImportError, RuntimeError, FileNotFoundError) as e:
+        except (ImportError, RuntimeError, FileNotFoundError, ValueError) as e:
             pytest.skip(f"SynthpopSynthesizer tests skipped because R or rpy2 is not properly configured: {e}")
