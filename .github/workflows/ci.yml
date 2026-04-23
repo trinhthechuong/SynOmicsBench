@@ -35,9 +35,10 @@ jobs:
           uv sync --all-extras --dev
 
       - name: Lint with ruff
-
         run: |
-          uv run ruff check src/synomicsbench
+          uvx ruff check src/synomicsbench
+
+
 
       - name: Run tests
         run: |
