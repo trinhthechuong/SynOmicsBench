@@ -1,5 +1,5 @@
 """
-Tests for SynOmics synthesizer modules.
+Tests for synomicsbench synthesizer modules.
 
 Note: Some tests require optional dependencies and will be skipped if not available.
 """
@@ -41,7 +41,7 @@ class TestBaseSynthesizer:
     """Tests for BaseSynthesizer class."""
 
     def test_import_base_synthesizer(self):
-        from SynOmics.synthesizer.BaseSynthesizer import BaseSynthesizer
+        from synomicsbench.synthesizer.BaseSynthesizer import BaseSynthesizer
         assert BaseSynthesizer is not None
 
 
@@ -49,7 +49,7 @@ class TestGaussianCopulaSynthesizer:
     """Tests for GaussianCopulasynthesizer class."""
 
     def test_import_gc(self):
-        from SynOmics.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
+        from synomicsbench.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
         assert GaussianCopulasynthesizer is not None
 
 
@@ -57,15 +57,15 @@ class TestCTGANSynthesizer:
     """Tests for CTGANSynthesizer class."""
 
     def test_import_ctgan(self):
-        from SynOmics.synthesizer.CTGANsynthesizer import CTGANSynthesizer
-        assert CTGANSynthesizer is not None
+        from synomicsbench.synthesizer.CTGANsynthesizer import CTGANsynthesizer
+        assert CTGANsynthesizer is not None
 
 
 class TestTVAESynthesizer:
     """Tests for TVAESynthesizer class."""
 
     def test_import_tvae(self):
-        from SynOmics.synthesizer.TVAEsynthesizer import TVAEsynthesizer
+        from synomicsbench.synthesizer.TVAEsynthesizer import TVAEsynthesizer
         assert TVAEsynthesizer is not None
 
 
@@ -73,5 +73,5 @@ class TestSynthpopSynthesizer:
     """Tests for SynthpopSynthesizer class."""
 
     def test_import_synthpop(self):
-        from SynOmics.synthesizer.Synthpopsynthesizer import SynthpopSynthesizer
+        from synomicsbench.synthesizer.Synthpopsynthesizer import SynthpopSynthesizer
         assert SynthpopSynthesizer is not None

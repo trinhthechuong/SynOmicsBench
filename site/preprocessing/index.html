@@ -1108,7 +1108,7 @@
 
 
 <h1 id="preprocessing-data">Preprocessing Data<a class="headerlink" href="#preprocessing-data" title="Permanent link">&para;</a></h1>
-<p>The <code>SynOmics.processing</code> module provides a comprehensive suite of utilities for cleaning, transforming, and integrating omics and clinical data. This processing pipeline minimizes the confounding impact of data quality on generative model effectiveness, ensuring unbiased comparability among the evaluated synthetic data generation methods. As illustrated in Figure 2, the pipeline follows five sequential steps: 1) Data Filtering, 2) Transcriptomic Harmonization, 3) Feature type classification, 4) Multivariate missing data imputation, and 5) Data Integration. The pipeline is flexible and configurable, allowing users to customize preprocessing steps based on their specific datasets and analysis requirements.</p>
+<p>The <code>synomicsbench.processing</code> module provides a comprehensive suite of utilities for cleaning, transforming, and integrating omics and clinical data. This processing pipeline minimizes the confounding impact of data quality on generative model effectiveness, ensuring unbiased comparability among the evaluated synthetic data generation methods. As illustrated in Figure 2, the pipeline follows five sequential steps: 1) Data Filtering, 2) Transcriptomic Harmonization, 3) Feature type classification, 4) Multivariate missing data imputation, and 5) Data Integration. The pipeline is flexible and configurable, allowing users to customize preprocessing steps based on their specific datasets and analysis requirements.</p>
 <h2 id="data-integration-pipeline">Data Integration Pipeline<a class="headerlink" href="#data-integration-pipeline" title="Permanent link">&para;</a></h2>
 <p><img alt="Data Integration Pipeline" src="../assets/figures/processing_pipeline.png" /></p>
 <p><em><strong>Figure 1</strong>: Standardized preprocessing pipeline for clinical-transcriptomic data integration.</em></p>
@@ -1116,7 +1116,7 @@
 <h2 id="pipeline-execution">Pipeline Execution<a class="headerlink" href="#pipeline-execution" title="Permanent link">&para;</a></h2>
 <p>The following example demonstrates how to configure and execute the complete data integration pipeline:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataIntegrationPipeline</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.processing.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataIntegrationPipeline</span>
 
 <span class="n">output_dir</span> <span class="o">=</span> <span class="s2">&quot;./integrationpipeline_output&quot;</span>
 
@@ -1252,7 +1252,7 @@ feature_engineering → integrate_data
 preprocessing utilities directly—see the section below.</p>
 </div>
 <h2 id="utility-functions-dataprocessor">Utility Functions (<code>DataProcessor</code>)<a class="headerlink" href="#utility-functions-dataprocessor" title="Permanent link">&para;</a></h2>
-<p>All helper functions are available in <code>SynOmics.processing.preprocessing.DataProcessor</code>. These are useful when you want to execute specific preprocessing steps without running the full <code>DataIntegrationPipeline</code>.</p>
+<p>All helper functions are available in <code>synomicsbench.processing.preprocessing.DataProcessor</code>. These are useful when you want to execute specific preprocessing steps without running the full <code>DataIntegrationPipeline</code>.</p>
 <h3 id="available-methods">Available Methods<a class="headerlink" href="#available-methods" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -1349,7 +1349,7 @@ preprocessing utilities directly—see the section below.</p>
 <p>The following example demonstrates how to use <code>DataProcessor</code> for targeted data cleaning, encoding, and imputation:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataProcessor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.processing.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataProcessor</span>
 
 <span class="c1"># 0. Sample Data</span>
 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>

@@ -17,7 +17,7 @@ Higher values indicate greater agreement in survival discrimination. Kaplan-Meie
 ## Code Example
 
 ```python
-from SynOmics.metrics.narrow_utility.survival_analysis import  SurvivalEvaluator
+from synomicsbench.metrics.narrow_utility.survival_analysis import  SurvivalEvaluator
 
 #Define dataset dictionary
 dataset_dict = {}
@@ -53,7 +53,7 @@ print(f"Synthetic Score: {synthetic_score:.4f}")
 ## Kaplan-Meier Curve Visualization
 
 ```python
-from SynOmics.metrics.narrow_utility.survival_analysis import  SurvivalEvaluator
+from synomicsbench.metrics.narrow_utility.survival_analysis import  SurvivalEvaluator
 
 # Define datasets
 datasets = {

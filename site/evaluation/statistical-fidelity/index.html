@@ -1164,8 +1164,8 @@
 <p>where <span class="arithmatex">\(N\)</span> and <span class="arithmatex">\(M\)</span> denote the total number of clinical features and genes, respectively.</p>
 <hr />
 <h3 id="code-example">Code Example<a class="headerlink" href="#code-example" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.fidelity.UnivariateSimilarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnivariateSimilarity</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.fidelity.UnivariateSimilarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnivariateSimilarity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
 
 <span class="c1"># Compute metadata (auto-detect feature types)</span>
 <span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span>
@@ -1203,8 +1203,8 @@
 <p>where each <span class="arithmatex">\(\bar{S}_{\text{modality}}\)</span> is the mean similarity score over all feature pairs within that category.</p>
 <hr />
 <h3 id="code-example_1">Code Example<a class="headerlink" href="#code-example_1" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.fidelity.PairwiseSimilarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairwiseSimilarity</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.fidelity.PairwiseSimilarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">PairwiseSimilarity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
 
 <span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="o">.</span><span class="n">get_metadata</span><span class="p">(</span>
     <span class="n">data</span><span class="o">=</span><span class="n">original_data</span><span class="p">,</span>
@@ -1224,7 +1224,7 @@
 <hr />
 <h3 id="visualization">Visualization<a class="headerlink" href="#visualization" title="Permanent link">&para;</a></h3>
 <p>The violin plot below shows the distribution of per-feature bivariate similarity scores across SDG methods. The <code>plot_violin</code> function from the broad utility analysis module produces manuscript-quality figures:</p>
-<p><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.fidelity.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_violin_grid_by_cancer</span>
+<p><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.fidelity.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">plot_violin_grid_by_cancer</span>
 
 <span class="c1"># scores_dict: mapping from method name to list ofs scores   </span>
 <span class="c1"># Univariate similarity scores: the list of per-feature scores</span>

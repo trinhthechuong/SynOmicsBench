@@ -70,7 +70,7 @@ We perform pairwise Bayesian comparisons following the framework proposed by [Be
 To compare specific methods and obtain the Bayesian probability estimates:
 
 ```python
-from SynOmics.metrics.fidelity.BayesianComparison import BayesianComparison
+from synomicsbench.metrics.fidelity.BayesianComparison import BayesianComparison
 
 bc = BayesianComparison(rope=0.01)
 
@@ -97,7 +97,7 @@ compare_result = bc.compare_methods(
 You can also compute and visualize probability heatmaps for multiple cohorts and methods simultaneously:
 
 ```python
-from SynOmics.metrics.fidelity.BayesianComparison import BayesianComparison
+from synomicsbench.metrics.fidelity.BayesianComparison import BayesianComparison
 
 Univariate_Score_Dict = {
     'ccRCC': {

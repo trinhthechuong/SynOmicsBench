@@ -29,10 +29,10 @@ where the analysis is constrained to the top $k = 10$ most abundant cell types.
 
 ## Code Example
 
-The `cell_deconvolution` module in SynOmics provides the Aitchison distance calculation:
+The `cell_deconvolution` module in synomicsbench provides the Aitchison distance calculation:
 
 ```python
-from SynOmics.metrics.narrow_utility.cell_deconvolution import (
+from synomicsbench.metrics.narrow_utility.cell_deconvolution import (
     aitchison_distance,
     aitchison_score,
 )

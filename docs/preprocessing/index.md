@@ -1,6 +1,6 @@
 # Preprocessing Data
 
-The `SynOmics.processing` module provides a comprehensive suite of utilities for cleaning, transforming, and integrating omics and clinical data. This processing pipeline minimizes the confounding impact of data quality on generative model effectiveness, ensuring unbiased comparability among the evaluated synthetic data generation methods. As illustrated in Figure 2, the pipeline follows five sequential steps: 1) Data Filtering, 2) Transcriptomic Harmonization, 3) Feature type classification, 4) Multivariate missing data imputation, and 5) Data Integration. The pipeline is flexible and configurable, allowing users to customize preprocessing steps based on their specific datasets and analysis requirements.
+The `synomicsbench.processing` module provides a comprehensive suite of utilities for cleaning, transforming, and integrating omics and clinical data. This processing pipeline minimizes the confounding impact of data quality on generative model effectiveness, ensuring unbiased comparability among the evaluated synthetic data generation methods. As illustrated in Figure 2, the pipeline follows five sequential steps: 1) Data Filtering, 2) Transcriptomic Harmonization, 3) Feature type classification, 4) Multivariate missing data imputation, and 5) Data Integration. The pipeline is flexible and configurable, allowing users to customize preprocessing steps based on their specific datasets and analysis requirements.
 
 
 ## Data Integration Pipeline
@@ -17,7 +17,7 @@ The following example demonstrates how to configure and execute the complete dat
 
 ```python
 import pandas as pd
-from SynOmics.processing.pipeline import DataIntegrationPipeline
+from synomicsbench.processing.pipeline import DataIntegrationPipeline
 
 output_dir = "./integrationpipeline_output"
 
@@ -101,7 +101,7 @@ feature_engineering → integrate_data
 
 ## Utility Functions (`DataProcessor`)
 
-All helper functions are available in `SynOmics.processing.preprocessing.DataProcessor`. These are useful when you want to execute specific preprocessing steps without running the full `DataIntegrationPipeline`.
+All helper functions are available in `synomicsbench.processing.preprocessing.DataProcessor`. These are useful when you want to execute specific preprocessing steps without running the full `DataIntegrationPipeline`.
 
 ### Available Methods
 
@@ -131,7 +131,7 @@ The following example demonstrates how to use `DataProcessor` for targeted data 
 ```python
 import pandas as pd
 import numpy as np
-from SynOmics.processing.preprocessing import DataProcessor
+from synomicsbench.processing.preprocessing import DataProcessor
 
 # 0. Sample Data
 df = pd.DataFrame(

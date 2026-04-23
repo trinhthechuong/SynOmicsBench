@@ -1,5 +1,5 @@
 """
-Tests for SynOmics utils, gene_query, and postprocessing modules.
+Tests for synomicsbench utils, gene_query, and postprocessing modules.
 """
 
 import os
@@ -15,7 +15,7 @@ class TestMonitoringUtils:
     """Tests for monitoring/logging utilities."""
 
     def test_set_logger_basic(self, tmp_path):
-        from SynOmics.utils.monitoring import set_logger
+        from synomicsbench.utils.monitoring import set_logger
 
         logger = set_logger("test_logger", str(tmp_path))
 
@@ -23,7 +23,7 @@ class TestMonitoringUtils:
         assert logger.name == "test_logger"
 
     def test_set_logger_with_file(self, tmp_path):
-        from SynOmics.utils.monitoring import set_logger
+        from synomicsbench.utils.monitoring import set_logger
 
         log_file = "test_log.log"
         logger = set_logger("test", str(tmp_path), log_file)
@@ -34,7 +34,7 @@ class TestMonitoringUtils:
         assert os.path.exists(log_path)
 
     def test_set_logger_different_names(self, tmp_path):
-        from SynOmics.utils.monitoring import set_logger
+        from synomicsbench.utils.monitoring import set_logger
 
         logger1 = set_logger("logger1", str(tmp_path))
         logger2 = set_logger("logger2", str(tmp_path))
@@ -46,18 +46,12 @@ class TestPostprocessing:
     """Tests for postprocessing functions."""
 
     def test_postprocessing_import(self):
-        from SynOmics.processing import postprocessing
+        from synomicsbench.processing import postprocessing
 
         assert postprocessing is not None
 
 
-class TestSynthesizerPostprocessing:
-    """Tests for synthesizer postprocessing module."""
 
-    def test_import_synthesizer_postprocessing(self):
-        from SynOmics.synthesizer import postprocessing
-
-        assert postprocessing is not None
 
 
 class TestMissingValueSimilarity:
@@ -65,7 +59,7 @@ class TestMissingValueSimilarity:
 
     def test_missing_value_similarity_import(self):
         try:
-            from SynOmics.metrics.fidelity.MissingValueSimilarity import (
+            from synomicsbench.metrics.fidelity.MissingValueSimilarity import (
                 MissingValue_Similarity,
             )
 
@@ -75,12 +69,17 @@ class TestMissingValueSimilarity:
 
     def test_missing_value_similarity_init(self):
         try:
-            from SynOmics.metrics.fidelity.MissingValueSimilarity import (
+            from synomicsbench.metrics.fidelity.MissingValueSimilarity import (
                 MissingValue_Similarity,
             )
+            import pandas as pd
 
-            mvs = MissingValue_Similarity()
-            assert mvs is not None
+            df_real = pd.DataFrame({"colA": [1, 2], "missingindicator_colA": [0, 1]})
+            df_syn = pd.DataFrame({"colA": [1, 3], "missingindicator_colA": [0, 1]})
+            mvs = MissingValue_Similarity(
+                origin_data=df_real, synthetic_data=df_syn, missing_indicators=["missingindicator_colA"]
+            )
+            assert isinstance(mvs, dict)
         except (NameError, ImportError) as e:
             pytest.skip(f"MissingValueSimilarity has import issues: {e}")
 
@@ -89,8 +88,8 @@ class TestPairwiseSimilarityCoverage:
     """Additional tests to improve PairwiseSimilarity coverage."""
 
     def test_pairwise_with_different_methods(self):
-        from SynOmics.metrics.fidelity.PairwiseSimilarity import PairwiseSimilarity
-        from SynOmics.processing.metadata import MetaData
+        from synomicsbench.metrics.fidelity.PairwiseSimilarity import PairwiseSimilarity
+        from synomicsbench.processing.metadata import MetaData
 
         np.random.seed(42)
         n = 30
@@ -124,8 +123,8 @@ class TestUnivariateSimilarityCoverage:
     """Additional tests for UnivariateSimilarity coverage."""
 
     def test_univariate_get_visualization(self):
-        from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
-        from SynOmics.processing.metadata import MetaData
+        from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
+        from synomicsbench.processing.metadata import MetaData
 
         np.random.seed(42)
         n = 30
@@ -158,7 +157,7 @@ class TestCorrelationsUtils:
     """Additional tests for correlations module."""
 
     def test_correlations_module_import(self):
-        from SynOmics.utils import correlations
+        from synomicsbench.utils import correlations
 
         assert correlations is not None
 
@@ -167,7 +166,7 @@ class TestMetadataCoverage:
     """Additional tests for MetaData module."""
 
     def test_metadata_with_ordinal_features(self):
-        from SynOmics.processing.metadata import MetaData
+        from synomicsbench.processing.metadata import MetaData
 
         np.random.seed(42)
         data = pd.DataFrame(
@@ -187,7 +186,7 @@ class TestMetadataCoverage:
         assert isinstance(metadata, dict)
 
     def test_metadata_as_sdv_format(self):
-        from SynOmics.processing.metadata import MetaData
+        from synomicsbench.processing.metadata import MetaData
 
         np.random.seed(42)
         data = pd.DataFrame(

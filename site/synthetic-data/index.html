@@ -1188,8 +1188,8 @@
 <hr />
 <h2 id="usage-example">Usage Example<a class="headerlink" href="#usage-example" title="Permanent link">&para;</a></h2>
 <h3 id="1-gaussian-copula">1. Gaussian Copula<a class="headerlink" href="#1-gaussian-copula" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.synthesizer.GaussianCopulasynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianCopulasynthesizer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.synthesizer.GaussianCopulasynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianCopulasynthesizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
 
 <span class="n">original_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;original_data.csv&quot;</span><span class="p">)</span>
 <span class="n">metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="o">.</span><span class="n">getmeta</span><span class="p">(</span><span class="n">metadata_path</span><span class="p">)</span>
@@ -1209,7 +1209,7 @@
 </code></pre></div>
 <h3 id="2-ctgan">2. CTGAN<a class="headerlink" href="#2-ctgan" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.synthesizer.CTGANsynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">CTGANsynthesizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.synthesizer.CTGANsynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">CTGANsynthesizer</span>
 
 <span class="n">synthesizer</span> <span class="o">=</span> <span class="n">CTGANsynthesizer</span><span class="p">(</span><span class="n">output_path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;ctgan_result&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
 <span class="n">synthetic_data</span> <span class="o">=</span> <span class="n">synthesizer</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
@@ -1222,7 +1222,7 @@
 </code></pre></div>
 <h3 id="3-tvae">3. TVAE<a class="headerlink" href="#3-tvae" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.synthesizer.TVAEsynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">TVAEsynthesizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.synthesizer.TVAEsynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">TVAEsynthesizer</span>
 
 <span class="n">synthesizer</span> <span class="o">=</span> <span class="n">TVAEsynthesizer</span><span class="p">(</span><span class="n">output_path</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;tvae_result&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
 
@@ -1237,7 +1237,7 @@
 <h3 id="4-synthpop">4. Synthpop<a class="headerlink" href="#4-synthpop" title="Permanent link">&para;</a></h3>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.synthesizer.Synthpopsynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthpopSynthesizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.synthesizer.Synthpopsynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">SynthpopSynthesizer</span>
 
 <span class="c1"># Prepare categorical features</span>
 <span class="n">grouped_metadata</span> <span class="o">=</span> <span class="n">MetaData</span><span class="o">.</span><span class="n">grouping_features_astype</span><span class="p">(</span><span class="n">original_data</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>

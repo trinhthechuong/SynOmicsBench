@@ -1133,7 +1133,7 @@
 <p>where <span class="arithmatex">\(\omega = 0.5\)</span> assigns lower weight to non-significant genes, prioritizing biologically meaningful signals.</p>
 <h2 id="code-example">Code Example<a class="headerlink" href="#code-example" title="Permanent link">&para;</a></h2>
 <p>The <code>GCSAnalyzer</code> class provides the full workflow for computing GCS and generating scatter plots:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.narrow_utility.DGE</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCSAnalyzer</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.narrow_utility.DGE</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCSAnalyzer</span>
 
 <span class="n">original_dge</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;original_dge_path.csv&#39;</span><span class="p">)</span>
 <span class="n">synthetic_dge</span> <span class="o">=</span>  <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;synthetic_dge_path.csv&#39;</span><span class="p">)</span>
@@ -1155,7 +1155,7 @@
 </code></pre></div>
 <h2 id="scatter-plot-visualization">Scatter Plot Visualization<a class="headerlink" href="#scatter-plot-visualization" title="Permanent link">&para;</a></h2>
 <p>The scatter plot shows the rank score comparison between original and synthetic data, with concordance zones color-coded. The following code produces manuscript-quality GCS scatter plots using the <strong>Melanoma</strong> cohort as an example:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.narrow_utility.DGE</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCSAnalyzer</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.narrow_utility.DGE</span><span class="w"> </span><span class="kn">import</span> <span class="n">GCSAnalyzer</span>
 
 <span class="n">analyzer</span> <span class="o">=</span> <span class="n">GCSAnalyzer</span><span class="p">(</span>
     <span class="n">term_col</span><span class="o">=</span><span class="s2">&quot;Gene&quot;</span><span class="p">,</span>

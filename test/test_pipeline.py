@@ -1,5 +1,5 @@
 """
-Tests for SynOmics processing pipeline module.
+Tests for synomicsbench processing pipeline module.
 
 Note: Some tests require optional dependencies (mygene). Those tests will be skipped
 if the dependency is not available.
@@ -14,7 +14,7 @@ import pytest
 
 # Check for optional dependencies
 try:
-    from SynOmics.processing.pipeline import DataIntegrationPipeline
+    from synomicsbench.processing.pipeline import DataIntegrationPipeline
 
     PIPELINE_AVAILABLE = True
 except ImportError:

@@ -32,7 +32,7 @@ where $\omega = 0.5$ assigns lower weight to non-significant genes, prioritizing
 The `GCSAnalyzer` class provides the full workflow for computing GCS and generating scatter plots:
 
 ```python
-from SynOmics.metrics.narrow_utility.DGE import GCSAnalyzer
+from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
 original_dge = pd.read_csv('original_dge_path.csv')
 synthetic_dge =  pd.read_csv('synthetic_dge_path.csv')
@@ -58,7 +58,7 @@ print(f"Significant concordant genes: {n3 + n4}")
 The scatter plot shows the rank score comparison between original and synthetic data, with concordance zones color-coded. The following code produces manuscript-quality GCS scatter plots using the **Melanoma** cohort as an example:
 
 ```python
-from SynOmics.metrics.narrow_utility.DGE import GCSAnalyzer
+from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
 analyzer = GCSAnalyzer(
     term_col="Gene",

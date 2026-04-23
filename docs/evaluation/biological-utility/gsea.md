@@ -23,7 +23,7 @@ where $N_\text{sig}$ counts concordant significant pathways, $N_\text{non-sig}$ 
 The `PCSAnalyzer` class computes PCS and generates scatter plots:
 
 ```python
-from SynOmics.metrics.narrow_utility.GSEA import PCSAnalyzer
+from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
 
 analyzer = PCSAnalyzer(
     term_col="Term",
@@ -50,7 +50,7 @@ print(f"Significant concordant pathways: {result.n_sign}")
 The following code generates manuscript-quality PCS scatter plots using the **Melanoma** cohort as an example:
 
 ```python
-from SynOmics.metrics.narrow_utility.GSEA import PCSAnalyzer
+from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
 
 analyzer = PCSAnalyzer(
     term_col="Term",

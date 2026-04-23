@@ -1359,7 +1359,7 @@ uv<span class="w"> </span>sync
 <ul>
 <li>Create a virtual environment automatically</li>
 <li>Install exact dependencies from <code>uv.lock</code> for reproducibility</li>
-<li>Install SynOmics in editable mode for development</li>
+<li>Install synomicsbench in editable mode for development</li>
 <li>Work without requiring pip or any other package manager</li>
 </ul>
 <h4 id="activate-the-environment">Activate the Environment<a class="headerlink" href="#activate-the-environment" title="Permanent link">&para;</a></h4>
@@ -1367,7 +1367,7 @@ uv<span class="w"> </span>sync
 <span class="nb">source</span><span class="w"> </span>.venv/bin/activate<span class="w">  </span><span class="c1"># On Windows: .venv\Scripts\activate</span>
 
 <span class="c1"># Verify installation</span>
-python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import SynOmics; print(&#39;SynOmics successfully installed!&#39;)&quot;</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import synomicsbench; print(&#39;synomicsbench successfully installed!&#39;)&quot;</span>
 </code></pre></div>
 <hr />
 <h3 id="method-2-from-source-with-pip">Method 2: From Source with pip<a class="headerlink" href="#method-2-from-source-with-pip" title="Permanent link">&para;</a></h3>
@@ -1385,7 +1385,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <p>The package dependencies are defined in <code>pyproject.toml</code> and will be installed automatically.</p>
 <hr />
 <h3 id="method-3-using-singularityapptainer-container">Method 3: Using Singularity/Apptainer Container<a class="headerlink" href="#method-3-using-singularityapptainer-container" title="Permanent link">&para;</a></h3>
-<p>For HPC environments or reproducible containerized workflows, we provide a pre-built Singularity/Apptainer container with SynOmics and all dependencies pre-installed.</p>
+<p>For HPC environments or reproducible containerized workflows, we provide a pre-built Singularity/Apptainer container with synomicsbench and all dependencies pre-installed.</p>
 <h4 id="pull-the-container">Pull the Container<a class="headerlink" href="#pull-the-container" title="Permanent link">&para;</a></h4>
 <div class="highlight"><pre><span></span><code><span class="c1"># Using Apptainer (recommended for newer systems)</span>
 apptainer<span class="w"> </span>pull<span class="w"> </span>synomicsbench_public_test.sif<span class="w"> </span>oras://ghcr.io/trinhthechuong/synomicsbench:v20250319
@@ -1407,15 +1407,15 @@ singularity<span class="w"> </span>shell<span class="w"> </span>--bind<span clas
 <div class="highlight"><pre><span></span><code><span class="c1"># Navigate to your mounted workspace</span>
 <span class="nb">cd</span><span class="w"> </span>/mnt
 
-<span class="c1"># SynOmics is already installed and available</span>
-python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import SynOmics; print(SynOmics.__version__)&quot;</span>
+<span class="c1"># synomicsbench is already installed and available</span>
+python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import synomicsbench; print(synomicsbench.__version__)&quot;</span>
 
 <span class="c1"># Run your analysis scripts</span>
 python<span class="w"> </span>your_analysis.py
 </code></pre></div>
 <p>The container includes:</p>
 <ul>
-<li><strong>Pre-installed SynOmics</strong> package with all dependencies</li>
+<li><strong>Pre-installed synomicsbench</strong> package with all dependencies</li>
 <li><strong>uv</strong> package manager for additional dependencies</li>
 <li><strong>Python 3.12+</strong> environment ready to use</li>
 <li>All required system libraries and tools</li>
@@ -1436,9 +1436,9 @@ python<span class="w"> </span>your_analysis.py
 <p>Here's a complete example showing how to generate synthetic data using GaussianCopula and evaluate fidelity:</p>
 <div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.synthesizer.GaussianCopulasynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianCopulasynthesizer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.fidelity.UnivariateSimilarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnivariateSimilarity</span> 
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.synthesizer.GaussianCopulasynthesizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianCopulasynthesizer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.fidelity.UnivariateSimilarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnivariateSimilarity</span> 
 
 <span class="c1"># Load your clinical-transcriptomic dataset</span>
 <span class="n">original_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;your_original_data.csv&quot;</span><span class="p">)</span>

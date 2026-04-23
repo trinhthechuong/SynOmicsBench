@@ -65,7 +65,7 @@ pip install -e .
 ### 1. Preprocess Your Data
 
 ```python
-from SynOmics.processing.pipeline import DataIntegrationPipeline
+from synomicsbench.processing.pipeline import DataIntegrationPipeline
 
 pipeline = DataIntegrationPipeline(output_dir="./output", logger="my_pipeline")
 results = pipeline.run_pipeline(
@@ -80,7 +80,7 @@ results = pipeline.run_pipeline(
 ### 2. Generate Synthetic Data
 
 ```python
-from SynOmics.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
+from synomicsbench.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
 
 synth = GaussianCopulasynthesizer(output_path="./results", metadata=metadata)
 synthetic_data = synth.generate(
@@ -93,7 +93,7 @@ synthetic_data = synth.generate(
 ### 3. Evaluate
 
 ```python
-from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
+from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
 
 uni = UnivariateSimilarity(output_dir="./evaluation")
 score = uni.get_univariate_score(

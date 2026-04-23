@@ -66,8 +66,8 @@ Detail description of each adaptation is provided in the manuscript of this work
 ### 1. Gaussian Copula
 
 ```python
-from SynOmics.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
-from SynOmics.processing.metadata import MetaData
+from synomicsbench.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
+from synomicsbench.processing.metadata import MetaData
 
 original_data = pd.read_csv("original_data.csv")
 metadata = MetaData.getmeta(metadata_path)
@@ -90,7 +90,7 @@ output_filename="gaussiancopula_synthetic_data.csv",
 
 ```python
 import pandas as pd
-from SynOmics.synthesizer.CTGANsynthesizer import CTGANsynthesizer
+from synomicsbench.synthesizer.CTGANsynthesizer import CTGANsynthesizer
 
 synthesizer = CTGANsynthesizer(output_path=f"ctgan_result", metadata=metadata)
 synthetic_data = synthesizer.generate(
@@ -106,7 +106,7 @@ synthetic_data = synthesizer.generate(
 
 ```python
 import pandas as pd
-from SynOmics.synthesizer.TVAEsynthesizer import TVAEsynthesizer
+from synomicsbench.synthesizer.TVAEsynthesizer import TVAEsynthesizer
 
 synthesizer = TVAEsynthesizer(output_path=f"tvae_result", metadata=metadata)
 
@@ -124,7 +124,7 @@ synthetic_data = synthesizer.generate(
 ```python
 import pandas as pd
 import numpy as np
-from SynOmics.synthesizer.Synthpopsynthesizer import SynthpopSynthesizer
+from synomicsbench.synthesizer.Synthpopsynthesizer import SynthpopSynthesizer
 
 # Prepare categorical features
 grouped_metadata = MetaData.grouping_features_astype(original_data, metadata)

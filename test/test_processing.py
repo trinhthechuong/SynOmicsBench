@@ -1,5 +1,5 @@
 """
-Smoke tests for SynOmics.processing module.
+Smoke tests for synomicsbench.processing module.
 
 Tests DataProcessor, MetaData, and postprocessing functions using
 a 100-column subset of the real test data to keep execution fast.
@@ -13,9 +13,9 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from SynOmics.processing.preprocessing import DataProcessor
-from SynOmics.processing.metadata import MetaData
-from SynOmics.processing import postprocessing
+from synomicsbench.processing.preprocessing import DataProcessor
+from synomicsbench.processing.metadata import MetaData
+from synomicsbench.processing import postprocessing
 
 # ---------------------------------------------------------------------------
 # Fixtures

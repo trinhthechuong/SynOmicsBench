@@ -41,7 +41,7 @@ This will:
 
 - Create a virtual environment automatically
 - Install exact dependencies from `uv.lock` for reproducibility
-- Install SynOmics in editable mode for development
+- Install synomicsbench in editable mode for development
 - Work without requiring pip or any other package manager
 
 #### Activate the Environment
@@ -51,7 +51,7 @@ This will:
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
 # Verify installation
-python -c "import SynOmics; print('SynOmics successfully installed!')"
+python -c "import synomicsbench; print('synomicsbench successfully installed!')"
 ```
 
 ---
@@ -78,7 +78,7 @@ The package dependencies are defined in `pyproject.toml` and will be installed a
 
 ### Method 3: Using Singularity/Apptainer Container
 
-For HPC environments or reproducible containerized workflows, we provide a pre-built Singularity/Apptainer container with SynOmics and all dependencies pre-installed.
+For HPC environments or reproducible containerized workflows, we provide a pre-built Singularity/Apptainer container with synomicsbench and all dependencies pre-installed.
 
 #### Pull the Container
 
@@ -114,8 +114,8 @@ Once inside the container shell:
 # Navigate to your mounted workspace
 cd /mnt
 
-# SynOmics is already installed and available
-python -c "import SynOmics; print(SynOmics.__version__)"
+# synomicsbench is already installed and available
+python -c "import synomicsbench; print(synomicsbench.__version__)"
 
 # Run your analysis scripts
 python your_analysis.py
@@ -123,7 +123,7 @@ python your_analysis.py
 
 The container includes:
 
-- **Pre-installed SynOmics** package with all dependencies
+- **Pre-installed synomicsbench** package with all dependencies
 - **uv** package manager for additional dependencies
 - **Python 3.12+** environment ready to use
 - All required system libraries and tools
@@ -152,9 +152,9 @@ Here's a complete example showing how to generate synthetic data using GaussianC
 ```python
 import pandas as pd
 import numpy as np
-from SynOmics.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
-from SynOmics.processing.metadata import MetaData
-from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity 
+from synomicsbench.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
+from synomicsbench.processing.metadata import MetaData
+from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity 
 
 # Load your clinical-transcriptomic dataset
 original_data = pd.read_csv("your_original_data.csv")

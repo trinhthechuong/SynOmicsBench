@@ -12,11 +12,11 @@ The overall performance for a given method is the mean KS-Complement score acros
 
 ## Code Example
 
-The ssGSEA evaluation reuses the `UnivariateSimilarity` class from `SynOmics.metrics.fidelity` to compare NES distributions pathway-by-pathway:
+The ssGSEA evaluation reuses the `UnivariateSimilarity` class from `synomicsbench.metrics.fidelity` to compare NES distributions pathway-by-pathway:
 
 ```python
-from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
-from SynOmics.processing.metadata import MetaData
+from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
+from synomicsbench.processing.metadata import MetaData
 import pandas as pd
 
 # Load ssGSEA NES matrices (rows = samples, columns = pathways)

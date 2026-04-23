@@ -1021,9 +1021,9 @@
 <div class="arithmatex">\[\text{KSComplement}_p = 1 - \text{KS}\!\bigl(\text{CDF}(\text{NES}_p^{\text{original}}),\;\text{CDF}(\text{NES}_p^{\text{synthetic}})\bigr)\]</div>
 <p>The overall performance for a given method is the mean KS-Complement score across all pathways.</p>
 <h2 id="code-example">Code Example<a class="headerlink" href="#code-example" title="Permanent link">&para;</a></h2>
-<p>The ssGSEA evaluation reuses the <code>UnivariateSimilarity</code> class from <code>SynOmics.metrics.fidelity</code> to compare NES distributions pathway-by-pathway:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.fidelity.UnivariateSimilarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnivariateSimilarity</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
+<p>The ssGSEA evaluation reuses the <code>UnivariateSimilarity</code> class from <code>synomicsbench.metrics.fidelity</code> to compare NES distributions pathway-by-pathway:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.fidelity.UnivariateSimilarity</span><span class="w"> </span><span class="kn">import</span> <span class="n">UnivariateSimilarity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.processing.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">MetaData</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="c1"># Load ssGSEA NES matrices (rows = samples, columns = pathways)</span>

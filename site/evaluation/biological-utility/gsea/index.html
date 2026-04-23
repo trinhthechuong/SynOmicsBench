@@ -1104,7 +1104,7 @@
 <p>where <span class="arithmatex">\(N_\text{sig}\)</span> counts concordant significant pathways, <span class="arithmatex">\(N_\text{non-sig}\)</span> counts concordant non-significant pathways, <span class="arithmatex">\(\omega = 0.5\)</span>, and <span class="arithmatex">\(M\)</span> normalizes based on the original pathway counts.</p>
 <h2 id="code-example">Code Example<a class="headerlink" href="#code-example" title="Permanent link">&para;</a></h2>
 <p>The <code>PCSAnalyzer</code> class computes PCS and generates scatter plots:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.narrow_utility.GSEA</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCSAnalyzer</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.narrow_utility.GSEA</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCSAnalyzer</span>
 
 <span class="n">analyzer</span> <span class="o">=</span> <span class="n">PCSAnalyzer</span><span class="p">(</span>
     <span class="n">term_col</span><span class="o">=</span><span class="s2">&quot;Term&quot;</span><span class="p">,</span>
@@ -1127,7 +1127,7 @@
 </code></pre></div>
 <h2 id="scatter-plot-visualization">Scatter Plot Visualization<a class="headerlink" href="#scatter-plot-visualization" title="Permanent link">&para;</a></h2>
 <p>The following code generates manuscript-quality PCS scatter plots using the <strong>Melanoma</strong> cohort as an example:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.narrow_utility.GSEA</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCSAnalyzer</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.narrow_utility.GSEA</span><span class="w"> </span><span class="kn">import</span> <span class="n">PCSAnalyzer</span>
 
 <span class="n">analyzer</span> <span class="o">=</span> <span class="n">PCSAnalyzer</span><span class="p">(</span>
     <span class="n">term_col</span><span class="o">=</span><span class="s2">&quot;Term&quot;</span><span class="p">,</span>

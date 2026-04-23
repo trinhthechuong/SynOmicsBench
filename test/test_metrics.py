@@ -1,5 +1,5 @@
 """
-Smoke tests for SynOmics.metrics module.
+Smoke tests for synomicsbench.metrics module.
 
 Tests fidelity (UnivariateSimilarity, PairwiseSimilarity, BayesianComparison,
 check_column_consistency), narrow_utility (GCSAnalyzer, cell_deconvolution), and privacy metrics.
@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from SynOmics.processing.metadata import MetaData
+from synomicsbench.processing.metadata import MetaData
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -85,14 +85,14 @@ def tmp_dir(tmp_path):
 
 class TestColumnConsistency:
     def test_same_columns_returns_true(self, data_no_id, syn_no_id):
-        from SynOmics.metrics.fidelity.utils import check_column_consistency
+        from synomicsbench.metrics.fidelity.utils import check_column_consistency
 
         result = check_column_consistency(data_no_id, syn_no_id)
         assert isinstance(result, bool)
         assert result is True
 
     def test_different_columns_returns_false(self, data_no_id):
-        from SynOmics.metrics.fidelity.utils import check_column_consistency
+        from synomicsbench.metrics.fidelity.utils import check_column_consistency
 
         altered = data_no_id.copy()
         altered = altered.rename(columns={altered.columns[0]: "FAKE_COL"})
@@ -110,7 +110,7 @@ class TestUnivariateSimilarity:
         pytest.importorskip("sdmetrics")
 
     def test_univariate_score(self, data_no_id, syn_no_id, metadata_dict, tmp_dir):
-        from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
+        from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
 
         us = UnivariateSimilarity(output_dir=tmp_dir)
         score = us.get_univariate_score(
@@ -123,7 +123,7 @@ class TestUnivariateSimilarity:
         assert 0.0 <= score <= 1.0
 
     def test_get_detail_df(self, data_no_id, syn_no_id, metadata_dict, tmp_dir):
-        from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
+        from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
 
         us = UnivariateSimilarity(output_dir=tmp_dir, logger_name="detail_test")
         us.get_univariate_score(data_no_id, syn_no_id, metadata_dict, save=False)
@@ -132,7 +132,7 @@ class TestUnivariateSimilarity:
         assert "Score" in details.columns
 
     def test_summarize(self, data_no_id, syn_no_id, metadata_dict, tmp_dir):
-        from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
+        from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
 
         us = UnivariateSimilarity(output_dir=tmp_dir, logger_name="summarize_test")
         us.get_univariate_score(data_no_id, syn_no_id, metadata_dict, save=False)
@@ -142,7 +142,7 @@ class TestUnivariateSimilarity:
     def test_plot_column_score_histogram(
         self, data_no_id, syn_no_id, metadata_dict, tmp_dir
     ):
-        from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
+        from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
 
         us = UnivariateSimilarity(output_dir=tmp_dir, logger_name="plot_test")
         us.get_univariate_score(data_no_id, syn_no_id, metadata_dict, save=False)
@@ -163,7 +163,7 @@ class TestPairwiseSimilarity:
     def test_init_and_get_pairwise_scores(
         self, data_no_id, syn_no_id, metadata_dict, tmp_dir
     ):
-        from SynOmics.metrics.fidelity.PairwiseSimilarity import PairwiseSimilarity
+        from synomicsbench.metrics.fidelity.PairwiseSimilarity import PairwiseSimilarity
 
         ps = PairwiseSimilarity(
             original_data=data_no_id,
@@ -179,7 +179,7 @@ class TestPairwiseSimilarity:
     def test_metadata_mismatch_raises(
         self, data_no_id, syn_no_id, metadata_dict, tmp_dir
     ):
-        from SynOmics.metrics.fidelity.PairwiseSimilarity import PairwiseSimilarity
+        from synomicsbench.metrics.fidelity.PairwiseSimilarity import PairwiseSimilarity
 
         bad_meta = {k: v for k, v in list(metadata_dict.items())[:-1]}  # drop one key
         with pytest.raises(RuntimeError, match="metadata does not match"):
@@ -202,7 +202,7 @@ class TestBayesianComparison:
         pytest.importorskip("baycomp")
 
     def test_compare_methods(self):
-        from SynOmics.metrics.fidelity.BayesianComparison import BayesianComparison
+        from synomicsbench.metrics.fidelity.BayesianComparison import BayesianComparison
 
         rng = np.random.default_rng(0)
         scores_a = rng.normal(0.8, 0.05, size=20).tolist()
@@ -225,14 +225,14 @@ class TestBayesianComparison:
         assert len(df) == 6
 
     def test_compare_methods_too_few_methods(self):
-        from SynOmics.metrics.fidelity.BayesianComparison import BayesianComparison
+        from synomicsbench.metrics.fidelity.BayesianComparison import BayesianComparison
 
         bc = BayesianComparison()
         with pytest.raises(ValueError):
             bc.compare_methods(method_to_scores={"A": [0.8, 0.7]})
 
     def test_invalid_rope(self):
-        from SynOmics.metrics.fidelity.BayesianComparison import BayesianComparison
+        from synomicsbench.metrics.fidelity.BayesianComparison import BayesianComparison
 
         with pytest.raises(ValueError, match="rope must be > 0"):
             BayesianComparison(rope=-1)
@@ -247,7 +247,7 @@ class TestMissingValueSimilarity:
     def test_import_or_skip(self):
         """MissingValueSimilarity.py is missing 'import pandas as pd'. Verify it fails or works."""
         try:
-            from SynOmics.metrics.fidelity.MissingValueSimilarity import (
+            from synomicsbench.metrics.fidelity.MissingValueSimilarity import (
                 MissingValue_Similarity,
             )
         except (NameError, ImportError) as exc:
@@ -285,26 +285,26 @@ class TestGCSAnalyzer:
         return ori, syn
 
     def test_init(self):
-        from SynOmics.metrics.narrow_utility.DGE import GCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
         analyzer = GCSAnalyzer(term_col="Gene", nes_col="Log2FC", q_col="Q_value")
         assert analyzer.q_thr == 0.05
         assert analyzer.w == 0.5
 
     def test_invalid_q_thr(self):
-        from SynOmics.metrics.narrow_utility.DGE import GCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
         with pytest.raises(ValueError, match="q_thr"):
             GCSAnalyzer(q_thr=0.0)
 
     def test_invalid_w(self):
-        from SynOmics.metrics.narrow_utility.DGE import GCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
         with pytest.raises(ValueError, match="w must be"):
             GCSAnalyzer(w=-1)
 
     def test_compute_rank_score(self, sample_dge_data):
-        from SynOmics.metrics.narrow_utility.DGE import GCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
         ori, _ = sample_dge_data
         analyzer = GCSAnalyzer()
@@ -314,7 +314,7 @@ class TestGCSAnalyzer:
         assert "qval" in rnk.columns
 
     def test_align_rank_scores(self, sample_dge_data):
-        from SynOmics.metrics.narrow_utility.DGE import GCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
         ori, syn = sample_dge_data
         analyzer = GCSAnalyzer()
@@ -326,7 +326,7 @@ class TestGCSAnalyzer:
         assert "rank_syn" in aligned.columns
 
     def test_gene_set_concordance_score(self, sample_dge_data):
-        from SynOmics.metrics.narrow_utility.DGE import GCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
         ori, syn = sample_dge_data
         analyzer = GCSAnalyzer()
@@ -342,7 +342,7 @@ class TestGCSAnalyzer:
         assert isinstance(n_non_sign, int)
 
     def test_process_single_dge_result(self, sample_dge_data):
-        from SynOmics.metrics.narrow_utility.DGE import GCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
         ori, syn = sample_dge_data
         analyzer = GCSAnalyzer()
@@ -364,7 +364,7 @@ class TestSurvivalEvaluator:
         pytest.importorskip("scienceplots")
 
     def test_init_and_compute(self):
-        from SynOmics.metrics.narrow_utility.survival_analysis import SurvivalEvaluator
+        from synomicsbench.metrics.narrow_utility.survival_analysis import SurvivalEvaluator
 
         rng = np.random.default_rng(0)
         n = 50
@@ -385,7 +385,7 @@ class TestSurvivalEvaluator:
         assert evaluator is not None
 
     def test_compute_survival_metrics(self):
-        from SynOmics.metrics.narrow_utility.survival_analysis import SurvivalEvaluator
+        from synomicsbench.metrics.narrow_utility.survival_analysis import SurvivalEvaluator
 
         rng = np.random.default_rng(1)
         n = 60
@@ -419,7 +419,7 @@ class TestPrivacyInference:
         pytest.importorskip("anonymeter")
 
     def test_eval_inference(self, data_no_id, syn_no_id):
-        from SynOmics.metrics.privacy.inference import eval_inference_genes_clinical
+        from synomicsbench.metrics.privacy.inference import eval_inference_genes_clinical
 
         # Use a tiny subset (5 clinical cols) for speed
         num_clinical = 5
@@ -432,7 +432,7 @@ class TestPrivacyInference:
         results = eval_inference_genes_clinical(
             ori=small_ori,
             syns={"test_synth": small_syn},
-            num_clinical=num_clinical,
+            clinical_cols=list(range(num_clinical)),
         )
         assert isinstance(results, dict)
         assert "test_synth" in results
@@ -444,7 +444,7 @@ class TestPrivacySinglingOut:
         pytest.importorskip("anonymeter")
 
     def test_eval_singling_out_univariate(self, data_no_id, syn_no_id):
-        from SynOmics.metrics.privacy.singling_out import eval_singling_out_univariate
+        from synomicsbench.metrics.privacy.singling_out import eval_singling_out_univariate
 
         # Use small subset for speed
         small_ori = (
@@ -474,7 +474,7 @@ class TestPrivacyLinkability:
         pytest.importorskip("anonymeter")
 
     def test_eval_linkability(self, data_no_id, syn_no_id):
-        from SynOmics.metrics.privacy.linkability import eval_linkability_genes_clinical
+        from synomicsbench.metrics.privacy.linkability import eval_linkability_genes_clinical
 
         # Use small subset: 5 clinical + 10 gene columns
         num_clinical = 5
@@ -489,7 +489,7 @@ class TestPrivacyLinkability:
         results = eval_linkability_genes_clinical(
             ori=small_ori,
             syns={"test_synth": small_syn},
-            num_clinical=num_clinical,
+            clinical_cols=list(range(num_clinical)),
             proportions=(0.5, 1.0),
             seed=42,
         )
@@ -522,7 +522,7 @@ class TestCellDeconvolution:
         return df_orig, df_syn, cell_types
 
     def test_geometric_center(self):
-        from SynOmics.metrics.narrow_utility.cell_deconvolution import geometric_center
+        from synomicsbench.metrics.narrow_utility.cell_deconvolution import geometric_center
 
         X = np.array([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]])
         center = geometric_center(X)
@@ -531,7 +531,7 @@ class TestCellDeconvolution:
         np.testing.assert_allclose(center[0], np.exp(np.mean(np.log([1.0, 4.0]))), rtol=1e-6)
 
     def test_geometric_center_uniform(self):
-        from SynOmics.metrics.narrow_utility.cell_deconvolution import geometric_center
+        from synomicsbench.metrics.narrow_utility.cell_deconvolution import geometric_center
 
         # All same values → center equals that value
         X = np.full((5, 3), 7.0)
@@ -539,7 +539,7 @@ class TestCellDeconvolution:
         np.testing.assert_allclose(center, [7.0, 7.0, 7.0], rtol=1e-6)
 
     def test_aitchison_distance_identical(self, sample_composition_data):
-        from SynOmics.metrics.narrow_utility.cell_deconvolution import aitchison_distance
+        from synomicsbench.metrics.narrow_utility.cell_deconvolution import aitchison_distance
 
         df_orig, _, cell_types = sample_composition_data
         # Distance to itself should be 0
@@ -548,7 +548,7 @@ class TestCellDeconvolution:
         assert dist == pytest.approx(0.0, abs=1e-10)
 
     def test_aitchison_distance_non_negative(self, sample_composition_data):
-        from SynOmics.metrics.narrow_utility.cell_deconvolution import aitchison_distance
+        from synomicsbench.metrics.narrow_utility.cell_deconvolution import aitchison_distance
 
         df_orig, df_syn, cell_types = sample_composition_data
         dist = aitchison_distance(df_orig, df_syn, cell_types)
@@ -556,7 +556,7 @@ class TestCellDeconvolution:
         assert dist >= 0.0
 
     def test_aitchison_distance_with_zeros(self):
-        from SynOmics.metrics.narrow_utility.cell_deconvolution import aitchison_distance
+        from synomicsbench.metrics.narrow_utility.cell_deconvolution import aitchison_distance
 
         # Data containing zeros — multi_replace should handle them
         cell_types = ["A", "B", "C"]
@@ -567,27 +567,27 @@ class TestCellDeconvolution:
         assert dist >= 0.0
 
     def test_aitchison_score_zero_distance(self):
-        from SynOmics.metrics.narrow_utility.cell_deconvolution import aitchison_score
+        from synomicsbench.metrics.narrow_utility.cell_deconvolution import aitchison_score
 
         score = aitchison_score(0.0)
         assert score == pytest.approx(1.0)
 
     def test_aitchison_score_positive_distance(self):
-        from SynOmics.metrics.narrow_utility.cell_deconvolution import aitchison_score
+        from synomicsbench.metrics.narrow_utility.cell_deconvolution import aitchison_score
 
         score = aitchison_score(1.0)
         assert score == pytest.approx(np.exp(-1.0))
         assert 0.0 < score < 1.0
 
     def test_aitchison_score_large_distance(self):
-        from SynOmics.metrics.narrow_utility.cell_deconvolution import aitchison_score
+        from synomicsbench.metrics.narrow_utility.cell_deconvolution import aitchison_score
 
         score = aitchison_score(100.0)
         assert score > 0.0
         assert score < 1e-40  # exp(-100) is extremely small
 
     def test_aitchison_distance_and_score_integration(self, sample_composition_data):
-        from SynOmics.metrics.narrow_utility.cell_deconvolution import (
+        from synomicsbench.metrics.narrow_utility.cell_deconvolution import (
             aitchison_distance,
             aitchison_score,
         )

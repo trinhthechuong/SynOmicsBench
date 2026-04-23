@@ -1066,11 +1066,11 @@
 <li><strong>Multivariate</strong>: predicates from multiple attribute combinations.</li>
 </ul>
 <hr />
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.privacy.singling_out</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.privacy.singling_out</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">eval_singling_out_univariate</span><span class="p">,</span>
     <span class="n">eval_singling_out_multivariate</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.processing.postprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">post_masking</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.processing.postprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">post_masking</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="c1"># Load and preprocess data</span>
@@ -1094,7 +1094,7 @@
 <hr />
 <h2 id="linkability-risk">Linkability Risk<a class="headerlink" href="#linkability-risk" title="Permanent link">&para;</a></h2>
 <p>Linkability assesses whether an attacker can use synthetic data to connect disjoint attribute sets (clinical features and gene expression) belonging to the same individual, using Gower-distance nearest neighbors.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.privacy.linkability</span><span class="w"> </span><span class="kn">import</span> <span class="n">eval_linkability_genes_clinical</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.privacy.linkability</span><span class="w"> </span><span class="kn">import</span> <span class="n">eval_linkability_genes_clinical</span>
 
 <span class="c1"># Example: define clinical and transcriptomic column indices or names</span>
 <span class="n">clinical_features</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>  <span class="c1"># or column names: [&quot;age&quot;, &quot;sex&quot;, &quot;stage&quot;, &quot;grade&quot;]</span>
@@ -1117,7 +1117,7 @@
 <hr />
 <h2 id="inference-risk">Inference Risk<a class="headerlink" href="#inference-risk" title="Permanent link">&para;</a></h2>
 <p>Inference quantifies the ability to deduce sensitive clinical attributes from auxiliary gene expression features using k-nearest neighbor prediction.</p>
-<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">SynOmics.metrics.privacy.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">eval_inference_genes_clinical</span>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.privacy.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">eval_inference_genes_clinical</span>
 
 <span class="c1"># Example: define clinical and transcriptomic column indices or names</span>
 <span class="n">clinical_features</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]</span>  <span class="c1"># or column names: [&quot;age&quot;, &quot;sex&quot;, &quot;stage&quot;, &quot;grade&quot;]</span>

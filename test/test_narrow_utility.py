@@ -1,5 +1,5 @@
 """
-Tests for SynOmics GSEA and narrow utility modules.
+Tests for synomicsbench GSEA and narrow utility modules.
 """
 
 import numpy as np
@@ -31,7 +31,7 @@ class TestGSEAAnalyzer:
         return ori, syn
 
     def test_pcs_analyzer_init(self):
-        from SynOmics.metrics.narrow_utility.GSEA import PCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
         
         analyzer = PCSAnalyzer(
             term_col="Term",
@@ -45,7 +45,7 @@ class TestGSEAAnalyzer:
         assert analyzer.w == 0.5
 
     def test_pcs_analyzer_default_init(self):
-        from SynOmics.metrics.narrow_utility.GSEA import PCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
         
         analyzer = PCSAnalyzer()
         
@@ -57,7 +57,7 @@ class TestPredictiveModelComparator:
     """Tests for PredictiveModelComparator class."""
 
     def test_import(self):
-        from SynOmics.metrics.narrow_utility import predictive_model_comp
+        from synomicsbench.metrics.narrow_utility import predictive_model_comp
         assert predictive_model_comp is not None
 
 
@@ -66,7 +66,7 @@ class TestNarrowUtilityBayesianComparison:
 
     def test_import(self):
         try:
-            from SynOmics.metrics.narrow_utility.BayesianComparison import BayesianComparison
+            from synomicsbench.metrics.narrow_utility.BayesianComparison import BayesianComparison
             assert BayesianComparison is not None
         except ImportError:
             pytest.skip("Module not available")
@@ -76,5 +76,5 @@ class TestVisualization:
     """Tests for visualization utilities."""
 
     def test_import_visualization_module(self):
-        from SynOmics.metrics.fidelity import visualization
+        from synomicsbench.metrics.fidelity import visualization
         assert visualization is not None

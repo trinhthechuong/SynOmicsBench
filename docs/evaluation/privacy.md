@@ -14,11 +14,11 @@ Singling out measures the ability to isolate a specific individual in the datase
 ---
 
 ```python
-from SynOmics.metrics.privacy.singling_out import (
+from synomicsbench.metrics.privacy.singling_out import (
     eval_singling_out_univariate,
     eval_singling_out_multivariate,
 )
-from SynOmics.processing.postprocessing import post_masking
+from synomicsbench.processing.postprocessing import post_masking
 import pandas as pd
 
 # Load and preprocess data
@@ -47,7 +47,7 @@ for evaluator in uni_results["Gaussian Copula"]:
 Linkability assesses whether an attacker can use synthetic data to connect disjoint attribute sets (clinical features and gene expression) belonging to the same individual, using Gower-distance nearest neighbors.
 
 ```python
-from SynOmics.metrics.privacy.linkability import eval_linkability_genes_clinical
+from synomicsbench.metrics.privacy.linkability import eval_linkability_genes_clinical
 
 # Example: define clinical and transcriptomic column indices or names
 clinical_features = [0, 1, 2, 3]  # or column names: ["age", "sex", "stage", "grade"]
@@ -75,7 +75,7 @@ for evaluator in link_results["Gaussian Copula"]:
 Inference quantifies the ability to deduce sensitive clinical attributes from auxiliary gene expression features using k-nearest neighbor prediction.
 
 ```python
-from SynOmics.metrics.privacy.inference import eval_inference_genes_clinical
+from synomicsbench.metrics.privacy.inference import eval_inference_genes_clinical
 
 # Example: define clinical and transcriptomic column indices or names
 clinical_features = [0, 1, 2, 3]  # or column names: ["age", "sex", "stage", "grade"]

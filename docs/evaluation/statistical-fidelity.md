@@ -27,8 +27,8 @@ where $N$ and $M$ denote the total number of clinical features and genes, respec
 ### Code Example
 
 ```python
-from SynOmics.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
-from SynOmics.processing.metadata import MetaData
+from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
+from synomicsbench.processing.metadata import MetaData
 
 # Compute metadata (auto-detect feature types)
 metadata = MetaData.get_metadata(
@@ -78,8 +78,8 @@ where each $\bar{S}_{\text{modality}}$ is the mean similarity score over all fea
 
 
 ```python
-from SynOmics.metrics.fidelity.PairwiseSimilarity import PairwiseSimilarity
-from SynOmics.processing.metadata import MetaData
+from synomicsbench.metrics.fidelity.PairwiseSimilarity import PairwiseSimilarity
+from synomicsbench.processing.metadata import MetaData
 
 metadata = MetaData.get_metadata(
     data=original_data,
@@ -104,7 +104,7 @@ print(f"Bivariate Score: {scores:.4f}")
 The violin plot below shows the distribution of per-feature bivariate similarity scores across SDG methods. The `plot_violin` function from the broad utility analysis module produces manuscript-quality figures:
 
 ```python
-from SynOmics.metrics.fidelity.visualization import plot_violin_grid_by_cancer
+from synomicsbench.metrics.fidelity.visualization import plot_violin_grid_by_cancer
 
 # scores_dict: mapping from method name to list ofs scores   
 # Univariate similarity scores: the list of per-feature scores
