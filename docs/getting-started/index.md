@@ -129,6 +129,7 @@ print(f"Overall Fidelity Score: {score:.4f}")
 ## Next Steps
 
 Now that you've completed your first synthesis, explore more advanced topics:
+
 - [Preprocessing Data](../preprocessing/index.md):How to harmonize and integrate multimodal data.
 
 - [Generate Synthetic Data](../synthetic-data/index.md): Detailed descriptions of each synthesis method and their adaptations.
