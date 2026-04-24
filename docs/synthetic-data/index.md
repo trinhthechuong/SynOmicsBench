@@ -70,7 +70,11 @@ from synomicsbench.synthesizer.GaussianCopulasynthesizer import GaussianCopulasy
 from synomicsbench.processing.metadata import MetaData
 
 original_data = pd.read_csv("original_data.csv")
-metadata = MetaData.getmeta(metadata_path)
+metadata = MetaData.get_metadata(
+    data=original_data,
+    ordinal_features= [] #your ordinal feature list,
+    threshold_unique_values = 10
+)
 
 seed = 42 
 
@@ -121,6 +125,9 @@ synthetic_data = synthesizer.generate(
 
 ### 4. Synthpop
 
+> [!NOTE] 
+> Synthpop requires R installation. You can install R from [CRAN](https://cran.r-project.org/). If you don't have R, you can try the [apptainer image](../getting-started/index.md).
+
 ```python
 import pandas as pd
 import numpy as np
@@ -136,10 +143,7 @@ categorical_features = grouped_metadata.get("ordinal_categorical") + \
 predictor_matrix = np.load("synthpop/predictor_matrix.npy")
 predictor_df = pd.DataFrame(predictor_matrix, index=original_data.columns, columns=original_data.columns)
 
-r_home = "/opt/R/4.4.1/lib/R" # Path to R installation
-r_terminal = "R441" # Name of the R terminal
-
-synth = SynthpopSynthesizer(output_path=f"synthpop_result", metadata=metadata, r_home=r_home, r_terminal=r_terminal)
+synth = SynthpopSynthesizer(output_path=f"synthpop_result", metadata=metadata)
 synthetic_data = synth.generate(
     data=original_data, 
     seed=42, 
