@@ -19,9 +19,12 @@ RUN curl -fsSL -o /tmp/r-4.4.1_1_amd64.deb \
     && rm /tmp/r-4.4.1_1_amd64.deb \
     && apt-get clean && rm -rf /var/lib/apt/lists/* \
     && ln -s /opt/R/4.4.1/bin/R      /usr/local/bin/R \
-    && ln -s /opt/R/4.4.1/bin/Rscript /usr/local/bin/Rscript
+    && ln -s /opt/R/4.4.1/bin/Rscript /usr/local/bin/Rscript \
+    && echo "/opt/R/4.4.1/lib/R/lib" > /etc/ld.so.conf.d/r-4.4.1.conf \
+    && ldconfig
 
 ENV R_HOME=/opt/R/4.4.1/lib/R
+ENV LD_LIBRARY_PATH=/opt/R/4.4.1/lib/R/lib
 
 # Install R packages required by Synthpop synthesizer
 RUN Rscript -e "install.packages(c('synthpop', 'dplyr'), repos='https://cloud.r-project.org', quiet=TRUE)"

@@ -83,6 +83,7 @@ jobs:
         password: ${{ secrets.GITHUB_TOKEN }}
     env:
       R_HOME: /opt/R/4.4.1/lib/R
+      LD_LIBRARY_PATH: /opt/R/4.4.1/lib/R/lib
       RPY2_CFFI_MODE: ABI
       UV_NO_BINARY_PACKAGE: rpy2          # compile rpy2 from source against container's R
       # Both cache and venv must be on the same filesystem (container overlay) so uv
