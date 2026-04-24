@@ -70,7 +70,7 @@ dataset_dict = {
     "TVAE": "GSEA/tvae_0.csv",
 }
 
-fig, axs = analyzer.plot_gsea_datasets(
+fig, pcs_dict = analyzer.plot_gsea_datasets(
     ori_data="GSEA/original_data.csv",
     dataset_dict=dataset_dict,
     figsize=(9, 10)

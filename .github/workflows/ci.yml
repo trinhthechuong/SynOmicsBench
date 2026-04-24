@@ -2,9 +2,9 @@ name: Python CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
 
 permissions:
   contents: write
@@ -13,9 +13,10 @@ env:
   RPY2_CFFI_MODE: ABI
 
 jobs:
+  # ── Unit & processing tests (no R required) ─────────────────────────────────
   test:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -31,16 +32,35 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: |
-          uv sync --all-extras --dev
+        run: uv sync --all-extras --dev
 
       - name: Lint with ruff
-        run: |
-          uvx ruff check src/synomicsbench
-
-
+        run: uvx ruff check src/synomicsbench
 
       - name: Run tests
-        run: |
-          # Chạy các test sanity trước cho nhanh, sau đó là integration tests
-          uv run pytest test/ -v
+        run: uv run pytest test/ --ignore=test/test_synthesizers_integration.py -v
+
+  # ── Synthesizer integration tests (requires R 4.4.1 + synthpop) ─────────────
+  test-synthesizers:
+    runs-on: ubuntu-latest
+    needs: test
+    container:
+      image: ghcr.io/${{ github.repository_owner }}/synomicsbench-test:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    env:
+      R_HOME: /opt/R/4.4.1/lib/R
+      RPY2_CFFI_MODE: ABI
+      # Force rpy2 to build from source so it links against the container's R
+      UV_NO_BINARY_PACKAGE: rpy2
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: uv sync --all-extras --dev
+
+      - name: Run synthesizer integration tests
+        run: uv run pytest test/test_synthesizers_integration.py -v

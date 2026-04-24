@@ -1,6 +1,6 @@
 [project]
 name = "synomicsbench"
-version = "1.0.1"
+version = "1.0.2"
 # description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -30,7 +30,7 @@ dependencies = [
     "polar>=0.0.127",
     "polars>=1.39.2",
     "pytest>=9.0.3",
-    "rpy2==3.6.5",
+    "rpy2==3.5.16",
     "scienceplots>=2.2.1",
     "scikit-bio>=0.7.0",
     "scikit-learn>=1.8.0",

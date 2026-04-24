@@ -19,13 +19,15 @@ Higher values indicate greater agreement in survival discrimination. Kaplan-Meie
 ```python
 from synomicsbench.metrics.narrow_utility.survival_analysis import  SurvivalEvaluator
 
-#Define dataset dictionary
-dataset_dict = {}
-survival_cols = ['OS', 'OS_CNSR','Benefit']
-original_data = pd.read_csv('original_data.csv')
-dataset_dict["Original_data"] = original_data[cols]
-synthetic_data = pd.read_csv('synthetic_data.csv')
-dataset_dict['Synthetic_data'] = synthetic_data[survival_cols]
+# Define dataset dictionary
+survival_cols = ["OS", "OS_CNSR", "Benefit"]
+original_data = pd.read_csv("original_data.csv")
+synthetic_data = pd.read_csv("synthetic_data.csv")
+
+dataset_dict = {
+    "Origin": original_data[survival_cols],
+    "Synthetic_data": synthetic_data[survival_cols],
+}
 
 
 
@@ -38,15 +40,15 @@ evaluator = SurvivalEvaluator(
     phenotype=phenotype,
     time_target="OS",
     event_target="OS_CNSR",
-    original_name="Original_data"
+    original_name="Origin"
 )
 
-# Compute C-index similarity scores with respect to Original data
+# Compute C-index similarity scores with respect to the original data
 summary_df = evaluator.compute_survival_metrics()
-scored_df = evaluator.compute_cindex_scores(original_name="Original_data")
+scored_df = evaluator.compute_cindex_scores(original_name="Origin")
 
 # Extract the C-index score
-synthetic_score = scored_df.loc[scored_df['Dataset'] == 'Synthetic_data', 'C-index_score'].values[0]
+synthetic_score = scored_df.loc[scored_df["Dataset"] == "Synthetic_data", "C-index_score"].values[0]
 print(f"Synthetic Score: {synthetic_score:.4f}")
 ```
 
@@ -55,9 +57,9 @@ print(f"Synthetic Score: {synthetic_score:.4f}")
 ```python
 from synomicsbench.metrics.narrow_utility.survival_analysis import  SurvivalEvaluator
 
-# Define datasets
+# Define datasets — the key for the reference must match original_name
 datasets = {
-    "Original": real_df,
+    "Origin": real_df,
     "Gaussian Copula": gc_df,
     "Avatars K5": avatars_k5_df,
     "Avatars K10": avatars_k10_df,
@@ -73,11 +75,11 @@ evaluator = SurvivalEvaluator(
     phenotype=phenotype,
     time_target="OS",
     event_target="OS_CNSR",
-    original_name="Original_data"
+    original_name="Origin"
 )
 evaluator.compute_survival_metrics()
 fig, summary = evaluator.plot_grid(
-    save_dir = 'survial_analysis_comparison.png'
+    save_dir="survival_analysis_results/"
 )
 
 # Each panel shows: Kaplan-Meier curves, log-rank P value, C-index

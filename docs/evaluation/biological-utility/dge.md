@@ -79,8 +79,8 @@ dataset_dict = {
 }
 
 # Plot all methods in a grid
-fig, axs = analyzer.plot_gcs_datasets(
-    ori_path="DGE/origin.csv",
+fig, gcs_dict = analyzer.plot_gcs_datasets(
+    ori_data="DGE/origin.csv",
     dataset_dict=dataset_dict,
     figsize=(18, 10)
 )

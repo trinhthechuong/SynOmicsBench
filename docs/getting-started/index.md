@@ -99,7 +99,8 @@ ordinal_features = ["Mstage", "Tx_Start_ECOG", "numPriorTherapies", "biopsyConte
 # Create metadata object to specify feature types and properties
 metadata = MetaData.get_metadata(
     data=original_data,
-    ordinal_features=ordinal_features
+    ordinal_features=ordinal_features,
+    threshold_unique_values = 10
 )
 
 # Initialize and run the synthesizer
@@ -130,9 +131,8 @@ print(f"Overall Fidelity Score: {score:.4f}")
 
 Now that you've completed your first synthesis, explore more advanced topics:
 
-- [Preprocessing Data](../preprocessing/index.md):How to harmonize and integrate multimodal data.
+- [Preprocessing Data](../preprocessing/index.md): How to harmonize and integrate multimodal data.
 
 - [Generate Synthetic Data](../synthetic-data/index.md): Detailed descriptions of each synthesis method and their adaptations.
 
 - [Evaluation Metrics](../evaluation/index.md): Deep dive into Statistical fidelity, Biology utility and Privacy metrics.
-

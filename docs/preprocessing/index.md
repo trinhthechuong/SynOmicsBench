@@ -19,21 +19,18 @@ The following example demonstrates how to configure and execute the complete dat
 import pandas as pd
 from synomicsbench.processing.pipeline import DataIntegrationPipeline
 
-output_dir = "./integrationpipeline_output"
+# Load your raw data
+clinical_data = pd.read_csv("clinical_data.csv")
+transcriptomics_data = pd.read_csv("transcriptomics_data.csv")
 
-imputer = "mice"
-imputer_params = {
-    "iterations": 10,
-    "n_estimators": 100,
-    "random_state": 42
-}
+output_dir = "./integrationpipeline_output"
 
 ordinal_cat_columns = [
     "MSKCC",
     "Number_of_Prior_Therapies",
     "ORR",
     "ExtremeResponder",
-    "Benefit"
+    "Benefit",
 ]
 
 steps_config = {
@@ -47,14 +44,20 @@ steps_config = {
     "integrate_data": True,
 }
 
+imputer_params = {
+    "iterations": 10,
+    "n_estimators": 100,
+    "random_state": 42,
+}
+
 pipeline = DataIntegrationPipeline(
     output_dir=output_dir,
-    logger="Integration_final"
+    logger="Integration_final",
 )
 
 results = pipeline.run_pipeline(
-    clinical_data=clinical_data_1,
-    transcriptomics_data=omics_data_t,
+    clinical_data=clinical_data,
+    transcriptomics_data=transcriptomics_data,
     clinical_id_column="RNA_ID",
     transcriptomics_id_column="Sample",
     integration_id_column="Patient_ID",
@@ -64,15 +67,24 @@ results = pipeline.run_pipeline(
     unique_threshold=10,
     scaler="minmax",
     ordinal_cat_columns=ordinal_cat_columns,
-    imputer=imputer,
+    imputer="mice",
     imputer_params=imputer_params,
     low_expression_variance_threshold=0.0005,
     add_indicators=True,
     verbose=True,
 )
+
+# Access outputs — run_pipeline() returns a dict with three keys
+processed_clinical       = results["processed_clinical"]
+processed_transcriptomics = results["processed_transcriptomics"]
+integrated_data          = results["integrated_data"]   # None if integrate_data=False
+
+print(f"Clinical shape:        {processed_clinical.shape}")
+print(f"Transcriptomics shape: {processed_transcriptomics.shape}")
+print(f"Integrated shape:      {integrated_data.shape}")
 ```
 
-The `steps_config` dictionary controls which preprocessing steps are executed, allowing flexible pipeline customization based on data characteristics and analysis requirements. The pipeline returns processed clinical and transcriptomics data ready for synthesis or downstream analysis.
+The `steps_config` dictionary controls which preprocessing steps are executed, allowing flexible pipeline customization based on data characteristics and analysis requirements. The pipeline returns a dict with keys `processed_clinical`, `processed_transcriptomics`, and `integrated_data` (the inner-joined dataset, or `None` when `integrate_data=False`).
 
 ## Pipeline Steps
 
@@ -126,39 +138,62 @@ All helper functions are available in `synomicsbench.processing.preprocessing.Da
 
 ### Example Usage
 
-The following example demonstrates how to use `DataProcessor` for targeted data cleaning, encoding, and imputation:
+The following example uses a realistic clinical-transcriptomic dataset (30 patients, 6 clinical features, 30 genes) to demonstrate each `DataProcessor` step individually.
 
 ```python
 import pandas as pd
 import numpy as np
 from synomicsbench.processing.preprocessing import DataProcessor
 
-# 0. Sample Data
-df = pd.DataFrame(
-    {
-        "Patient_ID": ["P1", "P2", None, "P2"],
-        "sex": ["M", "F", "F", "F"],
-        "stage": ["I", "II", "II", None],
-        "age": [63, np.nan, 55, 55],
-        "geneA": [0.1, 0.0, 0.0, 0.0],
-    }
+# ── Sample data ──────────────────────────────────────────────────────────────
+N = 30
+np.random.seed(42)
+
+data = {
+    "Patient_ID":       [f"P{i+1:02d}" for i in range(N)],
+    "Gender":           np.random.choice(["M", "F"], N),
+    "Mstage":           np.random.choice(["I", "II", "III", "IV"], N),
+    "Tx_Start_ECOG":    np.random.choice([0, 1, 2], N).astype(float),
+    "numPriorTherapies":np.random.randint(0, 4, N).astype(float),
+    "biopsyContext":    np.random.choice(["Primary", "Metastatic"], N),
+    "Age":              np.random.randint(45, 80, N).astype(float),
+}
+for i in range(1, 31):
+    data[f"Gene_{i:02d}"] = np.random.normal(loc=5, scale=2, size=N)
+
+df = pd.DataFrame(data)
+
+# Introduce realistic missingness
+df.loc[[10, 12], "Patient_ID"] = np.nan   # undefined IDs → will be dropped
+df.loc[2,  "Age"]           = np.nan
+df.loc[5,  "Mstage"]        = np.nan
+df.loc[15, "Tx_Start_ECOG"] = np.nan
+
+# ── 1. Filtering & QC ────────────────────────────────────────────────────────
+df_clean = DataProcessor.remove_unknown_entities(df, id_column="Patient_ID")
+df_clean = DataProcessor.remove_duplications(df_clean, axis=0).reset_index(drop=True)
+
+# ── 2. Encoding ──────────────────────────────────────────────────────────────
+dummy_cat    = ["Gender"]
+ordinal_cols = ["Mstage", "Tx_Start_ECOG", "numPriorTherapies", "biopsyContext"]
+
+cat_encoded              = DataProcessor.encode_dummy_features(df_clean[dummy_cat])
+ord_encoded, ord_encoder = DataProcessor.encode_ordinal_features(df_clean[ordinal_cols])
+
+# ── 3. Scaling ───────────────────────────────────────────────────────────────
+num_scaled, num_scaler = DataProcessor.standardization(df_clean[["Age"]], scaler="minmax")
+
+# ── 4. MICE imputation ───────────────────────────────────────────────────────
+# Operates on the cleaned DataFrame; missing indicators are appended automatically.
+df_imputed = DataProcessor.mice_imputation(
+    df_clean.reset_index(drop=True),
+    iterations=10,
+    n_estimators=100,
+    add_indicators=True,
 )
 
-# 1. Filtering & QC
-df_clean = DataProcessor.remove_unknown_entities(df, id_column="Patient_ID")
-df_clean = DataProcessor.remove_duplications(df_clean, axis=0)
-
-# 2. Encoding
-cat_encoded = DataProcessor.encode_dummy_features(df_clean[["sex"]])
-ord_encoded, ord_encoder = DataProcessor.encode_ordinal_features(df_clean[["stage"]].fillna("missing"))
-
-# 3. Scaling
-num_scaled, num_scaler = DataProcessor.standardization(df_clean[["age"]].fillna(df_clean["age"].median()), scaler="minmax")
-
-# 4. Imputation (MICE)
-# Requires miceforest: pip install miceforest
-df_imputed = DataProcessor.mice_imputation(df, iterations=10, n_estimators=100, add_indicators=True)
-
-# 5. Extract Imputation Indicators
+# ── 5. Extract missingness indicators ────────────────────────────────────────
 indicators = DataProcessor.extract_missingindicator_columns(df_imputed)
+print(indicators.columns.tolist())
+# ['missingindicator_Age', 'missingindicator_Mstage', 'missingindicator_Tx_Start_ECOG']
 ```

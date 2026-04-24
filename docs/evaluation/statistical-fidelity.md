@@ -87,40 +87,49 @@ metadata = MetaData.get_metadata(
     ordinal_features=None
 )
 
-pairwise = PairwiseSimilarity(output_dir="results/broad_utility")
-scores = pairwise.get_pairwise_score(
+pairwise = PairwiseSimilarity(
     original_data=original_data,
     synthetic_data=synthetic_data,
-    metadata=metadata
+    metadata=metadata,
+    output_dir="results/broad_utility",
+    name="my_dataset"
 )
+results = pairwise.get_pairwise_scores(method="spearman")
 
-print(f"Bivariate Score: {scores:.4f}")
+# results is a dict with keys: "PairwiseScore", "OriginalCorrelation", "SyntheticCorrelation"
+scores = results["PairwiseScore"]
+print(f"Mean Bivariate Score: {scores.mean():.4f}")
 ```
 
 ---
 
 ### Visualization
 
-The violin plot below shows the distribution of per-feature bivariate similarity scores across SDG methods. The `plot_violin` function from the broad utility analysis module produces manuscript-quality figures:
+The violin plot below shows the distribution of per-feature similarity scores across SDG methods. The `plot_violin_grid_by_cancer` function produces manuscript-quality figures. The input dict must be structured as `{cancer: {method: [scores]}}`:
 
 ```python
 from synomicsbench.metrics.fidelity.visualization import plot_violin_grid_by_cancer
 
-# scores_dict: mapping from method name to list ofs scores   
-# Univariate similarity scores: the list of per-feature scores
-# Bivariate similarity scores: the list of per-pair scores
+# cancer_to_method_scores: {cancer_name: {method_name: [score_replicate_1, ...]}}
+# Each list contains per-feature (univariate) or per-pair (bivariate) scores across replicates.
 Score_Dict = {
-    "Avatars K5": avatars_k5_scores, 
-    "Avatars K10": avatars_k10_scores,
-    "CTGAN": ctgan_scores,
-    "Gaussian Copula": gc_scores,
-    "Synthpop": synthpop_scores,
-    "TVAE": tvae_scores,
+    "ccRCC": {
+        "Avatars K5": avatars_k5_ccrcc_scores,
+        "Avatars K10": avatars_k10_ccrcc_scores,
+        "CTGAN": ctgan_ccrcc_scores,
+        "Gaussian Copula": gc_ccrcc_scores,
+        "Synthpop": synthpop_ccrcc_scores,
+        "TVAE": tvae_ccrcc_scores,
+    },
+    "Melanoma": {
+        "Avatars K5": avatars_k5_melanoma_scores,
+        # ...
+    },
 }
 
 fig, axes, mean_by_cancer = plot_violin_grid_by_cancer(
     cancer_to_method_scores=Score_Dict,
-    value_name="Univariate Score", 
+    value_name="Univariate Score",
     figsize=(18, 5)
 )
 ```
