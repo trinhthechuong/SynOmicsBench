@@ -38,7 +38,7 @@ metadata = MetaData.get_metadata(
 )
 
 # Compute univariate similarity scores
-uni = UnivariateSimilarity(output_dir="results/broad_utility")
+uni = UnivariateSimilarity(output_dir="results/statistical_fidelity")
 scores = uni.get_univariate_score(
     original_data=original_data,
     synthetic_data=synthetic_data,
@@ -91,7 +91,7 @@ pairwise = PairwiseSimilarity(
     original_data=original_data,
     synthetic_data=synthetic_data,
     metadata=metadata,
-    output_dir="results/broad_utility",
+    output_dir="results/statistical_fidelity",
     name="my_dataset"
 )
 results = pairwise.get_pairwise_scores(method="spearman")
