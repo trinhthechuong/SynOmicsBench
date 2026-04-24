@@ -85,9 +85,10 @@ jobs:
       R_HOME: /opt/R/4.4.1/lib/R
       RPY2_CFFI_MODE: ABI
       UV_NO_BINARY_PACKAGE: rpy2          # compile rpy2 from source against container's R
-      # Keep venv on the container's own overlay filesystem (not the workspace bind-mount).
-      # This lets uv hardlink between its cache and the venv instead of copying,
-      # halving disk usage and avoiding "No space left on device" (os error 28).
+      # Both cache and venv must be on the same filesystem (container overlay) so uv
+      # can hardlink instead of copy — avoids "No space left on device" (os error 28).
+      # /github/home (bind-mount) and /__w (bind-mount) are different fs from /opt (overlay).
+      UV_CACHE_DIR: /opt/uv-cache
       UV_PROJECT_ENVIRONMENT: /opt/synomics-venv
 
     steps:
