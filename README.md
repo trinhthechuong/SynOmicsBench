@@ -126,11 +126,5 @@ For complete API references, tutorials, and full benchmarking results, check out
 
 ---
 
-## 📝 Citation
-
-If you use SynOmicsBench in your research, please cite:
-
-> Trinh, T. C., Woillard, J. B., Uguzzoni, G., & Battail, C. (2024). **A unified benchmark of synthetic data generation for clinical and transcriptomic cancer data.** *(Manuscript in preparation)*
-
 ## 📄 License
 This project is open-sourced under the MIT License.
