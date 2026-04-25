@@ -1,8 +1,8 @@
 [project]
 name = "synomicsbench"
-version = "1.0.2"
+version = "1.0.3"
 # description = "Add your description here"
-readme = "README.md"
+readme = "README-pypi.md"
 requires-python = ">=3.12"
 dependencies = [
     "anonymeter>=1.0.0",

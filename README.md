@@ -65,35 +65,48 @@ apptainer exec synomicsbench.sif python -c "import synomicsbench; print('OK: Syn
 
 ## 🚀 Quick Start
 
-Here is a brief example of how to generate synthetic data with Gaussian Copula and evaluate its statistical fidelity:
+Here is a minimal end-to-end example: preprocess data, generate synthetic samples with Gaussian Copula, and evaluate statistical fidelity.
 
 ```python
 import pandas as pd
-from synomicsbench.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
+from synomicsbench.processing.preprocessing import DataProcessor
 from synomicsbench.processing.metadata import MetaData
-from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity 
+from synomicsbench.synthesizer.GaussianCopulasynthesizer import GaussianCopulasynthesizer
+from synomicsbench.metrics.fidelity.UnivariateSimilarity import UnivariateSimilarity
 
-# 1. Load Data & Prepare Metadata
+# ── 1. Load & preprocess ──────────────────────────────────────────────────────
 original_data = pd.read_csv("your_clinical_transcriptomic_data.csv")
-ordinal_features = ["Mstage", "Tx_Start_ECOG", "numPriorTherapies"]
-metadata = MetaData.get_metadata(data=original_data, ordinal_features=ordinal_features)
 
-# 2. Generate Synthetic Data
+original_data = DataProcessor.remove_unknown_entities(original_data, id_column="Patient_ID")
+original_data = DataProcessor.remove_duplications(original_data, axis=0).reset_index(drop=True)
+original_data = DataProcessor.mice_imputation(original_data, iterations=10, n_estimators=100)
+
+# ── 2. Build metadata ─────────────────────────────────────────────────────────
+ordinal_features = ["Mstage", "Tx_Start_ECOG", "numPriorTherapies"]
+metadata = MetaData.get_metadata(
+    data=original_data,
+    ordinal_features=ordinal_features,
+    threshold_unique_values=10,
+)
+
+# ── 3. Generate synthetic data ────────────────────────────────────────────────
 synth = GaussianCopulasynthesizer(output_path="./results", metadata=metadata)
 synthetic_data = synth.generate(
-    data=original_data, 
-    n_samples=original_data.shape[0]
+    data=original_data,
+    seed=42,
+    n_samples=original_data.shape[0],
+    output_filename="synthetic_data.csv",
 )
 
-# 3. Evaluate Fidelity
-evaluator = UnivariateSimilarity(output_dir="./evaluation_results")
+# ── 4. Evaluate statistical fidelity ─────────────────────────────────────────
+evaluator = UnivariateSimilarity(output_dir="./results/evaluation")
 score = evaluator.get_univariate_score(
-    original_data=original_data, 
-    synthetic_data=synthetic_data, 
-    metadata=metadata, 
-    save=True
+    original_data=original_data,
+    synthetic_data=synthetic_data,
+    metadata=metadata,
+    save=True,
 )
-print(f"Overall Fidelity Score: {score:.4f}")
+print(f"Univariate Fidelity Score: {score:.4f}")
 ```
 
 ---
