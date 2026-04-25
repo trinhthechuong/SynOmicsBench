@@ -3,8 +3,13 @@
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19660703.svg)](https://zenodo.org/records/19660703)
 [![CI](https://github.com/trinhthechuong/SynOmicsBench/actions/workflows/ci.yml/badge.svg)](https://github.com/trinhthechuong/SynOmicsBench/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-GitHub%20Pages-blue.svg)](https://trinhthechuong.github.io/SynOmicsBench/)
+[![PyPI](https://img.shields.io/pypi/v/synomicsbench)](https://pypi.org/project/synomicsbench/)
+[![Downloads](https://img.shields.io/pypi/dm/synomicsbench)](https://pypi.org/project/synomicsbench/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-red.svg)](https://www.python.org/downloads/release/python-3120/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![uv](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json)](https://github.com/astral-sh/uv)
+[![Container](https://img.shields.io/badge/container-Apptainer-blue.svg)](https://github.com/trinhthechuong/SynOmicsBench/pkgs/container/synomicsbench)
 
 
 **SynOmicsBench** is a unified benchmarking framework for synthetic data generation (SDG) for clinical transcriptomic cancer cohorts.
