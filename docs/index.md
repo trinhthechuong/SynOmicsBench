@@ -107,7 +107,7 @@ Quantifies disclosure vulnerability aligned with the European Data Protection Bo
 
 If you use SynOmicsBench in your research, please cite our manuscript:
 
-> Trinh, T. C., Woillard, J. B., Uguzzoni, G., & Battail, C. (2024). **A unified benchmark of synthetic data generation for clinical and transcriptomic cancer data.**
+> Trinh, T. C., Woillard, J. B., Uguzzoni, G., & Battail, C. (2026). **A unified benchmark of synthetic data generation for clinical and transcriptomic cancer data.**
 
 This framework is currently described in a manuscript under preparation/submission. Check back for updated citation details.
 
