@@ -1,0 +1,1303 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Synthetic data benchmarking for omics data">
+      
+      
+        <meta name="author" content="SynOmicsBench Team">
+      
+      
+        <link rel="canonical" href="https://trinhthechuong.github.io/SynOmicsBench/evaluation/">
+      
+      
+        <link rel="prev" href="../synthetic-data/">
+      
+      
+        <link rel="next" href="statistical-fidelity/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Evaluation Framework - SynOmicsBench Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#evaluation-framework" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="SynOmicsBench Documentation" class="md-header__button md-logo" aria-label="SynOmicsBench Documentation" data-md-component="logo">
+      
+  <img src="../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SynOmicsBench Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Evaluation Framework
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/trinhthechuong/SynOmicsBench" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SynOmicsBench
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../preprocessing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Preprocessing Data
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../synthetic-data/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Generate Synthetic Data
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Evaluation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="SynOmicsBench Documentation" class="md-nav__button md-logo" aria-label="SynOmicsBench Documentation" data-md-component="logo">
+      
+  <img src="../assets/logo.png" alt="logo">
+
+    </a>
+    SynOmicsBench Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/trinhthechuong/SynOmicsBench" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SynOmicsBench
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../synthetic-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate Synthetic Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="./" class="md-nav__link md-nav__link--active">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link md-nav__link--active" for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Evaluation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="statistical-fidelity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Statistical Fidelity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Biological Utility
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Biological Utility
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="biological-utility/dge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="biological-utility/gsea/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSEA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="biological-utility/ssgsea/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssGSEA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="biological-utility/cell-deconvolution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cell Type Deconvolution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="biological-utility/survival-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Survival Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="biological-results/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Biological Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="privacy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Privacy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="autobenchmark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatic Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#evaluation-dimensions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evaluation Dimensions
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Evaluation Dimensions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#statistical-fidelity" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Statistical Fidelity
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#biological-utility" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Biological Utility
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#privacy-risk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Privacy Risk
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#automatic-benchmark" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Automatic Benchmark
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#bayesian-comparison-framework" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Bayesian Comparison Framework
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Bayesian Comparison Framework">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#methodology" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Methodology
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#usage-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Usage Example
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Usage Example">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pairwise-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pairwise Comparison
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#heatmap-visualization" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Heatmap Visualization
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="evaluation-framework">Evaluation Framework<a class="headerlink" href="#evaluation-framework" title="Permanent link">&para;</a></h1>
+<p>SynOmicsBench evaluates synthetic cancer omics data across three complementary dimensions to ensure that generated datasets are statistically similar to the original (Statistical fidelity), biologically meaningful for downstream analyses (Biological utility), and safe for data sharing (Privacy). This multidimensional approach addresses the fundamental trade-off between utility and privacy.</p>
+<hr />
+<h2 id="evaluation-dimensions">Evaluation Dimensions<a class="headerlink" href="#evaluation-dimensions" title="Permanent link">&para;</a></h2>
+<p>Our evaluation framework is organized into three distinct pillars, each measuring different aspects of synthetic data quality:</p>
+<h3 id="statistical-fidelity"><a href="statistical-fidelity/">Statistical Fidelity</a><a class="headerlink" href="#statistical-fidelity" title="Permanent link">&para;</a></h3>
+<p>Statistical fidelity assesses how well the synthetic data preserves the global statistical properties of the original dataset.</p>
+<div class="grid cards">
+<ul>
+<li>
+<p><strong><a href="statistical-fidelity/#univariate-similarity">Univariate Similarity</a></strong></p>
+</li>
+<li>
+<p><strong><a href="statistical-fidelity/#bivariate-similarity">Bivariate Similarity</a></strong></p>
+</li>
+</ul>
+</div>
+<p>This dimension provides the first line of evaluation for any synthetic data generation method.</p>
+<h3 id="biological-utility"><a href="biological-utility/index.md">Biological Utility</a><a class="headerlink" href="#biological-utility" title="Permanent link">&para;</a></h3>
+<p>Biological utility focuses on task-specific performance in clinically relevant downstream analyses. Statistical fidelity does not always guarantee that biological signals are preserved for scientific discovery.</p>
+<div class="grid cards">
+<ul>
+<li>
+<p><strong><a href="biological-utility/dge/">Differential Gene Expression (DGE)</a></strong></p>
+</li>
+<li>
+<p><strong><a href="biological-utility/gsea/">Gene Set Enrichment (GSEA)</a></strong></p>
+</li>
+<li>
+<p><strong><a href="biological-utility/ssgsea/">Single-sample Gene Set Enrichment (ssGSEA)</a></strong></p>
+</li>
+<li>
+<p><strong><a href="biological-utility/cell-deconvolution/">Cell Type Deconvolution</a></strong></p>
+</li>
+<li>
+<p><strong><a href="biological-utility/survival-analysis/">Survival Analysis</a></strong></p>
+</li>
+</ul>
+</div>
+<p>These tasks directly assess whether synthetic data can support real-world biological research.</p>
+<h3 id="privacy-risk"><a href="privacy/">Privacy Risk</a><a class="headerlink" href="#privacy-risk" title="Permanent link">&para;</a></h3>
+<p>Privacy evaluation quantifies the disclosure vulnerability of the synthetic data, aligned with European Data Protection Board (EDPB) principles. We leverage the <a href="https://petsymposium.org/popets/2023/popets-2023-0055.php">Anonymeter Framework</a> to evaluate the privacy risk under three attack scenarios:</p>
+<ul>
+<li><strong>Singling-Out</strong>: The risk of isolating a unique individual in the dataset based on their attributes</li>
+<li><strong>Linkability</strong>: The risk of connecting records from the synthetic dataset to the original or other external datasets</li>
+<li><strong>Inference</strong>: The risk of deducing sensitive attribute values from other available information</li>
+</ul>
+<h3 id="automatic-benchmark"><a href="autobenchmark/">Automatic Benchmark</a><a class="headerlink" href="#automatic-benchmark" title="Permanent link">&para;</a></h3>
+<p>Rather than computing each of the three pillars separately and aggregating the results by hand, the <strong>Automatic Benchmark</strong> runs every dimension in one pass and produces a rank-derived meta-score plus a comprehensive report — the recommended entry point once you have multiple candidate SDG methods to compare.</p>
+<hr />
+<h2 id="bayesian-comparison-framework">Bayesian Comparison Framework<a class="headerlink" href="#bayesian-comparison-framework" title="Permanent link">&para;</a></h2>
+<p>The high computational cost of synthetic data generaion under clinical transcriptomic settings constrains the number of generating replicates to which traditional p-values are not robust. To address the limited sample size and maximize the robustness of comparison, we implement a rigorous Bayesian comparison approach. The Bayesian approach enables an uncertainty-aware comparison by estimating the probability that one method outperforms another across the distribution of replicates, thereby avoiding binary conclusions while remaining appropriate for small-sample evaluation.</p>
+<h3 id="methodology">Methodology<a class="headerlink" href="#methodology" title="Permanent link">&para;</a></h3>
+<p>We perform pairwise Bayesian comparisons following the framework proposed by <a href="https://jmlr.org/papers/v18/16-305.html">Benavoli et al.</a>, using the <em>baycomp</em> Python library. A Bayesian correlated t-test is applied to estimate posterior probabilities for three mutually exclusive hypotheses:</p>
+<ul>
+<li><strong>Better probability</strong> (<span class="arithmatex">\(P(SDG_{1} &gt; SDG_{2})\)</span>): the probability that <span class="arithmatex">\(SDG_{1}\)</span> outperforms <span class="arithmatex">\(SDG_{2}\)</span></li>
+<li><strong>Worse probability</strong> (<span class="arithmatex">\(P(SDG_{1} &lt; SDG_{2})\)</span>): the probability that <span class="arithmatex">\(SDG_{1}\)</span> underperforms <span class="arithmatex">\(SDG_{2}\)</span></li>
+<li><strong>Practical equivalent probability</strong>: the probability that the performance difference lies within a predefined Region of Practical Equivalence (ROPE)</li>
+</ul>
+<h3 id="usage-example">Usage Example<a class="headerlink" href="#usage-example" title="Permanent link">&para;</a></h3>
+<h4 id="pairwise-comparison">Pairwise Comparison<a class="headerlink" href="#pairwise-comparison" title="Permanent link">&para;</a></h4>
+<p>To compare specific methods and obtain the Bayesian probability estimates:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.fidelity.BayesianComparison</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianComparison</span>
+
+<span class="n">bc</span> <span class="o">=</span> <span class="n">BayesianComparison</span><span class="p">(</span><span class="n">rope</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">score_ccrcc</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;Avatars K10&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.868223</span><span class="p">,</span> <span class="mf">0.870562</span><span class="p">,</span> <span class="mf">0.866601</span><span class="p">,</span> <span class="mf">0.871735</span><span class="p">,</span> <span class="mf">0.869462</span><span class="p">],</span>
+    <span class="s1">&#39;CTGAN&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.834993</span><span class="p">,</span> <span class="mf">0.805653</span><span class="p">,</span> <span class="mf">0.821708</span><span class="p">,</span> <span class="mf">0.816810</span><span class="p">,</span> <span class="mf">0.809196</span><span class="p">]</span>
+<span class="p">}</span>
+
+<span class="n">compare_result</span> <span class="o">=</span> <span class="n">bc</span><span class="o">.</span><span class="n">compare_methods</span><span class="p">(</span>
+    <span class="n">method_to_scores</span><span class="o">=</span><span class="n">score_ccrcc</span><span class="p">,</span>
+    <span class="n">methods_order</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Avatars K10&#39;</span><span class="p">,</span> <span class="s1">&#39;CTGAN&#39;</span><span class="p">],</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>Output:</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method 1</th>
+<th style="text-align: left;">Method 2</th>
+<th style="text-align: right;">Better Prob</th>
+<th style="text-align: right;">Worse Prob</th>
+<th style="text-align: right;">Equivalent Prob</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Avatars K10</td>
+<td style="text-align: left;">CTGAN</td>
+<td style="text-align: right;">0.995937</td>
+<td style="text-align: right;">0.000969485</td>
+<td style="text-align: right;">0.00309318</td>
+</tr>
+<tr>
+<td style="text-align: left;">CTGAN</td>
+<td style="text-align: left;">Avatars K10</td>
+<td style="text-align: right;">0.000969485</td>
+<td style="text-align: right;">0.995937</td>
+<td style="text-align: right;">0.00309318</td>
+</tr>
+</tbody>
+</table>
+<h4 id="heatmap-visualization">Heatmap Visualization<a class="headerlink" href="#heatmap-visualization" title="Permanent link">&para;</a></h4>
+<p>You can also compute and visualize probability heatmaps for multiple cohorts and methods simultaneously:</p>
+<p><div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">synomicsbench.metrics.fidelity.BayesianComparison</span><span class="w"> </span><span class="kn">import</span> <span class="n">BayesianComparison</span>
+
+<span class="n">Univariate_Score_Dict</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;ccRCC&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;Avatars K5&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8881120877695017</span><span class="p">,</span> <span class="mf">0.890477305776368</span><span class="p">,</span> <span class="mf">0.8905614386501237</span><span class="p">,</span> <span class="mf">0.8888098881167701</span><span class="p">,</span> <span class="mf">0.8913354237600071</span><span class="p">],</span>
+        <span class="s1">&#39;Avatars K10&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8682233057904494</span><span class="p">,</span> <span class="mf">0.8705623113141328</span><span class="p">,</span> <span class="mf">0.8666012789137973</span><span class="p">,</span> <span class="mf">0.8717350925047507</span><span class="p">,</span> <span class="mf">0.869462903338299</span><span class="p">],</span>
+        <span class="s1">&#39;CTGAN&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8349935442546923</span><span class="p">,</span> <span class="mf">0.8056530676365664</span><span class="p">,</span> <span class="mf">0.8217082370402533</span><span class="p">,</span> <span class="mf">0.8168101267159</span><span class="p">,</span> <span class="mf">0.8091963081738267</span><span class="p">],</span>
+        <span class="s1">&#39;Gaussian Copula&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8939178299457882</span><span class="p">,</span> <span class="mf">0.888584901789092</span><span class="p">,</span> <span class="mf">0.8908454392711511</span><span class="p">,</span> <span class="mf">0.886851763847271</span><span class="p">,</span> <span class="mf">0.883785424538307</span><span class="p">],</span>
+        <span class="s1">&#39;Synthpop&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.9518448306115543</span><span class="p">,</span> <span class="mf">0.9532236382164678</span><span class="p">,</span> <span class="mf">0.9517425968988666</span><span class="p">,</span> <span class="mf">0.9503118851292676</span><span class="p">,</span> <span class="mf">0.9534472187997605</span><span class="p">],</span>
+        <span class="s1">&#39;TVAE&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.6309826968017754</span><span class="p">,</span> <span class="mf">0.621016865353633</span><span class="p">,</span> <span class="mf">0.6637430006699062</span><span class="p">,</span> <span class="mf">0.5812554183782042</span><span class="p">,</span> <span class="mf">0.6395117650457438</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;Melanoma&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;Avatars K5&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8564967958041939</span><span class="p">,</span> <span class="mf">0.8566124125620105</span><span class="p">,</span> <span class="mf">0.8557903057614384</span><span class="p">,</span> <span class="mf">0.8552329963363088</span><span class="p">,</span> <span class="mf">0.861733435106733</span><span class="p">],</span>
+        <span class="s1">&#39;Avatars K10&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8466413890303546</span><span class="p">,</span> <span class="mf">0.8432481904403524</span><span class="p">,</span> <span class="mf">0.8421363812805591</span><span class="p">,</span> <span class="mf">0.8407387666940881</span><span class="p">,</span> <span class="mf">0.8438034236667638</span><span class="p">],</span>
+        <span class="s1">&#39;CTGAN&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.7386315254751082</span><span class="p">,</span> <span class="mf">0.7627143040836618</span><span class="p">,</span> <span class="mf">0.7829547727714179</span><span class="p">,</span> <span class="mf">0.7675820451259966</span><span class="p">,</span> <span class="mf">0.7806570896923586</span><span class="p">],</span>
+        <span class="s1">&#39;Gaussian Copula&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8947284965524952</span><span class="p">,</span> <span class="mf">0.8910051558010256</span><span class="p">,</span> <span class="mf">0.894645248824405</span><span class="p">,</span> <span class="mf">0.8926649796604031</span><span class="p">,</span> <span class="mf">0.8936413709040798</span><span class="p">],</span>
+        <span class="s1">&#39;Synthpop&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.9228348197885513</span><span class="p">,</span> <span class="mf">0.9161532463334907</span><span class="p">,</span> <span class="mf">0.9268803262950096</span><span class="p">,</span> <span class="mf">0.9306173790084618</span><span class="p">,</span> <span class="mf">0.921938807240532</span><span class="p">],</span>
+        <span class="s1">&#39;TVAE&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8118174428996952</span><span class="p">,</span> <span class="mf">0.8155383849775407</span><span class="p">,</span> <span class="mf">0.7688229113356462</span><span class="p">,</span> <span class="mf">0.8111297666213386</span><span class="p">,</span> <span class="mf">0.8032479967530497</span><span class="p">]</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;NSCLC&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;Avatars K5&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8640593599686472</span><span class="p">,</span> <span class="mf">0.8697787139827998</span><span class="p">,</span> <span class="mf">0.8702699655884499</span><span class="p">,</span> <span class="mf">0.8671504554801867</span><span class="p">,</span> <span class="mf">0.8639593703968106</span><span class="p">],</span>
+        <span class="s1">&#39;Avatars K10&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.8543093480034314</span><span class="p">,</span> <span class="mf">0.854821534289125</span><span class="p">,</span> <span class="mf">0.8519989756828202</span><span class="p">,</span> <span class="mf">0.8488335579271308</span><span class="p">,</span> <span class="mf">0.8541274238575611</span><span class="p">],</span>
+        <span class="s1">&#39;CTGAN&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.7767114152979895</span><span class="p">,</span> <span class="mf">0.7500690012214213</span><span class="p">,</span> <span class="mf">0.7827400422596005</span><span class="p">,</span> <span class="mf">0.7734342410909774</span><span class="p">,</span> <span class="mf">0.7250724465427827</span><span class="p">],</span>
+        <span class="s1">&#39;Gaussian Copula&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.9057809875606977</span><span class="p">,</span> <span class="mf">0.8996162072029326</span><span class="p">,</span> <span class="mf">0.8935751605323073</span><span class="p">,</span> <span class="mf">0.9016654341446757</span><span class="p">,</span> <span class="mf">0.9065041456658781</span><span class="p">],</span>
+        <span class="s1">&#39;Synthpop&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.9184738919693407</span><span class="p">,</span> <span class="mf">0.9231041713180277</span><span class="p">,</span> <span class="mf">0.9282744185326606</span><span class="p">,</span> <span class="mf">0.9296057084197769</span><span class="p">,</span> <span class="mf">0.9232167259549566</span><span class="p">],</span>
+        <span class="s1">&#39;TVAE&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.7460308291609655</span><span class="p">,</span> <span class="mf">0.7440953841590348</span><span class="p">,</span> <span class="mf">0.754862702150197</span><span class="p">,</span> <span class="mf">0.712140411911071</span><span class="p">,</span> <span class="mf">0.7793414436344053</span><span class="p">]</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">bc</span> <span class="o">=</span> <span class="n">BayesianComparison</span><span class="p">(</span><span class="n">rope</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">cancers</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ccRCC&quot;</span><span class="p">,</span> <span class="s2">&quot;Melanoma&quot;</span><span class="p">,</span> <span class="s2">&quot;NSCLC&quot;</span><span class="p">]</span>
+<span class="n">methods_order</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Avatars K5&quot;</span><span class="p">,</span> <span class="s2">&quot;Avatars K10&quot;</span><span class="p">,</span> <span class="s2">&quot;CTGAN&quot;</span><span class="p">,</span> <span class="s2">&quot;Gaussian Copula&quot;</span><span class="p">,</span> <span class="s2">&quot;Synthpop&quot;</span><span class="p">,</span> <span class="s2">&quot;TVAE&quot;</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span><span class="p">,</span> <span class="n">mats_by_cancer</span><span class="p">,</span> <span class="n">comp_by_cancer</span> <span class="o">=</span> <span class="n">bc</span><span class="o">.</span><span class="n">plot_pbetter_heatmap_grid</span><span class="p">(</span>
+    <span class="n">cancer_to_method_scores</span><span class="o">=</span><span class="n">Univariate_Score_Dict</span><span class="p">,</span>
+    <span class="n">cancers_order</span><span class="o">=</span><span class="n">cancers</span><span class="p">,</span>
+    <span class="n">methods_order</span><span class="o">=</span><span class="n">methods_order</span><span class="p">,</span>
+    <span class="n">value_col</span><span class="o">=</span><span class="s2">&quot;Better Prob&quot;</span><span class="p">,</span> 
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">18</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+    <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;.2f&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;bayesian_comp_fig2c_uni.pdf&quot;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">&quot;white&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">cancer</span> <span class="ow">in</span> <span class="n">cancers</span><span class="p">:</span>
+    <span class="n">bayesian_comp_df</span> <span class="o">=</span> <span class="n">comp_by_cancer</span><span class="p">[</span><span class="n">cancer</span><span class="p">]</span>
+    <span class="n">bayesian_comp_df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;UnivariateBayesian_estimation_</span><span class="si">{</span><span class="n">cancer</span><span class="si">}</span><span class="s1">.csv&#39;</span><span class="p">)</span>
+</code></pre></div>
+<img alt="Bayesian Comparison" src="../assets/figures/bayesiancomp.png" /></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.top", "search.highlight", "search.suggest", "content.code.copy"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

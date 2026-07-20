@@ -1,0 +1,1614 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Synthetic data benchmarking for omics data">
+      
+      
+        <meta name="author" content="SynOmicsBench Team">
+      
+      
+        <link rel="canonical" href="https://trinhthechuong.github.io/SynOmicsBench/evaluation/biological-results/">
+      
+      
+        <link rel="prev" href="../biological-utility/survival-analysis/">
+      
+      
+        <link rel="next" href="../privacy/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/logo.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Biological Results - SynOmicsBench Documentation</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#biological-rediscovery-results" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="SynOmicsBench Documentation" class="md-header__button md-logo" aria-label="SynOmicsBench Documentation" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            SynOmicsBench Documentation
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Biological Results
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/trinhthechuong/SynOmicsBench" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SynOmicsBench
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../getting-started/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Getting Started
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../preprocessing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Preprocessing Data
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../synthetic-data/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Generate Synthetic Data
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
+          
+  
+  
+    
+  
+  Evaluation
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../api/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  API
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="SynOmicsBench Documentation" class="md-nav__button md-logo" aria-label="SynOmicsBench Documentation" data-md-component="logo">
+      
+  <img src="../../assets/logo.png" alt="logo">
+
+    </a>
+    SynOmicsBench Documentation
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/trinhthechuong/SynOmicsBench" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    SynOmicsBench
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../preprocessing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Preprocessing Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../synthetic-data/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Generate Synthetic Data
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Evaluation
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Evaluation
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../statistical-fidelity/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Statistical Fidelity
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Biological Utility
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Biological Utility
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../biological-utility/dge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    DGE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../biological-utility/gsea/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    GSEA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../biological-utility/ssgsea/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ssGSEA
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../biological-utility/cell-deconvolution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cell Type Deconvolution
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../biological-utility/survival-analysis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Survival Analysis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Biological Results
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Biological Results
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ccrcc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ccRCC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ccRCC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#differential-gene-expression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Differential Gene Expression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gene-set-enrichment-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene Set Enrichment Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-sample-gsea" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-sample GSEA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cell-type-deconvolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell Type Deconvolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#survival-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Survival Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#melanoma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Melanoma
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Melanoma">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#differential-gene-expression_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Differential Gene Expression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gene-set-enrichment-analysis_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene Set Enrichment Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-sample-gsea_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-sample GSEA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cell-type-deconvolution_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell Type Deconvolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#survival-analysis_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Survival Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nsclc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NSCLC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NSCLC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#differential-gene-expression_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Differential Gene Expression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gene-set-enrichment-analysis_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene Set Enrichment Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cell-type-deconvolution_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell Type Deconvolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#survival-analysis_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Survival Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../privacy/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Privacy
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../autobenchmark/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Automatic Benchmark
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#ccrcc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ccRCC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ccRCC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#differential-gene-expression" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Differential Gene Expression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gene-set-enrichment-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene Set Enrichment Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-sample-gsea" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-sample GSEA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cell-type-deconvolution" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell Type Deconvolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#survival-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Survival Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#melanoma" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Melanoma
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Melanoma">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#differential-gene-expression_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Differential Gene Expression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gene-set-enrichment-analysis_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene Set Enrichment Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#single-sample-gsea_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Single-sample GSEA
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cell-type-deconvolution_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell Type Deconvolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#survival-analysis_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Survival Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#nsclc" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        NSCLC
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="NSCLC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#differential-gene-expression_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Differential Gene Expression
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#gene-set-enrichment-analysis_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Gene Set Enrichment Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cell-type-deconvolution_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cell Type Deconvolution
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#survival-analysis_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Survival Analysis
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Summary
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="biological-rediscovery-results">Biological Rediscovery Results<a class="headerlink" href="#biological-rediscovery-results" title="Permanent link">&para;</a></h1>
+<p>Beyond metric-based evaluation, we re-implemented the analytical workflows described in the original clinical studies to determine whether established biomarkers and biological insights could be independently rediscovered from synthetic data. This page presents the biological rediscovery findings organized by cancer cohort, following the narrative of each original study.</p>
+<div class="sdg-cards-grid">
+  <!-- ccRCC -->
+  <a href="#ccrcc" class="sdg-card">
+    <div class="sdg-card-front">
+      <img src="/SynOmicsBench/assets/figures/ccRCC.png" alt="ccRCC" class="sdg-logo" style="max-width:120px;max-height:120px;">
+      <h3>ccRCC</h3>
+    </div>
+  </a>
+
+  <!-- Melanoma -->
+  <a href="#melanoma" class="sdg-card">
+    <div class="sdg-card-front">
+      <img src="/SynOmicsBench/assets/figures/Melanoma.png" alt="Melanoma" class="sdg-logo" style="max-width:120px;max-height:120px;">
+      <h3>Melanoma</h3>
+    </div>
+  </a>
+
+  <!-- NSCLC -->
+  <a href="#nsclc" class="sdg-card">
+    <div class="sdg-card-front">
+      <img src="/SynOmicsBench/assets/figures/NSCLC.png" alt="NSCLC" class="sdg-logo" style="max-width:120px;max-height:120px;">
+      <h3>NSCLC</h3>
+    </div>
+  </a>
+</div>
+
+<hr />
+<h2 id="ccrcc">ccRCC<a class="headerlink" href="#ccrcc" title="Permanent link">&para;</a></h2>
+<p><strong>Cohort</strong>: 311 patients with advanced clear cell renal cell carcinoma from CheckMate 009, 010, and 025 trials, treated with nivolumab (anti-PD-1). Original study by <a href="https://doi.org/10.1038/s41591-020-0839-y">Braun et al. (<em>Nature Medicine</em>, 2020)</a>.</p>
+<p>Braun et al. performed an integrated genetic, transcriptomic, and immunopathologic analysis of advanced ccRCC tumors, uncovering how somatic alterations—particularly PBRM1 mutations and 9p21.3 deletions—interact with immune infiltration patterns to modulate response to PD-1 blockade.</p>
+<h3 id="differential-gene-expression">Differential Gene Expression<a class="headerlink" href="#differential-gene-expression" title="Permanent link">&para;</a></h3>
+<p>In the original study, Braun et al. identified that <strong>PBRM1 alterations are associated with increased angiogenesis gene expression</strong>. As illustrated in <strong>Figure 1</strong>, we re-applied this analysis to synthetic datasets: both <strong>Avatars (K5/K10)</strong> and <strong>Gaussian Copula</strong> successfully reproduced this clinical signal (Wilcoxon rank-sum test, <em>P</em> &lt; 0.01). In contrast, CTGAN and Synthpop failed to capture the PBRM1–angiogenesis association.</p>
+<p><img alt="Angiogenesis signal between PRBM1" src="/SynOmicsBench/assets/figures/Angio_pbrm1_ccRCC.png" />
+<em><strong>Figure 1</strong>: PBRM1 mutation-associated angiogenesis signal in ccRCC. Angiogenesis scores stratified by PBRM1 mutation status are shown. Statistical significance was assessed using a two-sided Wilcoxon rank-sum test.</em></p>
+<h3 id="gene-set-enrichment-analysis">Gene Set Enrichment Analysis<a class="headerlink" href="#gene-set-enrichment-analysis" title="Permanent link">&para;</a></h3>
+<p>The original study revealed that <strong>9p21.3 deletion</strong> was associated with a distinct pathway signature: increased EMT, mTORC1 signaling, angiogenesis, hypoxia, and glycolysis, alongside decreased oxidative phosphorylation, fatty acid metabolism, and TGF-β signaling. When we re-ran GSEA on synthetic datasets, <strong>Avatars (K5/K10)</strong> and <strong>Gaussian Copula</strong> reproducibly recapitulated the downregulated pathways—in particular fatty acid metabolism and oxidative phosphorylation. Upregulated pathways were harder to recover, with EMT being the only signal consistently detected across methods. <strong>Gaussian Copula</strong> demonstrated the best cross-replicate stability, including one replicate that was almost identical to the original full pathway pattern.</p>
+<p align="center">
+  <img src="/SynOmicsBench/assets/figures/GSEA_ccRCC.png" alt="Cell type deconvolution" width="500" height="300" />
+</p>
+
+<p><em><strong>Figure 2</strong>: GSEA result of  9p21.3 deletion in ccRCC cohort. Bubble plots show NES values for Hallmark pathways in the original and synthetic datasets. Color indicates statistical significance.</em></p>
+<h3 id="single-sample-gsea">Single-sample GSEA<a class="headerlink" href="#single-sample-gsea" title="Permanent link">&para;</a></h3>
+<p>At the individual sample level, Braun et al. showed that loss-of-function <strong>PBRM1 mutations</strong> were associated with reduced <strong>IL6-JAK-STAT3 signaling</strong> (Wilcoxon rank-sum test, <em>P</em> = 0.01). This signal was robustly reproduced by the <strong>Gaussian Copula</strong> across multiple synthetic replicates. Additionally, the direction and statistical significance of other pathways — including estrogen response, apoptosis, allograft rejection, and UV response — were also recovered by Gaussian Copula, whereas other SDG methods exhibited pronounced inter-replicacte variability.</p>
+<p><img alt="ssGSEA ccRCC PBRM1" src="/SynOmicsBench/assets/figures/ssGSEA_ccRCC.png" />
+<em><strong>Figure 3</strong>: Association between ssGSEA signals and PBRM1 phenotype in the ccRCC dataset . Bubble plots compare differential NES between PBRM1 mutation patients and PBRM1 wildtype patients in original and synthetic datasets. Bubble color denotes  P value thresholds (Wilcoxon rank-sum test). PBRM1 mutations were associated with reduced IL6-JAK-STAT3 signaling in the original cohort.</em></p>
+<h3 id="cell-type-deconvolution">Cell Type Deconvolution<a class="headerlink" href="#cell-type-deconvolution" title="Permanent link">&para;</a></h3>
+<p>Using CIBERSORTx with the LM22 reference signature, differential analysis between <strong>immune-infiltrated</strong> and <strong>immune-excluded/desert</strong> tumors in the original ccRCC cohort identified enrichment of CD8+ T cells, follicular helper T cells, activated CD4+ memory T cells, and M1 macrophages in infiltrated tumors, whereas excluded/desert tumors exhibited higher proportions of M2/M0 macrophages, resting CD4+ memory T cells, resting NK cells, and eosinophils.</p>
+<p>Among the SDG methods, only <strong>Avatars</strong> and <strong>Gaussian Copula</strong> managed to reconstruct immune contrasts at a near-significance level (Wilcoxon rank-sum test, FDR <em>Q</em> &lt; 0.25). Importantly, reproducibility across synthetic replicates was achieved only for cell types with very strong significance in the original data (FDR <em>Q</em> &lt; 0.05), such as CD8+ T cells and resting CD4+ memory T cells. For weaker or non-significant effects, corresponding synthetic results varied substantially between replicates.</p>
+<p align="center">
+  <img src="/SynOmicsBench/assets/figures/CellDeconvolution_ccRCC.png" alt="Cell type deconvolution" width="500" height="300" />
+</p>
+
+<p><em><strong>Figure 4</strong>: Differential LM22 immune cell proportions in ccRCC. Dot plots compare mean differences in immune cell fractions inferred by CIBERSORTx between immune-infiltrated and immune-excluded/desert tumors across the original and synthetic datasets generated by each SDG method. Colors indicate statistical significance based on a two-sided Wilcoxon rank-sum test with FDR adjustment.</em></p>
+<h3 id="survival-analysis">Survival Analysis<a class="headerlink" href="#survival-analysis" title="Permanent link">&para;</a></h3>
+<p>Braun et al. demonstrated that patients harboring <strong>PBRM1 alterations exhibited improved overall survival</strong> compared with wild-type cases. This genotype–outcome association was faithfully recapitulated by <strong>Avatars K10</strong> and <strong>Gaussian Copula</strong> (log-rank test, <em>P</em> &lt; 0.05), indicating effective preservation of mutation-linked survival dependencies. Overall, Avatars (K5/K10) and Gaussian Copula preserved significant differences between responders and non-responders for both OS and PFS (log-rank test, <em>P</em> &lt; 0.01). CTGAN retained significance for OS only, whereas Synthpop preserved significance for PFS only—indicating partial recovery of survival signals. TVAE was excluded from this cohort because it generated only a single treatment label across replicates.</p>
+<p><img alt="PBRM1 survival analysis" src="/SynOmicsBench/assets/figures/survivalanalysis_pbrm1_ccRCC.png" />
+<em><strong>Figure 5</strong>: PBRM1-associated overall survival in ccRCC. Kaplan-Meier curves compare overall survival between PBRM1-mutant (blue) and wild-type (orange) groups in the original dataset and across synthetic cohorts generated by each SDG method. The original survival advantage of PBRM1-mutant patients is reproduced in selected synthetic datasets, with log-rank P values C-indices reported in each panel.</em></p>
+<hr />
+<h2 id="melanoma">Melanoma<a class="headerlink" href="#melanoma" title="Permanent link">&para;</a></h2>
+<p><strong>Cohort</strong>: 121 patients with metastatic melanoma treated with anti-PD1 immune checkpoint blockade. Original study by <a href="https://doi.org/10.1038/s41591-019-0654-5">Liu et al. (<em>Nature Medicine</em>, 2019)</a>.</p>
+<p>Liu et al. performed an integrative molecular analysis, discovering that MHC class II-associated gene expression, interferon response pathways, and immune cell composition were key determinants of anti-PD1 response, and developed parsimonious predictive models integrating clinical, genomic and transcriptomic features.</p>
+<h3 id="differential-gene-expression_1">Differential Gene Expression<a class="headerlink" href="#differential-gene-expression_1" title="Permanent link">&para;</a></h3>
+<p>Liu et al. observed <strong>higher expression of 13 MHC class II-associated HLA genes in treatment responders</strong>, with four genes — HLA-DMA, HLA-DMB, HLA-DOA, and HLA-DOB — reaching statistical significance (Wilcoxon rank-sum test, <em>P</em> &lt; 0.05). While <strong>Avatars (K5/K10), Gaussian Copula, Synthpop, and TVAE</strong> successfully captured responder upregulation, the statistical significance was notably attenuated in the Avatars K10 and Gaussian Copula cohorts (<strong>Figure 6a</strong>). In Avatars K10, only HLA-DOA and HLA-DOB maintained significance, whereas all genes in Gaussian Copula failed to meet the 5% threshold. Conversely, Avatars K5 and TVAE exhibited an elevation in false-positive gene identifications.</p>
+<p><img alt="DGE Melanoma" src="/SynOmicsBench/assets/figures/DGE_Melanoma.png" />
+<em><strong>Figure 6</strong>: Preservation of responder-associated MHC gene signatures in melanoma. a) Volcano plots compare responders and non-responders. Highlighted points are MHC class I and MHC class II HLA genes. b) Hierarchical clustering of feature correlation matrices in the melanoma cohort. Correlation heatmaps with hierarchical clustering depict the structural organization of feature-feature associations in the melanoma dataset.</em>  </p>
+<p>These MHC class II genes are part of a larger biologically coherent structure visible in <strong>hierarchical clustering</strong> of feature correlation matrices. As shown in <strong>Figure 6b</strong>, the original Melanoma data revealed a highly structured architecture with a prominent <strong>immune-related cluster</strong> containing distinct MHC class I and MHC class II subclusters, a separate <strong>mutation and neoantigen load cluster</strong>, and a strong <strong>negative correlation between tumor purity and the immune cluster</strong> — where reduced purity served as a proxy for increased immune infiltration. Significantly, <strong>Avatars (K5/K10)</strong> and <strong>Gaussian Copula</strong> successfully recapitulated these biologically coherent blocks, whereas CTGAN and TVAE produced noisy or excessively smoothed matrices that failed to maintain the integrity of these critical biological relationships.</p>
+<h3 id="gene-set-enrichment-analysis_1">Gene Set Enrichment Analysis<a class="headerlink" href="#gene-set-enrichment-analysis_1" title="Permanent link">&para;</a></h3>
+<p>In the original cohort, five immune-related pathways (IFN-γ response, Allograft rejection, Complement, Inflammatory response, and IL6-JAK-STAT3 signaling) were enriched in responders, with no pathways enriched in progressors. These biological signatures were largely recovered by <strong>Avatars (K5/K10), Gaussian Copula, Synthpop, and TVAE</strong>, but not by CTGAN. Robust recovery across random seed replicates was only observed for <strong>Avatars K10, Gaussian Copula, Synthpop, and TVAE</strong> (<strong>Figure 7a</strong>).</p>
+<p><img alt="GSEA Melanoma" src="/SynOmicsBench/assets/figures/GSEA_Melanoma.png" />
+<em><strong>Figure 7</strong>: a) Directional agreement of key cancer pathways. Heatmaps display enrichment direction and agreement patterns for selected functional pathways in Melanoma. b) Treatment-stratified IFN response in the Melanoma cohort (orange strip). Dot plots present FDR q-values for IFN-γ and IFN-α response pathways stratified by prior ipilimumab exposure.</em></p>
+<p>Liu et al. further reported significant enrichment of <strong>IFN-γ</strong> and <strong>IFN-α</strong> response pathways in <strong>ipilimumab-treated</strong> responders (FDR <em>Q</em> &lt; 0.0001 for both), while no such enrichment was observed in the <strong>ipilimumab-naive</strong> subgroup. <strong>Gaussian Copula</strong> successfully reproduced this differential enrichment pattern (IFN-γ FDR <em>Q</em> = 0.0012 for treated, <em>Q</em> = 0.997 for naive; IFN-α FDR <em>Q</em> = 0.0012 for treated, <em>Q</em> = 1.0 for naive). Avatars K10 and Synthpop partially captured these signals, each recovering only one pathway. Gaussian Copula showed superior robustness, with three out of five replicates reproducing the subgroup effect (<strong>Figure 7b</strong>).</p>
+<h3 id="single-sample-gsea_1">Single-sample GSEA<a class="headerlink" href="#single-sample-gsea_1" title="Permanent link">&para;</a></h3>
+<p>In the original study, the combination of <strong>MHC class II score, LDH level, and lymph node metastasis status</strong> was reported to have strong prognostic performance for predicting progression in ipilimumab-treated patients. To assess transferability, models were trained exclusively on synthetic data and evaluated on held-out folds of the original cohort using 5-fold cross-validation repeated three times (<strong>Figure 8</strong>). Logistic regression trained on original data achieved a mean ROC-AUC of 0.82. Models trained on synthetic datasets generated by <strong>Avatars (K5/K10), CTGAN, and Gaussian Copula</strong> achieved comparable performance. Notably, this positive result was most robust for <strong>Gaussian Copula</strong>, with three out of five replicates achieving statistically comparable ROC-AUC, whereas other SDG approaches yielded only one or two successful replicates. The learned coefficients for all three features were negative, and models trained on Avatars K10 and Gaussian Copula synthetic datasets consistently preserved this directional alignment across replicates.</p>
+<p><img alt="ssGSEA Melanoma" src="/SynOmicsBench/assets/figures/ssGSEA_Melanoma.png" />
+<em><strong>Figure 8</strong>: Predictive modeling transferability in Melanoma cohort. Boxplots depict cross-validated ROC-AUC for LR models trained on synthetic data replicates and evaluated on held-out original data (5-fold cross-validation, repeated three times). The original data benchmark is shown for reference. Colored dots indicate denote statistically non-inferior performance versus the original model (Wilcoxon signed-rank test, P&lt;0.05). Right panels display learned coefficients for MHC class II score, lymph node metastasis status, and LDH level.</em> </p>
+<h3 id="cell-type-deconvolution_1">Cell Type Deconvolution<a class="headerlink" href="#cell-type-deconvolution_1" title="Permanent link">&para;</a></h3>
+<p>Using single-cell RNA-seq signatures reported by Jerby-Arnon et al., all immune signatures were enriched in responders in the original Melanoma cohort. Most SDG methods, except CTGAN, preserved the <strong>directionality</strong> of these signatures at a relaxed significance level (FDR <em>Q</em> &lt; 0.25). However, only <strong>Gaussian Copula</strong> and <strong>TVAE</strong> showed consistent agreement for the most significant immune signatures (<em>Q</em> &lt; 0.25), including overall immune infiltration, cytotoxic and exhausted CD8+ T cells, CD4+ T cells, B cells, and macrophages (<strong>Figure9a</strong>). Notably, TVAE frequently produced highly significant results alongside apparent effect-size inflation, accompanied by extreme label imbalance in responder-to-progressor ratios (ranging from 10.1% to 692.9%, compared with 83.9% in the original cohort).</p>
+<p><img alt="CellDeconvolution Melanoma" src="/SynOmicsBench/assets/figures/CellDeconvolution_Melanoma.png" />
+<em><strong>Figure 9</strong>: a) Recovery of single-cell-derived immune signatures in Melanoma. Dot plots show the mean differences of signature score between responders and progressors for immune programs derived from single-cell RNA-seq. The colors represent FDR-adjusted significance thresholds from a two-sided Wilcoxon rank-sum test. b) Differential LM22 immune cell proportions in Melanoma cohort. Dot plots compare mean differences in immune cell fractions inferred by CIBERSORTx between responders and progressors.</em> </p>
+<p>In the LM22-based analysis, differential analyses between responders and non-responders revealed no significant immune cell type differences in the original data; accordingly, SDG methods did not produce stable signals in this setting (<strong>Figure 9b</strong>).</p>
+<h3 id="survival-analysis_1">Survival Analysis<a class="headerlink" href="#survival-analysis_1" title="Permanent link">&para;</a></h3>
+<p>Liu et al. developed a parsimonious predictive model integrating MHC-II ssGSEA scores with genomic features to stratify progressors and non-progressors. We re-implemented this modeling framework using classifiers trained on synthetic datasets and conducted survival stratification (<strong>Figure 10</strong>). Only <strong>Gaussian Copula</strong> consistently reproduced this survival separation for both PFS (log-rank test, <em>P</em> &lt; 0.05) and OS (log-rank test, <em>P</em> &lt; 0.05). TVAE showed preservation for PFS (<em>P</em> &lt; 0.01), but could not preserve OS stratification. Overall, Avatars and Gaussian Copula maintained significant OS and PFS separation, while TVAE markedly distorted the responder-to-non-responder ratio (84% vs. 10%). CTGAN and Synthpop did not preserve significant OS or PFS differences.</p>
+<p><img alt="Survival analysis Melanoma" src="/SynOmicsBench/assets/figures/survival_analysis_Melanoma.png" />
+<em><strong>Figure 10</strong>: Preservation of survival stratification based on a predictive model in the ipilimumab-treated Melanoma cohort. Kaplan-Meier curves of PFS stratified by predicted risk groups (low risk: blue; high risk: orange) derived from a logistic regression model classifying progressors versus non-progressors. The model was retrained on each synthetic dataset, and predicted risk scores were used for survival stratification. Log-rank P values and C-indices are reported in each panel.</em> </p>
+<hr />
+<h2 id="nsclc">NSCLC<a class="headerlink" href="#nsclc" title="Permanent link">&para;</a></h2>
+<p><strong>Cohort</strong>: 152 patients with advanced non-small cell lung cancer from the Stand Up To Cancer-Mark Foundation (SU2C-MARK) cohort, treated with PD-1/PD-L1 blockade. Original study by <a href="https://doi.org/10.1038/s41588-023-01355-5">Ravi et al. (<em>Nature Genetics</em>, 2023)</a>.</p>
+<p>Ravi et al. performed the first integrative analysis of genomic and transcriptomic biomarkers in a large NSCLC-specific ICB cohort, revealing that myeloid-driven immune programs — particularly immunoproteasome components and macrophage/monocyte signatures — play a central role in determining checkpoint blockade response.</p>
+<h3 id="differential-gene-expression_2">Differential Gene Expression<a class="headerlink" href="#differential-gene-expression_2" title="Permanent link">&para;</a></h3>
+<p>The authors reported a convergence of differentially expressed genes (PSME1, PSME2, PSMB8, PSMB9, and PSMB10) within the <strong>immunoproteasome system</strong>, which was significantly enriched in responders relative to canonical Hallmark IFN-γ targets as well as a comprehensive list of proteasome components (Wilcoxon rank-sum test, <em>P</em> &lt; 0.01). This hierarchical enrichment pattern—the upregulation of immunoproteasome components relative to IFN-γ targets and general proteasome genes—was successfully re-discovered in synthetic datasets generated by <strong>Avatars K10</strong> and <strong>Gaussian Copula</strong> (<strong>Figure 11</strong>).</p>
+<p><img alt="DGE NSCLC" src="/SynOmicsBench/assets/figures/dge_nsclc.png" />
+<em><strong>Figure 11</strong>: Re-discovery of immunoproteasome enrichment in NSCLC. Signed <span class="arithmatex">\(-log_{10}(p-value)\)</span> distributions compare IFN-γ response genes, immunoproteasome (iPSM) components, and canonical proteasome genes between responders and non-responders. Statistical significance was assessed using a two-sided Wilcoxon rank-sum test.</em> </p>
+<h3 id="gene-set-enrichment-analysis_2">Gene Set Enrichment Analysis<a class="headerlink" href="#gene-set-enrichment-analysis_2" title="Permanent link">&para;</a></h3>
+<p>In NSCLC, both responder-associated (IFN-γ response, Allograft rejection, DNA repair) and non-responder-associated (EMT, WNT β-catenin, TGF-β signaling) pathways were recapitulated with varying degrees of robustness. <strong>TVAE</strong> demonstrated directional agreement across all these pathways in at least three out of five replicates. While <strong>Gaussian Copula</strong> and <strong>Synthpop</strong> showed consistent alignment with responder-associated pathways, <strong>Avatars (K5/K10)</strong> exhibited more robust agreement across replicates for non-responder-associated pathways (<strong>Figure 12</strong>).</p>
+<p align="center">
+  <img src="/SynOmicsBench/assets/figures/GSEA_NSCLC.png" alt="Cell type deconvolution" width="500" height="300" />
+</p>
+
+<p><em><strong>Figure 12</strong>: Directional agreement of key cancer pathways. Heatmaps display enrichment direction and agreement patterns for selected functional pathways in NSCLC.</em> </p>
+<h3 id="cell-type-deconvolution_2">Cell Type Deconvolution<a class="headerlink" href="#cell-type-deconvolution_2" title="Permanent link">&para;</a></h3>
+<p>Ravi et al. identified strong associations between resistance and <strong>myeloid-driven immune programs</strong>, including monocyte/macrophage and dendritic cell signatures (<strong>Figure 13a</strong>). While the association direction was partially recovered in several synthetic datasets, the level of significance varied across replicates.</p>
+<p><img alt="CellDeconvolution NSCLC" src="/SynOmicsBench/assets/figures/CellDeconvolution_NSCLC.png" />
+<em><strong>Figure 13</strong>: a) Recovery of single-cell-derived immune signatures in NSCLC cohort. Dot plots show the mean differences of signature score between responders and non-responders for immune programs derived from single-cell RNA-seq. The colors represent FDR-adjusted significance thresholds from a two-sided Wilcoxon rank-sum test. b) Biological signature correlation matrices in the NSCLC cohort. Correlation heatmaps display pairwise Pearson correlations among signatures in the original data and each synthetic dataset. The color scale ranges from negative (blue) to positive (red) correlations. Clustering highlights two principal modules: a resistance-associated wound-healing/immunosuppressive, stromal cluster (C1) and a response-associated immune activation/exhaustion cluster (C2). c) Differential LM22 immune cell proportions in NSCLC cohort. Dot plots compare mean differences in immune cell fractions inferred by CIBERSORTx between responders and non-responders.</em> </p>
+<p>To further probe higher-order immune organization, integrative correlation analysis was performed. As illustrate in <strong>Figure 13b</strong>, in the original data, <strong>two well-separated clusters</strong> emerged: a <strong>wound-healing-associated cluster (C1)</strong> dominated by immunosuppressive myeloid, stromal, EMT, and TGF-β signatures linked to resistance, and an <strong>immune activation/exhaustion cluster (C2)</strong> enriched for immune infiltration, immunoproteasome components, and IFN-γ signaling associated with response. This two-module structure was clearly preserved in <strong>Gaussian Copula</strong> and <strong>Avatars K5</strong> synthetic data, partially retained by Avatars K10, and largely lost in Synthpop, CTGAN, and TVAE.</p>
+<p>In the LM22-based analysis, no significant immune cell type differences were observed between responders and non-responders in the original data, consistent with prior reports (<strong>Figure 13c</strong>).</p>
+<h3 id="survival-analysis_2">Survival Analysis<a class="headerlink" href="#survival-analysis_2" title="Permanent link">&para;</a></h3>
+<p>Ravi et al. reported that among patients with high PD-L1 expression (TPS ≥ 50%), increased <strong>macrophage/monocyte infiltration</strong> was associated with <strong>reduced PFS</strong> despite otherwise favorable prognostic status. This clinically relevant survival signature was successfully recovered using <strong>Gaussian Copula</strong> synthetic data (log-rank test, <em>P</em> &lt; 0.05), whereas none of the other SDG methods reproduced this association (<strong>Figure 14</strong>). Overall, Avatars and Gaussian Copula retained significant separation for both OS and PFS, while CTGAN, Synthpop, and TVAE failed to maintain survival discrimination for either endpoint.</p>
+<p><img alt="Survival analysis NSCLC" src="/SynOmicsBench/assets/figures/survival_analysis_NSCLC.png" />
+<em><strong>Figure 14</strong>: Patient stratification using a macrophage/monocyte signature in the PD-L1 high NSCLC cohort. Kaplan-Meier curves evaluate progression-free survival differences between tumors with low (orange) versus high (blue) macrophage/monocyte aignaturescores within the PD-L1 high (TPS ≥ 50%) subgroup. Recovery of the adverse prognostic association observed in the original dataset is assessed across SDG methods. Log-rank P values and C-indices are shown in each panel.</em> </p>
+<hr />
+<h2 id="summary">Summary<a class="headerlink" href="#summary" title="Permanent link">&para;</a></h2>
+<p>Across all three cancer cohorts and five analytical tasks, <strong>Gaussian Copula</strong> emerged as the most consistent method for preserving biologically meaningful signals — from gene-level markers and pathway enrichment patterns to immune cell compositions and survival stratification. The two Avatars configurations (K5/K10) shared a strong runner-up position, successfully re-discovering most biological insights though with greater inter-replicate variability. Importantly, methods with high statistical fidelity scores (such as Synthpop) did not necessarily preserve complex biological relationships, reinforcing the need for biological validation beyond metric-based assessment.</p>
+<p>These results demonstrate that synthetic data can support biological hypothesis generation, but that careful method selection and multiple synthetic realizations are essential for reliable inference.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.tabs", "navigation.tabs.sticky", "navigation.indexes", "navigation.top", "search.highlight", "search.suggest", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
