@@ -74,6 +74,26 @@ The `metrics.privacy` module provides tools to assess the likelihood of privacy 
 
 ::: synomicsbench.metrics.privacy.inference
 
+## Metrics: Automatic Benchmark
+
+The `metrics.autobenchmark` module orchestrates every metric dimension into a single run, producing a rank-derived meta-score and a comprehensive report.
+
+::: synomicsbench.metrics.autobenchmark.config.BenchmarkConfig
+
+::: synomicsbench.metrics.autobenchmark.runner.BenchmarkRunner
+
+::: synomicsbench.metrics.autobenchmark.runners
+
+::: synomicsbench.metrics.autobenchmark.compute
+
+::: synomicsbench.metrics.autobenchmark.metascore
+
+::: synomicsbench.metrics.autobenchmark.report
+
+::: synomicsbench.metrics.autobenchmark.html_report
+
+::: synomicsbench.metrics.autobenchmark.privacy
+
 ## Utilities
 
 Utility modules provide monitoring capabilities, evaluation utilities, and correlation analysis tools used throughout the framework.

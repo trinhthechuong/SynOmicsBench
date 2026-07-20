@@ -48,6 +48,10 @@ Privacy evaluation quantifies the disclosure vulnerability of the synthetic data
 - **Linkability**: The risk of connecting records from the synthetic dataset to the original or other external datasets
 - **Inference**: The risk of deducing sensitive attribute values from other available information
 
+### [Automatic Benchmark](autobenchmark.md)
+
+Rather than computing each of the three pillars separately and aggregating the results by hand, the **Automatic Benchmark** runs every dimension in one pass and produces a rank-derived meta-score plus a comprehensive report — the recommended entry point once you have multiple candidate SDG methods to compare.
+
 ---
 
 ## Bayesian Comparison Framework

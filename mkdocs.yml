@@ -56,6 +56,7 @@ nav:
           - Survival Analysis: evaluation/biological-utility/survival-analysis.md
       - Biological Results: evaluation/biological-results.md
       - Privacy: evaluation/privacy.md
+      - Automatic Benchmark: evaluation/autobenchmark.md
   - API: api/index.md
 
 # Documentation Directory
