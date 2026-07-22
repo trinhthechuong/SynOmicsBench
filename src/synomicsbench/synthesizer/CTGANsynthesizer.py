@@ -2,9 +2,11 @@ from ctgan import CTGAN
 import pandas as pd
 import os
 import random
+import time
 import numpy as np
 from typing import Optional
 from synomicsbench.synthesizer.BaseSynthesizer import BaseSynthesizer
+from synomicsbench.synthesizer.transformer_cache import cache_context, unwrap_transformer
 
 class CTGANsynthesizer(BaseSynthesizer):
     """
@@ -38,9 +40,10 @@ class CTGANsynthesizer(BaseSynthesizer):
             data: pd.DataFrame,
             seed:  Optional[int] = None,
             *,
-            epochs: int=100, 
-            verbose: bool=True, 
-            cuda: bool = True, 
+            epochs: int=100,
+            verbose: bool=True,
+            cuda: bool = True,
+            transformer_cache: Optional[str] = None,
             **kwargs):
         """
         Train the CTGAN model on provided data.
@@ -51,6 +54,11 @@ class CTGANsynthesizer(BaseSynthesizer):
             epochs (int): Number of training epochs.
             verbose (bool): Verbosity flag.
             cuda (bool): Use GPU if True.
+            transformer_cache (str, optional): Path to a DataTransformer cache built by
+                ``synomicsbench.synthesizer.transformer_cache.build_cache``. Reuses the
+                fitted transformer instead of refitting one Bayesian GMM per column
+                (~0.09 s/column). The fit is deterministic given the data, so this does
+                not change the generated output. Raises if the cache does not match.
             **kwargs: Extra CTGAN parameters.
 
         Returns:
@@ -88,8 +96,12 @@ class CTGANsynthesizer(BaseSynthesizer):
         except Exception:
             pass
             
-        self.model.fit(data, discrete_columns=discrete_columns)
-        self.logger.info("CTGAN training completed")
+        started = time.time()
+        with cache_context(transformer_cache, data, discrete_columns, self.logger):
+            self.model.fit(data, discrete_columns=discrete_columns)
+        # Restore the real transformer so the saved model matches an uncached run.
+        unwrap_transformer(self.model)
+        self.logger.info(f"CTGAN training completed in {time.time() - started:.1f}s")
 
         model_path = os.path.join(self.output_path, "CTGAN_model.pkl")
         try:
