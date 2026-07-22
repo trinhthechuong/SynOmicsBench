@@ -39,9 +39,17 @@ dependencies = [
     "sdv>=1.18.0",
     "seaborn>=0.13.2",
     "statsmodels>=0.14.6",
-    "torch>=2.10.0",
+    "torch>=2.8.0",
     "tqdm>=4.67.3",
 ]
+
+[tool.uv]
+# Resolve only for Python 3.12: ctgan>=0.11 requires numpy>=2.1 on Python>=3.13,
+# which conflicts with anonymeter's numpy<1.27 ceiling. Pinning the resolution to
+# 3.12 is what allows ctgan 0.11.1 (the version used to generate the published
+# synthetic data) to coexist with anonymeter. Not published wheel metadata, so
+# `requires-python` above stays permissive for downstream users.
+environments = ["python_full_version >= '3.12' and python_full_version < '3.13'"]
 
 [build-system]
 requires = ["hatchling"]
