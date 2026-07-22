@@ -79,6 +79,7 @@ class CTGANsynthesizer(BaseSynthesizer):
         self.model = CTGAN(
             epochs=epochs,
             verbose=verbose,
+            enable_gpu=cuda,
             **kwargs
         )
         try:
