@@ -224,10 +224,18 @@ def run_dge(original: pd.DataFrame, candidates: List[Candidate],
         _, omic = config.resolve_columns(original.columns)
         origin_dge = _dge_table(original, omic, config)
         for cand in candidates:
-            syn = load_frame(cand.data, config.id_column)
-            syn_dge = _dge_table(syn, omic, config)
-            gcs = analyzer.process_single_dge_result(origin_dge, syn_dge)[2]
-            rows.append({"Model": cand.method, "Seed": cand.seed, "Value": float(gcs)})
+            # A degenerate synthetic can collapse a phenotype group (e.g. no PD in BR), which
+            # makes _dge_table raise. Record NaN for that one candidate instead of aborting the
+            # whole dimension for every other candidate.
+            try:
+                syn = load_frame(cand.data, config.id_column)
+                syn_dge = _dge_table(syn, omic, config)
+                gcs = float(analyzer.process_single_dge_result(origin_dge, syn_dge)[2])
+            except Exception as exc:
+                print(f"[autobenchmark] DGE skipped for {cand.method} (seed {cand.seed}): "
+                      f"{type(exc).__name__}: {exc}", flush=True)
+                gcs = float("nan")
+            rows.append({"Model": cand.method, "Seed": cand.seed, "Value": gcs})
     elif mode == "reuse":
         pre = _require(config.precomputed_dir, "precomputed_dir", "DGE")
         base = os.path.join(pre, "NarrowUtility", "DGE", "CRPR_PD")
