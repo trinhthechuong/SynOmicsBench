@@ -257,12 +257,13 @@ class DataProcessor:
 
     ### Prepare for Imputation ###
     @staticmethod
-    def encode_dummy_features(data: pd.DataFrame) -> pd.DataFrame:
+    def encode_dummy_features(data: pd.DataFrame, dummy_na: bool = True) -> pd.DataFrame:
         """
         Encode categorical features into dummy/one-hot columns.
 
         Args:
             data (pd.DataFrame): DataFrame with categorical features.
+            dummy_na (bool): Add missing column indicators for missing values. Defaults to True
 
         Returns:
             pd.DataFrame: Dummy-encoded DataFrame.
@@ -275,7 +276,7 @@ class DataProcessor:
             raise TypeError("Input must be a pandas DataFrame")
         try:
             cat_data_encoded = pd.get_dummies(
-                data, dtype="int64", dummy_na=True, columns=data.columns
+                data, dtype="int64", dummy_na=dummy_na, columns=data.columns
             )
             return cat_data_encoded
         except Exception as e:
