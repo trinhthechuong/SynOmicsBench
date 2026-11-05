@@ -51,6 +51,7 @@ DATASET_COLORS = {
     "Gaussian Copula": "#e78ac3",    # pink
     "Synthpop": "#a6d854",           # lime
     "TVAE": "#ffd92f",               # yellow
+    "Diffusion": "#e5c494",          # tan
 }
 
 
@@ -202,17 +203,22 @@ def plot_violin_grid_by_cancer(
         if method_scores is None or len(method_scores) == 0:
             raise ValueError(f"Cancer '{cancer}' has no method scores.")
 
-        # Build long df
-        rows = []
+        # Build the long-format frame column-wise: a full ccRCC pairwise block holds
+        # hundreds of millions of values, too many to materialise as one dict per value.
+        pieces = []
         for m in methods_order:
             vals = method_scores.get(m, None)
             if vals is None:
                 continue
             arr = pd.to_numeric(pd.Series(vals), errors="coerce").dropna().to_numpy(dtype=float)
-            for v in arr:
-                rows.append({"Method": m, value_name: float(v)})
+            if arr.size == 0:
+                continue
+            # Categorical keeps one small integer code per row instead of a string object.
+            cat = pd.Categorical([m] * arr.size, categories=list(methods_order), ordered=True)
+            pieces.append(pd.DataFrame({"Method": cat, value_name: arr}))
 
-        df_long = pd.DataFrame(rows)
+        df_long = (pd.concat(pieces, ignore_index=True) if pieces
+                   else pd.DataFrame(columns=["Method", value_name]))
         if df_long.empty:
             raise ValueError(f"Cancer '{cancer}' has no valid numeric scores after cleaning.")
 
