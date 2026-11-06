@@ -46,6 +46,14 @@ Our study leverages five synthetic data generation (SDG) methods through their o
       <h3>TVAE</h3>
     </div>
   </a>
+
+  <!-- TabDiff -->
+  <a href="https://github.com/MinkaiXu/TabDiff" target="_blank" class="sdg-card">
+    <div class="sdg-card-front">
+      <img src="../assets/figures/neural_network.png" alt="TabDiff Logo" class="sdg-logo">
+      <h3>TabDiff</h3>
+    </div>
+  </a>
 </div>
 
 Five SDG methods were benchmarked across three cancer types (NSCLC, melanoma, ccRCC), each repeated 5 times with different random seeds to assess the robustness of each method.
@@ -55,6 +63,7 @@ Naive fitting of synthetic data generation methods often fails on high-dimension
 - CTGAN and TVAE requires GPU for training on high-dimensional data.
 - Gaussian Copula requires a suitable encoding for categorical variables.
 - Synthpop requires a custom predictor matrix optimization to handle high-dimensional data.
+- TabDiff requires a GPU and a memory-efficient attention (`use_sdpa=True`, the default) to train on thousands of gene columns.
 - Avatars requires a feature clustering to partition the features into batch before submitting to the API.
 
 Detail description of each adaptation is provided in the manuscript of this work and [GitHub repository](https://github.com/thechuongtrinh/SynOmicsBench).
@@ -157,7 +166,35 @@ synthetic_data = synth.generate(
 )
 ```
 
-### 5. Avatars
+### 5. TabDiff
+
+> [!NOTE]
+> The TabDiff sources ([MinkaiXu/TabDiff](https://github.com/MinkaiXu/TabDiff), MIT licence, commit `5ecdb33`) ship with SynOmicsBench, unmodified. Install their extra dependencies with `pip install "synomicsbench[tabdiff]"`.
+
+```python
+from synomicsbench.synthesizer.TabDiffsynthesizer import TabDiffsynthesizer
+
+synthesizer = TabDiffsynthesizer(output_path="tabdiff_result", metadata=metadata)
+synthetic_data = synthesizer.generate(
+    data=original_data,
+    data_ids=list(original_data.index),
+    n_samples=original_data.shape[0],
+    seed=42,
+    fit_params={
+        "epochs": 3000,            # TabDiff default: 8000
+        "cuda": True,
+        # Skip TabDiff's periodic evaluation, whose metrics are not used here.
+        "config_overrides": {"train": {"main": {"check_val_every": 3001}}},
+    },
+    output_filename="synthetic_data_tabdiff.csv",
+)
+```
+
+Every other hyperparameter is read from TabDiff's own `tabdiff_configs.toml`. Any of them can be changed through `config_overrides`, which mirrors the TOML nesting. The per-epoch training curve is written to `train_log.csv` in `output_path`.
+
+For runs longer than one cluster job, `checkpoint_every` saves the full training state to `resume.pt`, and `deadline` (a Unix time) stops training safely before the walltime, raising `TrainingPaused`. Calling `generate` again with the same arguments and `output_path` resumes from `resume.pt`.
+
+### 6. Avatars
 
 > [!NOTE] 
 > Avatars requires a proprietary Octopize license. The example below highlights the specialized adaptations (data block chunking and feature clustering) used in SynOmicsBench to handle high-dimensional omic data over the API.
