@@ -36,21 +36,39 @@ class TestGSEAAnalyzer:
         analyzer = PCSAnalyzer(
             term_col="Term",
             nes_col="NES",
-            q_col="FDR q-val",
-            q_thr=0.05,
-            w=0.5
+            sig_col="NOM p-val",
+            sig_thr=0.01,
         )
         
-        assert analyzer.q_thr == 0.05
-        assert analyzer.w == 0.5
+        assert analyzer.sig_col == "NOM p-val"
+        assert analyzer.sig_thr == 0.01
 
     def test_pcs_analyzer_default_init(self):
         from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
         
         analyzer = PCSAnalyzer()
         
-        assert analyzer.q_thr == 0.05
-        assert analyzer.w == 0.5
+        assert analyzer.sig_col == "FDR q-val"
+        assert analyzer.sig_thr == 0.05
+
+    def test_compute_metrics(self, sample_gsea_data):
+        from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
+
+        ori, syn = sample_gsea_data
+        analyzer = PCSAnalyzer()
+        scores = analyzer.compute_metrics(ori, syn)
+        _, _, result = analyzer.process_single_gsea_result(ori, syn)
+        assert scores["F1"] == result.f1
+        assert analyzer.compute_metrics(ori, ori.copy(), metrics="F1") == pytest.approx(1.0)
+
+    def test_no_significant_synthetic_pathway(self, sample_gsea_data):
+        from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
+
+        ori, _ = sample_gsea_data
+        scores = PCSAnalyzer().compute_metrics(ori, ori.assign(**{"FDR q-val": 0.9}),
+                                               metrics=["Precision", "F1"])
+        assert np.isnan(scores["Precision"])
+        assert scores["F1"] == 0.0
 
 
 class TestPredictiveModelComparator:

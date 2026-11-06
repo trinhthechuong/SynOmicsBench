@@ -52,6 +52,8 @@ The `metrics.fidelity` module provides assessment tools for evaluating the distr
 
 The `metrics.narrow_utility` module evaluates the capability of synthetic data in downstream bioinformatics tasks.
 
+::: synomicsbench.metrics.narrow_utility.concordance
+
 ::: synomicsbench.metrics.narrow_utility.DGE
 
 ::: synomicsbench.metrics.narrow_utility.GSEA

@@ -211,7 +211,7 @@ def _pairwise_cross_mean(orig_full, syn_full, clin_feat, trans_feat, meta_full, 
 
 
 # ---------------------------------------------------------------------------
-# DGE (GCS)
+# DGE (F1-GCS)
 # ---------------------------------------------------------------------------
 
 def run_dge(original: pd.DataFrame, candidates: List[Candidate],
@@ -219,7 +219,7 @@ def run_dge(original: pd.DataFrame, candidates: List[Candidate],
     if mode == "skip":
         return _empty()
     rows = []
-    analyzer = GCSAnalyzer(term_col="Gene", nes_col="Log2FC", q_col="Q_value", seed=42, q_thr=0.05, w=0.5)
+    analyzer = GCSAnalyzer(term_col="Gene", nes_col="Log2FC", sig_col="P_value", seed=42, sig_thr=0.05)
     if mode == "compute":
         _, omic = config.resolve_columns(original.columns)
         origin_dge = _dge_table(original, omic, config)
@@ -230,12 +230,12 @@ def run_dge(original: pd.DataFrame, candidates: List[Candidate],
             try:
                 syn = load_frame(cand.data, config.id_column)
                 syn_dge = _dge_table(syn, omic, config)
-                gcs = float(analyzer.process_single_dge_result(origin_dge, syn_dge)[2])
+                f1 = float(analyzer.process_single_dge_result(origin_dge, syn_dge)[2].f1)
             except Exception as exc:
                 print(f"[autobenchmark] DGE skipped for {cand.method} (seed {cand.seed}): "
                       f"{type(exc).__name__}: {exc}", flush=True)
-                gcs = float("nan")
-            rows.append({"Model": cand.method, "Seed": cand.seed, "Value": gcs})
+                f1 = float("nan")
+            rows.append({"Model": cand.method, "Seed": cand.seed, "Value": f1})
     elif mode == "reuse":
         pre = _require(config.precomputed_dir, "precomputed_dir", "DGE")
         base = os.path.join(pre, "NarrowUtility", "DGE", "CRPR_PD")
@@ -243,8 +243,8 @@ def run_dge(original: pd.DataFrame, candidates: List[Candidate],
         for cand in candidates:
             stem = config.name_map[cand.method]
             syn_path = os.path.join(base, f"Seed_{cand.seed}", f"DGE_{stem}_{cand.seed}.csv")
-            gcs = analyzer.process_single_dge_result(origin_path, syn_path)[2]
-            rows.append({"Model": cand.method, "Seed": cand.seed, "Value": float(gcs)})
+            f1 = analyzer.process_single_dge_result(origin_path, syn_path)[2].f1
+            rows.append({"Model": cand.method, "Seed": cand.seed, "Value": float(f1)})
     return pd.DataFrame(rows)
 
 
@@ -258,7 +258,7 @@ def _dge_table(df: pd.DataFrame, gene_cols, config: BenchmarkConfig) -> pd.DataF
 
 
 # ---------------------------------------------------------------------------
-# GSEA (PCS)
+# GSEA (F1-PCS)
 # ---------------------------------------------------------------------------
 
 def run_gsea(original: pd.DataFrame, candidates: List[Candidate],
@@ -266,7 +266,7 @@ def run_gsea(original: pd.DataFrame, candidates: List[Candidate],
     if mode == "skip":
         return _empty()
     rows = []
-    analyzer = PCSAnalyzer(term_col="Term", nes_col="NES", q_col="FDR q-val", seed=42, q_thr=0.05, w=0.5)
+    analyzer = PCSAnalyzer(term_col="Term", nes_col="NES", sig_col="FDR q-val", seed=42, sig_thr=0.05)
     if mode == "compute":
         gene_set = _require(config.gene_set, "gene_set", "GSEA")
         _, omic = config.resolve_columns(original.columns)
@@ -277,8 +277,8 @@ def run_gsea(original: pd.DataFrame, candidates: List[Candidate],
             syn_dge = _dge_table(syn, omic, config)
             syn_gsea = _compute.gsea_prerank(syn_dge, gene_set, seed=cand.seed,
                                              permutation_num=config.gsea_permutations)
-            pcs = analyzer.process_single_gsea_result(origin_gsea, syn_gsea)[2].pcs
-            rows.append({"Model": cand.method, "Seed": cand.seed, "Value": float(pcs)})
+            f1 = analyzer.process_single_gsea_result(origin_gsea, syn_gsea)[2].f1
+            rows.append({"Model": cand.method, "Seed": cand.seed, "Value": float(f1)})
     elif mode == "reuse":
         pre = _require(config.precomputed_dir, "precomputed_dir", "GSEA")
         base = os.path.join(pre, "NarrowUtility", "GSEA", "CRPR_PD")
@@ -286,8 +286,8 @@ def run_gsea(original: pd.DataFrame, candidates: List[Candidate],
         for cand in candidates:
             stem = config.name_map[cand.method]
             syn_path = os.path.join(base, f"Seed_{cand.seed}", f"GSEA_{stem}_{cand.seed}.csv")
-            pcs = analyzer.process_single_gsea_result(origin_path, syn_path)[2].pcs
-            rows.append({"Model": cand.method, "Seed": cand.seed, "Value": float(pcs)})
+            f1 = analyzer.process_single_gsea_result(origin_path, syn_path)[2].f1
+            rows.append({"Model": cand.method, "Seed": cand.seed, "Value": float(f1)})
     return pd.DataFrame(rows)
 
 

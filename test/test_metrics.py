@@ -272,14 +272,14 @@ class TestGCSAnalyzer:
             {
                 "Gene": genes,
                 "Log2FC": rng.normal(0, 2, n_genes),
-                "Q_value": rng.uniform(0.001, 0.5, n_genes),
+                "P_value": rng.uniform(0.001, 0.5, n_genes),
             }
         )
         syn = pd.DataFrame(
             {
                 "Gene": genes,
                 "Log2FC": rng.normal(0, 2, n_genes),
-                "Q_value": rng.uniform(0.001, 0.5, n_genes),
+                "P_value": rng.uniform(0.001, 0.5, n_genes),
             }
         )
         return ori, syn
@@ -287,21 +287,16 @@ class TestGCSAnalyzer:
     def test_init(self):
         from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
-        analyzer = GCSAnalyzer(term_col="Gene", nes_col="Log2FC", q_col="Q_value")
-        assert analyzer.q_thr == 0.05
-        assert analyzer.w == 0.5
+        analyzer = GCSAnalyzer(term_col="Gene", nes_col="Log2FC", sig_col="Q_value")
+        assert analyzer.sig_col == "Q_value"
+        assert analyzer.sig_thr == 0.05
+        assert GCSAnalyzer().sig_col == "P_value"
 
-    def test_invalid_q_thr(self):
+    def test_invalid_sig_thr(self):
         from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
-        with pytest.raises(ValueError, match="q_thr"):
-            GCSAnalyzer(q_thr=0.0)
-
-    def test_invalid_w(self):
-        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
-
-        with pytest.raises(ValueError, match="w must be"):
-            GCSAnalyzer(w=-1)
+        with pytest.raises(ValueError, match="sig_thr"):
+            GCSAnalyzer(sig_thr=0.0)
 
     def test_compute_rank_score(self, sample_dge_data):
         from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
@@ -333,23 +328,76 @@ class TestGCSAnalyzer:
         rnk_ori = analyzer.compute_rank_score(ori)
         rnk_syn = analyzer.compute_rank_score(syn)
         aligned = GCSAnalyzer.align_rank_scores(rnk_ori, rnk_syn)
-        gcs, n_sign, n_non_sign, m = analyzer.gene_set_concordance_score(
-            aligned, ori_rank_size=len(rnk_ori)
-        )
-        assert isinstance(gcs, float)
-        assert 0.0 <= gcs <= 1.0
-        assert isinstance(n_sign, int)
-        assert isinstance(n_non_sign, int)
+        res = analyzer.gene_set_concordance_score(aligned)
+        assert res.n_sign == res.n_zone3 + res.n_zone4
+        assert res.recall == pytest.approx(res.n_sign / res.n_sig_ori)
+        assert res.precision == pytest.approx(res.n_sign / res.n_sig_syn)
+        assert 0.0 <= res.f1 <= 1.0
 
-    def test_process_single_dge_result(self, sample_dge_data):
+    def test_identical_tables_are_perfect(self, sample_dge_data):
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
+
+        ori, _ = sample_dge_data
+        scores = GCSAnalyzer().compute_metrics(ori, ori.copy())
+        for name in ("Recall", "Precision", "F1", "Slope", "Slope_robust", "Pearson", "SignConcordance"):
+            assert scores[name] == pytest.approx(1.0), name
+
+    def test_no_concordant_gene_gives_zero_f1(self, sample_dge_data):
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
+
+        ori, _ = sample_dge_data
+        syn = ori.assign(P_value=0.9)
+        scores = GCSAnalyzer().compute_metrics(ori, syn, metrics=["Recall", "Precision", "F1"])
+        assert scores["Recall"] == 0.0
+        assert np.isnan(scores["Precision"])
+        assert scores["F1"] == 0.0
+
+    def test_metrics_argument(self, sample_dge_data):
         from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
 
         ori, syn = sample_dge_data
         analyzer = GCSAnalyzer()
-        result = analyzer.process_single_dge_result(ori, syn)
-        assert isinstance(result, tuple)
-        # Should return 11 elements
-        assert len(result) == 11
+        f1 = analyzer.compute_metrics(ori, syn, metrics="F1")
+        both = analyzer.compute_metrics(ori, syn, metrics=["F1", "Slope"])
+        assert isinstance(f1, float)
+        assert list(both) == ["F1", "Slope"]
+        assert both["F1"] == f1
+        with pytest.raises(ValueError, match="Valid metrics"):
+            analyzer.compute_metrics(ori, syn, metrics="GCS")
+
+    def test_compute_metrics_datasets(self, sample_dge_data):
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
+
+        ori, syn = sample_dge_data
+        table = GCSAnalyzer().compute_metrics_datasets(ori, {"A": syn, "B": ori}, metrics=["F1", "Pearson"])
+        assert list(table.index) == ["A", "B"]
+        assert list(table.columns) == ["F1", "Pearson"]
+        assert table.loc["B", "F1"] == pytest.approx(1.0)
+
+    def test_process_single_dge_result(self, sample_dge_data):
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.concordance import ConcordanceResult
+
+        ori, syn = sample_dge_data
+        x, y, result = GCSAnalyzer().process_single_dge_result(ori, syn)
+        assert len(x) == len(y) == result.aligned_size
+        assert isinstance(result, ConcordanceResult)
+
+    def test_plot_calibration_scatter(self, sample_dge_data):
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
+
+        ori, syn = sample_dge_data
+        analyzer = GCSAnalyzer()
+        fig, table = analyzer.plot_calibration_scatter(
+            ori, {"A": syn, "B": ori}, highlight={"top": ["Gene_0", "Gene_1"]}
+        )
+        assert set(table.index) == {"A", "B"}
+        assert table.loc["A", "Slope"] == pytest.approx(analyzer.compute_metrics(ori, syn, "Slope"))
+        plt.close(fig)
 
 
 # ===========================================================================

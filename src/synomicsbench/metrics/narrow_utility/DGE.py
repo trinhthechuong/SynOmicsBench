@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
 from typing import Dict, Mapping, Tuple, Union
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+from synomicsbench.metrics.narrow_utility.concordance import (
+    ConcordanceAnalyzer,
+    ConcordanceResult,
+)
 
 
 DATA_COLORS = {
@@ -30,83 +34,38 @@ GCS_ZONE_BG_COLORS = {
 }
 
 
-@dataclass(frozen=True)
-class GCSResult:
+class GCSAnalyzer(ConcordanceAnalyzer):
     """
-    Container for GCS computation outputs.
+    Gene-level concordance (GCS) between original and synthetic DGE results.
+
+    Reports recall, precision and F1-score of the differentially expressed genes
+    (F1-GCS), and the effect-size calibration of the original DEGs: OLS slope of the
+    Log2FC, Pearson correlation and sign concordance.
 
     Args:
-        gcs (float): Gene-set Concordance Score (same formula as PCS, renamed).
-        n_sign (int): Number of concordant significant pathways (zones 3 + 4).
-        n_non_sign (int): Number of concordant non-significant pathways (zones 1 + 2).
-        m (float): Normalization constant M used in the GCS formula.
-        n_zone1 (int): Count in non-significant lower-left zone.
-        n_zone2 (int): Count in non-significant upper-right zone.
-        n_zone3 (int): Count in significant lower-left zone.
-        n_zone4 (int): Count in significant upper-right zone.
-        ori_rank_size (int): Number of ranked pathways in the original ranking.
-        aligned_size (int): Number of pathways after alignment (inner join).
-    """
-    gcs: float
-    n_sign: int
-    n_non_sign: int
-    m: float
-    n_zone1: int
-    n_zone2: int
-    n_zone3: int
-    n_zone4: int
-    ori_rank_size: int
-    aligned_size: int
-
-
-class GCSAnalyzer:
-    """
-    Refactor of the original GCS computation code into a class, preserving identical logic.
-
-    Args:
-        term_col (str): Column name for pathway / gene-set names.
-        nes_col (str): Column name for effect size (e.g., Log2FC).
-        q_col (str): Column name for Q-value.
-        seed (int): Seed used for np.random.seed to generate jitter.
-        q_thr (float): Q-value threshold used to define significance boundary.
-        w (float): Weight for non-significant concordance in GCS.
+        term_col (str): Gene name column.
+        nes_col (str): Effect-size column (e.g., Log2FC).
+        sig_col (str): Significance column; P-value or Q-value, as the user decides.
+        seed (int): Seed of the tiny jitter added to the rank scores.
+        sig_thr (float): Significance threshold applied to ``sig_col``.
 
     Raises:
-        ValueError: If q_thr is not in (0, 1].
-        ValueError: If w is negative.
+        ValueError: If sig_thr is not in (0, 1].
     """
 
     def __init__(
         self,
         term_col: str = "Gene",
         nes_col: str = "Log2FC",
-        q_col: str = "Q_value",
+        sig_col: str = "P_value",
         seed: int = 42,
-        q_thr: float = 0.05,
-        w: float = 0.5,
+        sig_thr: float = 0.05,
     ) -> None:
-        if not (0.0 < q_thr <= 1.0):
-            raise ValueError("q_thr must be in (0, 1].")
-        if w < 0:
-            raise ValueError("w must be >= 0.")
-
-        self.term_col = term_col
-        self.nes_col = nes_col
-        self.q_col = q_col
-        self.seed = seed
-        self.q_thr = q_thr
-        self.w = w
-
-    @staticmethod
-    def _load_df(data: Union[str, "os.PathLike[str]", pd.DataFrame]) -> pd.DataFrame:
-        """Helper to load a CSV if a path is provided, otherwise return the DataFrame."""
-        if isinstance(data, pd.DataFrame):
-            return data
-        return pd.read_csv(data)
+        super().__init__(term_col=term_col, nes_col=nes_col, sig_col=sig_col, seed=seed, sig_thr=sig_thr)
 
     def compute_rank_score(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Compute rank score = sign(Log2FC) * -log10(Q-value) with tiny jitter.
+        Compute rank score = sign(Log2FC) * -log10(significance) with tiny jitter.
 
         Args:
             df (pd.DataFrame): DGE results table.
@@ -114,89 +73,25 @@ class GCSAnalyzer:
         Returns:
             pd.DataFrame: Ranked table indexed by term_col with columns rank_score and qval.
         """
-        np.random.seed(self.seed)
+        return self.rank_score(df)
 
-        q = pd.to_numeric(df[self.q_col], errors="coerce").clip(lower=0.001)
-        nes = pd.to_numeric(df[self.nes_col], errors="coerce")
-
-        rank_score = np.sign(nes) * (-np.log10(q))
-
-        jitter = np.random.uniform(-1e-10, 1e-10, size=len(rank_score))
-        rank_score = rank_score + jitter
-
-        rnk = (
-            df[[self.term_col]]
-            .assign(rank_score=rank_score, qval=q)
-            .dropna()
-            .groupby(self.term_col)
-            .mean()
-            .sort_values("rank_score", ascending=False)
-        )
-
-        return rnk
-
-    @staticmethod
-    def align_rank_scores(rnk_ori: pd.DataFrame, rnk_syn: pd.DataFrame) -> pd.DataFrame:
+    def gene_set_concordance_score(self, df_rank: pd.DataFrame) -> ConcordanceResult:
         """
-        Inner join on pathway / gene names.
+        Compute recall, precision and F1-score of the differentially expressed genes.
 
         Args:
-            rnk_ori (pd.DataFrame): Original rank table indexed by term.
-            rnk_syn (pd.DataFrame): Synthetic rank table indexed by term.
+            df_rank (pd.DataFrame): Aligned rank table with rank_ori, rank_syn, q_ori, qval.
 
         Returns:
-            pd.DataFrame: Aligned rank table.
+            ConcordanceResult: Scores and counts.
         """
-        aligned = (
-            rnk_ori.rename(columns={"rank_score": "rank_ori", "qval": "q_ori"}).join(
-                rnk_syn.rename(columns={"rank_score": "rank_syn"}),
-                how="inner",
-            )
-        )
-        return aligned
-
-    def gene_set_concordance_score(
-        self,
-        df_rank: pd.DataFrame,
-        ori_rank_size: int,
-    ) -> Tuple[float, int, int, float]:
-        """
-        Compute GCS using original pathway count to avoid bias due to pathway loss after alignment.
-
-        Args:
-            df_rank (pd.DataFrame): Aligned rank table with rank_ori, rank_syn, q_ori.
-            ori_rank_size (int): Number of pathways in original ranking.
-
-        Returns:
-            tuple[float, int, int, float]: (GCS, N_sign, N_non_sign, M).
-        """
-        x = df_rank["rank_ori"].values
-        y = df_rank["rank_syn"].values
-
-        s_thr = -np.log10(self.q_thr)
-
-        zone1 = (x >= -s_thr) & (x <= 0) & (y >= -s_thr) & (y <= 0)
-        zone2 = (x >= 0) & (x <= s_thr) & (y >= 0) & (y <= s_thr)
-
-        zone3 = (x <= -s_thr) & (y <= -s_thr)
-        zone4 = (x >= s_thr) & (y >= s_thr)
-
-        n_sign = int(zone3.sum() + zone4.sum())
-        n_non_sign = int(zone1.sum() + zone2.sum())
-
-        num_sign = int((df_rank["q_ori"] < self.q_thr).sum())
-        num_non_sign = int(ori_rank_size - num_sign)
-
-        m = float(num_sign + self.w * num_non_sign)
-        gcs = float((n_sign + self.w * n_non_sign) / m) if m > 0 else np.nan
-
-        return gcs, n_sign, n_non_sign, m
+        return self.concordance_score(df_rank)
 
     def process_single_dge_result(
         self,
         dge_ori: Union[str, "os.PathLike[str]", pd.DataFrame],
         dge_syn: Union[str, "os.PathLike[str]", pd.DataFrame],
-    ) -> Tuple[np.ndarray, np.ndarray, float, int, int, int, int, float, int, int, int]:
+    ) -> Tuple[np.ndarray, np.ndarray, ConcordanceResult]:
         """
         Process original and synthetic DGE results (paths or DataFrames).
 
@@ -205,79 +100,32 @@ class GCSAnalyzer:
             dge_syn (str | PathLike | pd.DataFrame): Synthetic DGE table/path.
 
         Returns:
-            tuple: (x, y, GCS, n_zone1, n_zone2, n_zone3, n_zone4, M, ori_rank_size, aligned_size, seed_used).
+            tuple[np.ndarray, np.ndarray, ConcordanceResult]: (x, y, result).
         """
-        df_ori = self._load_df(dge_ori)
-        df_syn = self._load_df(dge_syn)
-
-        rnk_ori = self.compute_rank_score(df_ori)
-        rnk_syn = self.compute_rank_score(df_syn)
-
-        ori_rank_size = int(len(rnk_ori))
-
-        aligned = self.align_rank_scores(rnk_ori, rnk_syn)
-
-        x = aligned["rank_ori"].values
-        y = aligned["rank_syn"].values
-
-        s_thr = -np.log10(self.q_thr)
-
-        n_zone1 = int(((x >= -s_thr) & (x <= 0) & (y >= -s_thr) & (y <= 0)).sum())
-        n_zone2 = int(((x >= 0) & (x <= s_thr) & (y >= 0) & (y <= s_thr)).sum())
-        n_zone3 = int(((x <= -s_thr) & (y <= -s_thr)).sum())
-        n_zone4 = int(((x >= s_thr) & (y >= s_thr)).sum())
-
-        gcs, _, _, m = self.gene_set_concordance_score(
-            aligned,
-            ori_rank_size=ori_rank_size,
-        )
-
-        return (
-            x,
-            y,
-            gcs,
-            n_zone1,
-            n_zone2,
-            n_zone3,
-            n_zone4,
-            m,
-            ori_rank_size,
-            int(len(aligned)),
-            int(self.seed),
-        )
+        return self.process_single_result(dge_ori, dge_syn)
 
     def plot_single_gcs_panel(
         self,
         ax: plt.Axes,
         x: np.ndarray,
         y: np.ndarray,
-        gcs: float,
-        n_zone1: int,
-        n_zone2: int,
-        n_zone3: int,
-        n_zone4: int,
+        result: ConcordanceResult,
         tool_name: str,
-        m: float,
     ) -> None:
         """
-        Plot single GCS comparison panel (identical logic and styling to original code).
+        Plot one gene-level concordance panel in the rank-score plane.
 
         Args:
             ax (matplotlib.axes.Axes): Target axis.
             x (np.ndarray): Rank scores (original).
             y (np.ndarray): Rank scores (synthetic).
-            gcs (float): GCS value.
-            n_zone1 (int): Count in zone1.
-            n_zone2 (int): Count in zone2.
-            n_zone3 (int): Count in zone3.
-            n_zone4 (int): Count in zone4.
+            result (ConcordanceResult): Concordance result.
             tool_name (str): Tool/dataset name for title.
-            m (float): M normalization used in GCS.
 
         Returns:
             None
         """
-        s_thr = -np.log10(self.q_thr)
+        s_thr = -np.log10(self.sig_thr)
         lo, hi = -2, 2
 
         zone1 = (x >= -s_thr) & (x <= 0) & (y >= -s_thr) & (y <= 0)
@@ -314,17 +162,18 @@ class GCSAnalyzer:
         ax.set_ylim(lo, hi)
         ax.set_xlabel("Rank score (Original)")
         ax.set_ylabel("Rank score (Synthetic)")
-        ax.set_title(f"{tool_name}\nGCS={gcs:.3f} (w={self.w})")
+        ax.set_title(f"{tool_name}\nF1-GCS={result.f1:.3f}")
 
         ax.text(
             -1.9,
             1.8,
             "Zones\n"
-            f"NonSig LL: {n_zone1}\n"
-            f"NonSig UR: {n_zone2}\n"
-            f"Sig LL: {n_zone3}\n"
-            f"Sig UR: {n_zone4}\n"
-            f"M={m}",
+            f"NonSig LL: {result.n_zone1}\n"
+            f"NonSig UR: {result.n_zone2}\n"
+            f"Sig LL: {result.n_zone3}\n"
+            f"Sig UR: {result.n_zone4}\n"
+            f"Recall={result.recall:.3f}\n"
+            f"Precision={result.precision:.3f}",
             fontsize=10,
             va="top",
             bbox=dict(fc="white", alpha=0.7, ec="none"),
@@ -347,45 +196,20 @@ class GCSAnalyzer:
             figsize (tuple[int, int]): Figure size.
 
         Returns:
-            tuple[matplotlib.figure.Figure, dict[str, float]]: (figure, gcs_dict).
+            tuple[matplotlib.figure.Figure, dict[str, float]]: (figure, F1-GCS per dataset).
         """
         df_ori = self._load_df(ori_data)
 
         fig, axes = plt.subplots(2, 3, figsize=figsize)
         axes = axes.flatten()
 
-        gcs_dict: Dict[str, float] = {}
+        f1_dict: Dict[str, float] = {}
 
         for idx, (tool, data) in enumerate(dataset_dict.items()):
             try:
-                (
-                    x,
-                    y,
-                    gcs,
-                    n1,
-                    n2,
-                    n3,
-                    n4,
-                    m,
-                    _ori_rank_size,
-                    _aligned_size,
-                    _seed_used,
-                ) = self.process_single_dge_result(df_ori, data)
-
-                self.plot_single_gcs_panel(
-                    axes[idx],
-                    x,
-                    y,
-                    gcs,
-                    n1,
-                    n2,
-                    n3,
-                    n4,
-                    tool,
-                    m,
-                )
-
-                gcs_dict[tool] = gcs
+                x, y, result = self.process_single_dge_result(df_ori, data)
+                self.plot_single_gcs_panel(axes[idx], x, y, result, tool)
+                f1_dict[tool] = result.f1
 
             except Exception as e:
                 print(f"Skipping {tool}: {e}")
@@ -396,4 +220,4 @@ class GCSAnalyzer:
         plt.tight_layout()
         plt.show()
 
-        return fig, gcs_dict
+        return fig, f1_dict

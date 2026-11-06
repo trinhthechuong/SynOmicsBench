@@ -2,82 +2,79 @@
 
 GSEA identifies biological pathways that are coordinately regulated between conditions. Unlike DGE which focuses on individual genes, GSEA considers entire functional gene sets.
 
-## Pathway Concordance Score (PCS)
+## Pathway Concordance Score (F1-PCS)
 
-The PCS quantifies the agreement in pathway enrichment between original and synthetic datasets, following the same framework as the GCS.
+F1-PCS follows the same framework as [F1-GCS](dge.md), at the pathway level.
 
 ### Rank Score Calculation
 
 For each pathway $p$, a rank score integrates the direction and significance of enrichment:
 
-$$\text{RS}_p = \text{sign}(\text{NES}) \times \bigl(-\log_{10}(\text{FDR-}q_p)\bigr)$$
+$$\text{RS}_p = \text{sign}(\text{NES}_p) \times \bigl(-\log_{10}(s_p)\bigr)$$
 
-### PCS Formula
+where $s_p$ is the significance value of the pathway (column `sig_col`, by default the FDR q-value), clipped at 0.001.
 
-$$\text{PCS} = \frac{N_\text{sig} + \omega \cdot N_\text{non-sig}}{M}$$
+### Recall, Precision and F1-score
 
-where $N_\text{sig}$ counts concordant significant pathways, $N_\text{non-sig}$ counts concordant non-significant pathways, $\omega = 0.5$, and $M$ normalizes based on the original pathway counts.
+With $N_\text{sig}$ the number of pathways significant in both datasets with the same NES sign:
+
+$$\text{Recall} = \frac{N_\text{sig}}{N_\text{sig}^\text{original}}, \qquad \text{Precision} = \frac{N_\text{sig}}{N_\text{sig}^\text{synthetic}}, \qquad \text{F1-PCS} = \frac{2 \cdot \text{Precision} \cdot \text{Recall}}{\text{Precision} + \text{Recall}}$$
+
+A synthetic dataset can call no pathway significant: precision is then undefined (NaN) and F1-PCS is 0, recording that nothing was recovered.
+
+## NES calibration
+
+On the pathways significant in the original data, the synthetic NES is regressed on the original NES (`Slope`, `Slope_robust`, `Pearson`), and `SignConcordance` gives the fraction of those pathways enriched in the same direction (chance level 0.5). With few pathways the Theil–Sen slope (`Slope_robust`) is the recommended slope.
 
 ## Code Example
 
-The `PCSAnalyzer` class computes PCS and generates scatter plots:
-
 ```python
+import pandas as pd
 from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
 
 analyzer = PCSAnalyzer(
     term_col="Term",
     nes_col="NES",
-    q_col="FDR q-val",
-    q_thr=0.05,
-    w=0.5
+    sig_col="FDR q-val",   # or "NOM p-val"
+    sig_thr=0.05,
 )
-or_gsea_df = pd.read_csv('original_gsea_result.csv')
-syn_gsea_df = pd.read_csv('synthetic_gsea_result.csv')
+ori_gsea = pd.read_csv("original_gsea_result.csv")
+syn_gsea = pd.read_csv("synthetic_gsea_result.csv")
 
-# Process a single synthetic GSEA result
-x, y, result = analyzer.process_single_gsea_result(
-    gsea_ori=or_gsea_df,
-    gsea_syn=syn_gsea_df
-)
+f1 = analyzer.compute_metrics(ori_gsea, syn_gsea, metrics="F1")
+scores = analyzer.compute_metrics(ori_gsea, syn_gsea)   # all metrics
 
-print(f"PCS: {result.pcs:.3f}")
-print(f"Significant concordant pathways: {result.n_sign}")
+# Zone counts and the points of the rank-score plot
+x, y, result = analyzer.process_single_gsea_result(ori_gsea, syn_gsea)
+print(f"F1-PCS: {result.f1:.3f}  (recall {result.recall:.3f}, precision {result.precision:.3f})")
 ```
+
+Available metrics: `Recall`, `Precision`, `F1`, `Slope`, `Slope_robust`, `Pearson`, `SignConcordance`. Several synthetic datasets are compared with `analyzer.compute_metrics_datasets(ori_data, dataset_dict)`.
 
 ## Scatter Plot Visualization
 
-The following code generates manuscript-quality PCS scatter plots using the **Melanoma** cohort as an example:
-
 ```python
-from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
-
-analyzer = PCSAnalyzer(
-    term_col="Term",
-    nes_col="NES",
-    q_col="FDR q-val",
-    q_thr=0.05,
-    w=0.5
-)
-
-# Map method names to synthetic GSEA CSV paths
 dataset_dict = {
     "Avatars K5": "GSEA/avatarsk5_0.csv",
-    "Avatars K10": "GSEA/avatarsk10_0.csv",
     "CTGAN": "GSEA/ctgan_0.csv",
     "Gaussian Copula": "GSEA/gaussiancopula_0.csv",
     "Synthpop": "GSEA/synthpop_0.csv",
     "TVAE": "GSEA/tvae_0.csv",
+    "Diffusion": "GSEA/tabdiff_0.csv",
 }
 
-fig, pcs_dict = analyzer.plot_gsea_datasets(
+# Concordance zones, F1-PCS in each panel
+fig, f1_dict = analyzer.plot_gsea_datasets(
     ori_data="GSEA/original_data.csv",
     dataset_dict=dataset_dict,
-    figsize=(9, 10)
+    figsize=(9, 10),
 )
 fig.savefig("gsea_pcs_scatter.png", dpi=300, bbox_inches="tight")
+
+# NES calibration of the pathways enriched in the original
+fig, calibration = analyzer.plot_calibration_scatter("GSEA/original_data.csv", dataset_dict)
 ```
 
 ![GSEA PCS Scatter Plots](../../assets/figures/melanoma_gsea_pcs.png)
 
-*Scatter plots of pathway rank scores (Original vs. Synthetic) for each SDG method in the Melanoma cohort. The PCS value is shown in each panel.*
+*Scatter plots of pathway rank scores (Original vs. Synthetic) for each SDG method in the Melanoma cohort.*
