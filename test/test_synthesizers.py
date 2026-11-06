@@ -254,3 +254,95 @@ class TestTransformerCache:
 
         assert isinstance(synth.model._transformer, DataTransformer)
         assert not isinstance(synth.model._transformer, CachedDataTransformer)
+
+
+@pytest.fixture
+def tabdiff_data():
+    """Small mixed-type frame with a binary categorical, which TabDiff needs as its target."""
+    rng = np.random.default_rng(1)
+    n = 30
+    return pd.DataFrame(
+        {
+            **{f"g{i}": rng.normal(size=n) for i in range(4)},
+            "sex": rng.choice(["M", "F"], n),
+            "stage": rng.choice(["I", "II", "III"], n),
+        },
+        index=[f"P{i:03d}" for i in range(n)],
+    )
+
+
+@pytest.fixture
+def tabdiff_metadata(tabdiff_data):
+    return {
+        col: ("dummy_categorical" if tabdiff_data[col].dtype == object else "numerical")
+        for col in tabdiff_data.columns
+    }
+
+
+def _tabdiff_files():
+    from synomicsbench.synthesizer.TabDiffsynthesizer import TABDIFF_DIR
+
+    return sorted(
+        os.path.relpath(os.path.join(root, name), TABDIFF_DIR)
+        for root, _, names in os.walk(TABDIFF_DIR)
+        for name in names
+        if "__pycache__" not in root
+    )
+
+
+class TestTabDiffSynthesizer:
+    """Tests for TabDiffsynthesizer class (needs the ``tabdiff`` extra)."""
+
+    @pytest.fixture(autouse=True)
+    def _requires_tabdiff_extra(self):
+        for module in ("icecream", "category_encoders", "tomli", "tomli_w"):
+            pytest.importorskip(module)
+
+    def _generate(self, output_path, data, metadata, **fit_params):
+        from synomicsbench.synthesizer.TabDiffsynthesizer import TabDiffsynthesizer
+
+        synth = TabDiffsynthesizer(output_path=str(output_path), metadata=metadata)
+        fit = {"epochs": 2, "cuda": False, **fit_params}
+        return synth.generate(
+            data=data, n_samples=len(data), seed=0, enforce_rounding=False,
+            enforce_min_max=False, fit_params=fit, output_filename="syn.csv",
+        )
+
+    def test_import_tabdiff(self):
+        from synomicsbench.synthesizer.TabDiffsynthesizer import TabDiffsynthesizer
+        assert TabDiffsynthesizer is not None
+
+    def test_generate_keeps_layout(self, tmp_path, tabdiff_data, tabdiff_metadata):
+        before = _tabdiff_files()
+        synthetic = self._generate(tmp_path / "run", tabdiff_data, tabdiff_metadata)
+
+        assert synthetic.shape == tabdiff_data.shape
+        assert list(synthetic.columns) == list(tabdiff_data.columns)
+        assert set(synthetic["sex"]) <= set(tabdiff_data["sex"])
+        assert os.path.exists(tmp_path / "run" / "train_log.csv")
+        assert _tabdiff_files() == before  # the vendored sources are never written to
+
+    def test_epochs_conflict_with_override(self, tmp_path, tabdiff_data, tabdiff_metadata):
+        from synomicsbench.synthesizer.TabDiffsynthesizer import TabDiffsynthesizer
+
+        synth = TabDiffsynthesizer(output_path=str(tmp_path), metadata=tabdiff_metadata)
+        with pytest.raises(ValueError, match="pass only one"):
+            synth.fit(tabdiff_data, seed=0, epochs=2, cuda=False,
+                      config_overrides={"train": {"main": {"steps": 3}}})
+
+    def test_resumed_run_matches_uninterrupted_run(self, tmp_path, tabdiff_data, tabdiff_metadata):
+        import time
+        from synomicsbench.synthesizer.TabDiffsynthesizer import TrainingPaused
+
+        straight = self._generate(tmp_path / "straight", tabdiff_data, tabdiff_metadata,
+                                  epochs=3, checkpoint_every=100)
+
+        resumed_dir = tmp_path / "resumed"
+        with pytest.raises(TrainingPaused):
+            self._generate(resumed_dir, tabdiff_data, tabdiff_metadata, epochs=3,
+                           checkpoint_every=100, deadline=time.time())
+        assert os.path.exists(resumed_dir / "resume.pt")
+        resumed = self._generate(resumed_dir, tabdiff_data, tabdiff_metadata,
+                                 epochs=3, checkpoint_every=100)
+
+        pd.testing.assert_frame_equal(resumed, straight)
