@@ -25,7 +25,7 @@ SynOmicsBench compares synthetic data generation methods using a standardized pi
 
 - **Standardized Preprocessing**: Automated data filtering, harmonization, and integration.
 - **Multidimensional Evaluation**: Assessing Statistical Fidelity, Downstream Biological Utility, and Privacy Risk.
-- **State-of-the-Art SDG Methods**: Native support for **CTGAN, TVAE, Gaussian Copula, Synthpop, and Avatars (K5/K10)**. 
+- **State-of-the-Art SDG Methods**: Native support for **CTGAN, TVAE, Gaussian Copula, Synthpop, TabDiff, and Avatars (K5/K10)**. 
 
 ---
 
