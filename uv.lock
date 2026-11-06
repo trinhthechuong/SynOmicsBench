@@ -306,6 +306,23 @@ wheels = [
 ]
 
 [[package]]
+name = "category-encoders"
+version = "2.10.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy", marker = "python_full_version < '3.13'" },
+    { name = "pandas", marker = "python_full_version < '3.13'" },
+    { name = "patsy", marker = "python_full_version < '3.13'" },
+    { name = "scikit-learn", marker = "python_full_version < '3.13'" },
+    { name = "scipy", marker = "python_full_version < '3.13'" },
+    { name = "statsmodels", marker = "python_full_version < '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b5/49/147120df2a8ad12441187e1aed0663508787c849a17a247e9907c7169c8a/category_encoders-2.10.0.tar.gz", hash = "sha256:28e28a01813ac56d4ed068bb8561f523a527b04abf4261be890ab9adbc5fd143", size = 59408, upload-time = "2026-07-26T20:04:17.875Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/04/18/05dbd6a0871083a25f3a23a1b061c58b5b1ab1667edba635e78c34900e10/category_encoders-2.10.0-py3-none-any.whl", hash = "sha256:e1b9e4e489af72fb2da1bc07c92b9d8ff9bba330a9e8483d39346461decf0a8b", size = 87441, upload-time = "2026-07-26T20:04:16.68Z" },
+]
+
+[[package]]
 name = "certifi"
 version = "2026.2.25"
 source = { registry = "https://pypi.org/simple" }
@@ -983,6 +1000,21 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/b1/df/48c586a5fe32a0f01324ee087459e112ebb7224f646c0b5023f5e79e9956/httpx-0.28.1.tar.gz", hash = "sha256:75e98c5f16b0f35b567856f597f06ff2270a374470a5c2392242528e3e3e42fc", size = 141406, upload-time = "2024-12-06T15:37:23.222Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/2a/39/e50c7c3a983047577ee07d2a9e53faf5a69493943ec3f6a384bdc792deb2/httpx-0.28.1-py3-none-any.whl", hash = "sha256:d909fcccc110f8c7faf814ca82a9a4d816bc5a6dbfea25d6591d6985b8ba59ad", size = 73517, upload-time = "2024-12-06T15:37:21.509Z" },
+]
+
+[[package]]
+name = "icecream"
+version = "2.2.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "asttokens", marker = "python_full_version < '3.13'" },
+    { name = "colorama", marker = "python_full_version < '3.13'" },
+    { name = "executing", marker = "python_full_version < '3.13'" },
+    { name = "pygments", marker = "python_full_version < '3.13'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/10/84/6ebc95844feae8a6a29c7fd57e9e3a7ac4817ffab384dc4f0ed53b8e3c46/icecream-2.2.0.tar.gz", hash = "sha256:9d7f244187f00a13f4ac77d176990e187e9c279d6cac4f7548e338291ad97343", size = 14267, upload-time = "2026-04-03T17:42:51.387Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7a/82/9707c7b0336bca53b75f52fc350956a93da66eb6be632b370bc933216fb4/icecream-2.2.0-py3-none-any.whl", hash = "sha256:f8df7343b3e787023eec22f42fbe4722df2f93099d394fd820b91e16b2e6cb56", size = 16707, upload-time = "2026-04-03T17:42:50.001Z" },
 ]
 
 [[package]]
@@ -3636,15 +3668,25 @@ dependencies = [
     { name = "tqdm", marker = "python_full_version < '3.13'" },
 ]
 
+[package.optional-dependencies]
+tabdiff = [
+    { name = "category-encoders", marker = "python_full_version < '3.13'" },
+    { name = "icecream", marker = "python_full_version < '3.13'" },
+    { name = "tomli", marker = "python_full_version < '3.13'" },
+    { name = "tomli-w", marker = "python_full_version < '3.13'" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "anonymeter", specifier = ">=1.0.0" },
     { name = "baycomp", specifier = ">=1.0.3" },
+    { name = "category-encoders", marker = "extra == 'tabdiff'", specifier = "==2.10.0" },
     { name = "codecarbon", specifier = ">=3.2.5" },
     { name = "copulas", specifier = ">=0.12.0" },
     { name = "ctgan", specifier = ">=0.10.2" },
     { name = "deptry", specifier = ">=0.25.1" },
     { name = "gseapy", specifier = ">=1.1.12" },
+    { name = "icecream", marker = "extra == 'tabdiff'", specifier = "==2.2.0" },
     { name = "ipykernel", specifier = ">=7.2.0" },
     { name = "joblib", specifier = ">=1.5.3" },
     { name = "jupyter", specifier = ">=1.1.1" },
@@ -3672,9 +3714,12 @@ requires-dist = [
     { name = "sdv", specifier = ">=1.18.0" },
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "statsmodels", specifier = ">=0.14.6" },
+    { name = "tomli", marker = "extra == 'tabdiff'", specifier = "==2.4.0" },
+    { name = "tomli-w", marker = "extra == 'tabdiff'", specifier = "==1.2.0" },
     { name = "torch", specifier = ">=2.8.0" },
     { name = "tqdm", specifier = ">=4.67.3" },
 ]
+provides-extras = ["tabdiff"]
 
 [[package]]
 name = "terminado"
@@ -3754,6 +3799,15 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/de/69/9aa0c6a505c2f80e519b43764f8b4ba93b5a0bbd2d9a9de6e2b24271b9a5/tomli-2.4.0-cp314-cp314t-win_amd64.whl", hash = "sha256:2add28aacc7425117ff6364fe9e06a183bb0251b03f986df0e78e974047571fd", size = 120504, upload-time = "2026-01-11T11:22:35.764Z" },
     { url = "https://files.pythonhosted.org/packages/b3/9f/f1668c281c58cfae01482f7114a4b88d345e4c140386241a1a24dcc9e7bc/tomli-2.4.0-cp314-cp314t-win_arm64.whl", hash = "sha256:2b1e3b80e1d5e52e40e9b924ec43d81570f0e7d09d11081b797bc4692765a3d4", size = 99561, upload-time = "2026-01-11T11:22:36.624Z" },
     { url = "https://files.pythonhosted.org/packages/23/d1/136eb2cb77520a31e1f64cbae9d33ec6df0d78bdf4160398e86eec8a8754/tomli-2.4.0-py3-none-any.whl", hash = "sha256:1f776e7d669ebceb01dee46484485f43a4048746235e683bcdffacdf1fb4785a", size = 14477, upload-time = "2026-01-11T11:22:37.446Z" },
+]
+
+[[package]]
+name = "tomli-w"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/19/75/241269d1da26b624c0d5e110e8149093c759b7a286138f4efd61a60e75fe/tomli_w-1.2.0.tar.gz", hash = "sha256:2dd14fac5a47c27be9cd4c976af5a12d87fb1f0b4512f81d69cce3b35ae25021", size = 7184, upload-time = "2025-01-15T12:07:24.262Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c7/18/c86eb8e0202e32dd3df50d43d7ff9854f8e0603945ff398974c1d91ac1ef/tomli_w-1.2.0-py3-none-any.whl", hash = "sha256:188306098d013b691fcadc011abd66727d3c414c571bb01b1a174ba8c983cf90", size = 6675, upload-time = "2025-01-15T12:07:22.074Z" },
 ]
 
 [[package]]
