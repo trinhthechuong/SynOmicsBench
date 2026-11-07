@@ -32,7 +32,7 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 
 from synomicsbench.metrics.fidelity.visualization import DATASET_COLORS
-from .config import BenchmarkConfig, ALL_DIMS
+from .config import BenchmarkConfig, ALL_DIMS, PILLARS
 from .metascore import COMPONENT_COLORS, plot_weighted_composite_scores
 
 
@@ -174,11 +174,11 @@ def _scores_table(value_table: pd.DataFrame, methods: List[str]) -> str:
             for d in dims
         )
         rows.append(f"<tr><td class='rowhead'>{_chip(m)}</td>{cells}</tr>")
-    return _table_html("Per-metric scores (higher = better)", f"<th>Method</th>{head}", rows)
+    return _table_html("Per-metric scores (higher = better; privacy as 1 &minus; risk)", f"<th>Method</th>{head}", rows)
 
 
 def _pillar_table(composite: pd.DataFrame) -> str:
-    cols = ["Broad Utility", "Narrow Utility", "Privacy", "Total"]
+    cols = [*PILLARS, "Total"]
     head = "".join(
         f'<th style="color:{COMPONENT_COLORS.get(c, INK)}">{html.escape(c)}</th>' for c in cols
     )
@@ -323,10 +323,12 @@ def write_html_report(result, config: BenchmarkConfig, filename: str = "report.h
     # --- Level 2: per pillar ---
     if has_composite:
         lvl2 = ['<h2>2 · Per pillar</h2>',
-                '<p class="lead">The eight dimensions roll up into three equally-weighted pillars: '
-                f'<b style="color:{COMPONENT_COLORS["Broad Utility"]}">Broad Utility</b> '
-                f'(fidelity), <b style="color:{COMPONENT_COLORS["Narrow Utility"]}">Narrow Utility</b> '
-                f'(biology), and <b style="color:{COMPONENT_COLORS["Privacy"]}">Privacy</b>.</p>']
+                '<p class="lead">The dimensions roll up into three pillars, each the mean rank-derived '
+                'score of its dimensions: '
+                f'<b style="color:{COMPONENT_COLORS["Statistical fidelity"]}">Statistical fidelity</b>, '
+                f'<b style="color:{COMPONENT_COLORS["Biological utility"]}">Biological utility</b>, and '
+                f'<b style="color:{COMPONENT_COLORS["Privacy"]}">Privacy</b> '
+                '(privacy dimensions are scored as 1 &minus; risk).</p>']
         if "radar" in figs:
             lvl2.append(f'<div class="fig">{_img(figs["radar"], "all-round radar")}</div>')
         lvl2.append(_pillar_table(result.composite))

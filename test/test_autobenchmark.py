@@ -59,11 +59,60 @@ def test_composite_lower_is_better_and_has_all_pillars():
     fig, comp = plot_weighted_composite_scores(ms)
     import matplotlib.pyplot as plt
     plt.close(fig)
-    assert list(comp.columns) == ["Broad Utility", "Narrow Utility", "Privacy", "Total"]
+    pillars = ["Statistical fidelity", "Biological utility", "Privacy"]
+    assert list(comp.columns) == pillars + ["Total"]
     assert len(comp) == len(METHODS)
     # Total equals the sum of the three pillars.
-    np.testing.assert_allclose(comp["Total"].values,
-                               comp[["Broad Utility", "Narrow Utility", "Privacy"]].sum(axis=1).values)
+    np.testing.assert_allclose(comp["Total"].values, comp[pillars].sum(axis=1).values)
+    # each pillar is the weighted mean rank of its dimensions
+    from synomicsbench.metrics.autobenchmark import PILLARS
+    ranks = pd.DataFrame(ms)
+    for pillar, dims in PILLARS.items():
+        np.testing.assert_allclose(comp[pillar].values,
+                                   ranks.loc[comp.index, list(dims)].mean(axis=1).values / 3)
+
+
+def test_metascore_ties_at_twelve_decimals():
+    per = {"Univariate": pd.DataFrame({"Model": ["A", "B", "C"], "Seed": [0, 0, 0],
+                                       "Value": [0.5, 0.5 + 1e-15, 0.4]})}
+    ms = build_metascore(per)
+    assert ms["Univariate"] == {"A": 1.0, "B": 1.0, "C": 3.0}
+
+
+def test_privacy_dimensions_from_risk_table():
+    from synomicsbench.metrics.autobenchmark import runners as R
+    from synomicsbench.metrics.autobenchmark.config import PRIVACY_DIMS
+    table = pd.DataFrame({
+        "method": ["A", "A", "B", "B"] * 4,
+        "seed": [0, 0, 0, 0] * 4,
+        "attack": sum([[a] * 4 for a in ("SO_uni", "SO_multi", "Linkability", "Inference")], []),
+        "risk_residual": [0.1, 0.3, 0.0, 0.0] * 4,
+    })
+    cands = [R.Candidate("A", 0, None), R.Candidate("B", 0, None)]
+    out = R.run_privacy(None, cands, BenchmarkConfig(metadata={}), "reuse", privacy_csv=table)
+    assert set(out) == set(PRIVACY_DIMS)
+    for df in out.values():
+        values = df.set_index("Model")["Value"]
+        assert values["A"] == pytest.approx(0.8)   # 1 - mean(0.1, 0.3)
+        assert values["B"] == pytest.approx(1.0)
+
+
+def test_category_risk_uses_residual_with_control():
+    from synomicsbench.metrics.autobenchmark import privacy as P
+
+    class _Rate:
+        value = 0.2
+
+    class _ControlResults:
+        control_rate = _Rate()
+        def risk(self, baseline=False): return _Risk(0.05 if not baseline else 0.9)
+
+    class _ControlEvaluator:
+        def results(self): return _ControlResults()
+
+    risks = P.category_risks_from_attacks({"A": [_ControlEvaluator()]}, {"A": [_Evaluator(0.2, 0.4)]}, {}, {})
+    assert risks["Singling-out (uni)"]["A"] == pytest.approx(0.05)    # residual, no naive floor
+    assert risks["Singling-out (multi)"]["A"] == pytest.approx(0.4)   # floored at the naive risk
 
 
 def test_derive_labels_is_object_dtype_and_maps_groups():
@@ -173,11 +222,11 @@ def test_write_html_report_is_self_contained(tmp_path):
     assert "<html" in doc.lower()
     assert "data:image/png;base64," in doc
     assert "http://" not in doc and "https://" not in doc
-    # narrative + transparency: winner named, all 8 dimensions present
+    # narrative + transparency: winner named, every dimension present
     winner = result.composite["Total"].idxmin()
     assert winner in doc
     for dim in ALL_DIMS:
         assert dim in doc
     # the three pillars are labelled
-    for pillar in ("Broad Utility", "Narrow Utility", "Privacy"):
+    for pillar in ("Statistical fidelity", "Biological utility", "Privacy"):
         assert pillar in doc

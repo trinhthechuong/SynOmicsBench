@@ -18,7 +18,7 @@ from typing import Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 
-from .config import BenchmarkConfig, ALL_DIMS
+from .config import BenchmarkConfig, ALL_DIMS, PILLARS, PRIVACY_DIMS
 from . import runners as R
 from .runners import Candidate, load_frame
 from .metascore import build_metascore
@@ -27,24 +27,26 @@ from .metascore import build_metascore
 DIMENSION_RUNNERS = {
     "Univariate": R.run_univariate,
     "Bivariate": R.run_bivariate,
+    "Network Preservation": R.run_network,
     "DGE": R.run_dge,
     "GSEA": R.run_gsea,
     "ssGSEA": R.run_ssgsea,
     "Cell Deconvolution": R.run_cell_deconvolution,
     "Survival Analysis": R.run_survival,
-    # Privacy handled separately (needs the optional privacy_csv argument).
+    # The four privacy dimensions are produced together by R.run_privacy.
 }
 
 # Dimensions that cannot be recomputed in-process default to reuse.
 DEFAULT_MODES = {
     "Univariate": "compute",
     "Bivariate": "compute",
+    "Network Preservation": "compute",
     "DGE": "compute",
     "GSEA": "compute",
     "ssGSEA": "compute",
     "Cell Deconvolution": "reuse",
     "Survival Analysis": "compute",
-    "Privacy": "reuse",
+    **{dim: "reuse" for dim in PRIVACY_DIMS},
 }
 
 
@@ -55,7 +57,7 @@ class BenchmarkResult:
     metascore: Dict[str, Dict[str, float]]           # dimension -> {model: mean rank}
     value_table: pd.DataFrame                        # wide: index=Model, columns=dimension (mean value)
     rank_table: pd.DataFrame                         # wide: index=Model, columns=dimension (mean rank)
-    composite: Optional[pd.DataFrame] = None         # composite pillar scores + Total (if all dims present)
+    composite: Optional[pd.DataFrame] = None         # composite pillar scores + Total (if every pillar is present)
     dims_run: List[str] = field(default_factory=list)
     dims_missing: List[str] = field(default_factory=list)
 
@@ -152,8 +154,9 @@ class BenchmarkRunner:
             original_data: reference dataset (path or DataFrame).
             datasets: candidates (see :meth:`_candidates`).
             seed: default seed applied when ``datasets`` is a plain name->data mapping.
-            privacy_csv: optional precomputed ``overal_privacy_score`` CSV for the Privacy dim.
-            dimensions: subset of dimensions to run (default: all eight).
+            privacy_csv: optional long risk table (CSV or parquet) for the privacy dimensions,
+                see :func:`~synomicsbench.metrics.autobenchmark.privacy.category_risks_from_table`.
+            dimensions: subset of dimensions to run (default: all twelve).
         """
         self._default_seed = seed
         original = load_frame(original_data, self.config.id_column)
@@ -162,14 +165,18 @@ class BenchmarkRunner:
 
         per_dim_values: Dict[str, pd.DataFrame] = {}
         dims_run, dims_missing = [], []
+        privacy: Dict[str, Dict[str, pd.DataFrame]] = {}   # mode -> privacy dimension tables
         for dim in dims:
             mode = self.config.mode_for(dim, default=DEFAULT_MODES.get(dim, "compute"))
             if mode == "skip":
                 dims_missing.append(dim)
                 continue
             try:
-                if dim == "Privacy":
-                    df = R.run_privacy(original, candidates, self.config, mode, privacy_csv=privacy_csv)
+                if dim in PRIVACY_DIMS:
+                    if mode not in privacy:
+                        privacy[mode] = R.run_privacy(original, candidates, self.config, mode,
+                                                      privacy_csv=privacy_csv)
+                    df = privacy[mode].get(dim)
                 else:
                     df = DIMENSION_RUNNERS[dim](original, candidates, self.config, mode)
             except Exception as exc:  # keep going; report what failed
@@ -189,7 +196,7 @@ class BenchmarkRunner:
         rank_table = pd.DataFrame(metascore)
 
         composite = None
-        if all(d in metascore for d in ALL_DIMS):
+        if all(any(d in metascore for d in pdims) for pdims in PILLARS.values()):
             from .metascore import plot_weighted_composite_scores
             _, composite = plot_weighted_composite_scores(
                 metascore,

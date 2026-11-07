@@ -22,7 +22,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from .config import BenchmarkConfig, ALL_DIMS
+from .config import BenchmarkConfig, PILLARS
 from .metascore import plot_weighted_composite_scores
 from synomicsbench.metrics.fidelity.visualization import DATASET_COLORS
 
@@ -59,8 +59,8 @@ def write_report(result, config: BenchmarkConfig) -> dict:
         json.dump(result.metascore, fh, indent=4)
     paths["metascore_json"] = p
 
-    # 4. Composite (only when all eight dimensions are present).
-    if all(d in result.metascore for d in ALL_DIMS):
+    # 4. Composite (only when every pillar has at least one dimension).
+    if all(any(d in result.metascore for d in pdims) for pdims in PILLARS.values()):
         fig, composite = plot_weighted_composite_scores(
             result.metascore,
             broad_weight=config.weights[0],
@@ -141,6 +141,6 @@ def _render_markdown(result, config: BenchmarkConfig) -> str:
         best = result.composite["Total"].idxmin()
         lines.append(f"**Most balanced method: {best}** (Total = {result.composite['Total'].min():.3f}).")
     else:
-        lines.append("_Composite not built: not all eight dimensions were available._")
+        lines.append("_Composite not built: a pillar had no available dimension._")
     lines.append("")
     return "\n".join(lines)

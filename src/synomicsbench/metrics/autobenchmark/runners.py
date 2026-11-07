@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import List, Optional, Sequence, Union
+from typing import Dict, List, Optional, Sequence, Union
 
 import numpy as np
 import pandas as pd
@@ -418,66 +418,131 @@ def _survival_compute(original: pd.DataFrame, candidates: List[Candidate],
 
 
 # ---------------------------------------------------------------------------
-# Privacy (reuse)
+# Network preservation (normalized Z-summary)
+# ---------------------------------------------------------------------------
+
+def run_network(original: pd.DataFrame, candidates: List[Candidate],
+                config: BenchmarkConfig, mode: str) -> pd.DataFrame:
+    if mode == "skip":
+        return _empty()
+    if mode == "reuse":
+        table = pd.read_csv(_require(config.network_csv, "network_csv", "Network Preservation"))
+        table = table.rename(columns={"Tool": "Model", "Method": "Model"})
+        values = table.set_index(["Model", "Seed"])["Value"]
+        rows = [{"Model": c.method, "Seed": c.seed, "Value": float(values.get((c.method, c.seed), np.nan))}
+                for c in candidates]
+        return pd.DataFrame(rows)
+
+    from synomicsbench.metrics.fidelity.NetworkPreservation import NetworkPreservation
+
+    _, omic = config.resolve_columns(original.columns)
+    npres = NetworkPreservation(
+        output_dir=_tmp_dir(config, "network"),
+        n_genes=config.network_n_genes,
+        n_permutations=config.network_n_permutations,
+        log_transform=config.network_log_transform,
+        threads=config.network_threads,
+    )
+    npres.build_reference(original[omic])
+    syns = {cand.stem_key: load_frame(cand.data, config.id_column)[omic] for cand in candidates}
+    scores = npres.evaluate(syns, metrics="Zsummary_norm")
+    return pd.DataFrame([{"Model": c.method, "Seed": c.seed,
+                          "Value": float(scores.loc[c.stem_key, "Zsummary_norm"])} for c in candidates])
+
+
+# ---------------------------------------------------------------------------
+# Privacy (one dimension per attack category; value = 1 - risk)
 # ---------------------------------------------------------------------------
 
 def run_privacy(original: pd.DataFrame, candidates: List[Candidate],
                 config: BenchmarkConfig, mode: str,
-                privacy_csv: Optional[str] = None) -> pd.DataFrame:
+                privacy_csv=None) -> Dict[str, pd.DataFrame]:
+    """Privacy scores (1 - mean risk) of the four attack categories.
+
+    ``compute`` runs the attacks (against ``config.privacy_control`` when given, which gives
+    residual risks); ``reuse`` reads a long risk table (``privacy_csv``, see
+    :func:`~synomicsbench.metrics.autobenchmark.privacy.category_risks_from_table`) or the
+    saved anonymeter pickles under ``config.privacy_pickle_dir``.
+
+    Returns:
+        dict: dimension name -> DataFrame [Model, Seed, Value].
+    """
     if mode == "skip":
-        return _empty()
+        return {}
     if mode == "compute":
-        return _privacy_compute(original, candidates, config)
-    # reuse: from a precomputed overall-score CSV, or from saved anonymeter pickles.
-    seeds = sorted({c.seed for c in candidates})
-    tools = list({c.method for c in candidates})
-    rows = []
-    for seed in seeds:
-        if privacy_csv:
-            scores = _privacy.overall_privacy_from_csv(privacy_csv, seed, tools)
-        else:
-            pdir = _require(config.privacy_pickle_dir, "privacy_pickle_dir", "Privacy")
-            scores = _privacy.overall_privacy_from_pickles(pdir, seed, tools)
-        for cand in candidates:
-            if cand.seed == seed and cand.method in scores:
-                rows.append({"Model": cand.method, "Seed": seed, "Value": float(scores[cand.method])})
-    return pd.DataFrame(rows)
+        risks = _privacy_compute(original, candidates, config)
+    elif privacy_csv is not None:
+        table = _privacy.category_risks_from_table(privacy_csv)
+        risks = {dim: {(r.Model, r.Seed): r.Risk for r in sub.itertuples()}
+                 for dim, sub in table.groupby("Dimension")}
+    else:
+        pdir = _require(config.privacy_pickle_dir, "privacy_pickle_dir", "Privacy")
+        tools = list(dict.fromkeys(c.method for c in candidates))
+        risks = {}
+        for seed in sorted({c.seed for c in candidates}):
+            for dim, by_tool in _privacy.category_risks_from_pickles(pdir, seed, tools).items():
+                risks.setdefault(dim, {}).update({(tool, seed): r for tool, r in by_tool.items()})
+
+    out = {}
+    for dim, by_key in risks.items():
+        rows = [{"Model": c.method, "Seed": c.seed, "Value": 1.0 - float(by_key[(c.method, c.seed)])}
+                for c in candidates if (c.method, c.seed) in by_key]
+        out[dim] = pd.DataFrame(rows, columns=["Model", "Seed", "Value"])
+    return out
 
 
 def _privacy_compute(original: pd.DataFrame, candidates: List[Candidate],
-                     config: BenchmarkConfig) -> pd.DataFrame:
-    """Run the anonymeter attacks live (via the existing ``metrics.privacy`` functions).
+                     config: BenchmarkConfig) -> Dict[str, Dict[tuple, float]]:
+    """Run the four anonymeter attacks live (via the ``metrics.privacy`` functions).
 
-    Stochastic and slow — intended for NEW datasets (results won't reproduce a saved run).
-    Requires ``anonymeter`` to be installed. Each synthetic dataset is keyed by
-    ``{method}_{seed}``; the four attacks run over all of them at once and are combined into
-    ``1 - mean(4 category risks)`` per dataset (identical rule to the reuse paths).
+    Stochastic and slow. The clinical columns are always known to the attacker; univariate
+    singling out, linkability and inference run at every knowledge level (named gene sets,
+    then gene fractions), multivariate singling out on all columns. With
+    ``config.privacy_control`` the risks are residual risks.
+
+    Returns:
+        dict: dimension name -> {(method, seed): mean risk}.
     """
-    from synomicsbench.metrics.privacy.singling_out import (
-        eval_singling_out_univariate, eval_singling_out_multivariate)
-    from synomicsbench.metrics.privacy.linkability import eval_linkability_genes_clinical
     from synomicsbench.metrics.privacy.inference import eval_inference_genes_clinical
+    from synomicsbench.metrics.privacy.knowledge import knowledge_levels
+    from synomicsbench.metrics.privacy.linkability import eval_linkability_genes_clinical
+    from synomicsbench.metrics.privacy.singling_out import (
+        eval_singling_out_multivariate, eval_singling_out_univariate)
 
     clinical, transcriptomic = config.resolve_columns(original.columns)
-    syns = {cand.stem_key: load_frame(cand.data, config.id_column) for cand in candidates}
+    cols = list(clinical) + list(transcriptomic)
+    ori = original[cols]
+    syns = {cand.stem_key: load_frame(cand.data, config.id_column)[cols] for cand in candidates}
+    control = None
+    if config.privacy_control is not None:
+        control = load_frame(config.privacy_control, config.id_column)[cols]
 
     uni = eval_singling_out_univariate(
-        original, syns, n_attacks=config.privacy_n_attacks, max_attempts=config.privacy_max_attempts,
-        proportions=tuple(config.privacy_so_uni_proportions), seed=config.privacy_seed)
+        ori, syns, n_attacks=config.privacy_n_attacks, max_attempts=config.privacy_max_attempts,
+        proportions=tuple(config.privacy_so_uni_proportions), seed=config.privacy_seed,
+        control=control, clinical_cols=clinical, transcriptomic_cols=transcriptomic,
+        gene_sets=config.privacy_gene_sets, feature_seed=config.privacy_feature_seed)
     multi = eval_singling_out_multivariate(
-        original, syns, n_cols_list=tuple(config.privacy_so_multi_n_cols),
-        n_attacks=config.privacy_n_attacks, max_attempts=config.privacy_max_attempts, seed=config.privacy_seed)
+        ori, syns, n_cols_list=tuple(config.privacy_so_multi_n_cols),
+        n_attacks=config.privacy_n_attacks, max_attempts=config.privacy_max_attempts,
+        seed=config.privacy_seed, control=control)
     link = eval_linkability_genes_clinical(
-        original, syns, clinical_cols=list(clinical), transcriptomic_cols=list(transcriptomic),
+        ori, syns, clinical_cols=clinical, transcriptomic_cols=transcriptomic,
         n_neighbors=config.privacy_link_n_neighbors,
-        proportions=tuple(config.privacy_link_proportions), seed=config.privacy_seed)
-    infer = eval_inference_genes_clinical(
-        original, syns, clinical_cols=list(clinical), transcriptomic_cols=list(transcriptomic))
+        proportions=tuple(config.privacy_link_proportions), seed=config.privacy_feature_seed,
+        control=control, gene_sets=config.privacy_gene_sets)
+    infer: Dict[str, list] = {key: [] for key in syns}
+    for _, level_cols in knowledge_levels(clinical, transcriptomic, tuple(config.privacy_link_proportions),
+                                          config.privacy_gene_sets, config.privacy_feature_seed):
+        level = eval_inference_genes_clinical(
+            ori, syns, clinical_cols=clinical, transcriptomic_cols=level_cols[len(clinical):],
+            control=control)
+        for key, items in level.items():
+            infer[key].extend(items)
 
-    scores = _privacy.overall_privacy_from_attacks(uni, multi, link, infer, tools=list(syns.keys()))
-    rows = [{"Model": cand.method, "Seed": cand.seed,
-             "Value": float(scores.get(cand.stem_key, float("nan")))} for cand in candidates]
-    return pd.DataFrame(rows)
+    by_stem = _privacy.category_risks_from_attacks(uni, multi, link, infer)
+    return {dim: {(c.method, c.seed): risks[c.stem_key] for c in candidates if c.stem_key in risks}
+            for dim, risks in by_stem.items()}
 
 
 # ---------------------------------------------------------------------------

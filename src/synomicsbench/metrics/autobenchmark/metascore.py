@@ -1,12 +1,11 @@
 """
 Rank-derived meta-score aggregation and the weighted composite plot.
 
-Reproduces the logic of ``Manuscript/MetaScore/MetaScore_Melanoma.ipynb``:
-for each of the eight dimensions, all candidates (method x seed) are ranked
-(higher score = better = lower rank); each method's dimension score is the mean
-rank of its replicates. The three pillars (broad = univariate+bivariate,
-narrow = DGE+GSEA+ssGSEA+cell+survival, privacy) are combined with equal weights,
-and a lower total = a more balanced method.
+For each dimension, all candidates (method x seed) are ranked jointly (higher score =
+better = lower rank; ties share the minimum rank); each method's dimension score is the
+mean rank of its replicates. The score of a pillar (statistical fidelity, biological
+utility, privacy) is the mean of its dimensions' scores, and the meta-score is the
+weighted sum of the pillar scores: a lower total = a more balanced method.
 """
 
 from __future__ import annotations
@@ -19,27 +18,28 @@ import matplotlib.pyplot as plt
 
 from synomicsbench.metrics.fidelity.visualization import DATASET_COLORS
 
-# Component (pillar) colors — identical to MetaScore_Melanoma.ipynb.
-COMPONENT_COLORS = {
-    "Broad Utility": "#3498db",   # blue
-    "Narrow Utility": "#9b59b6",  # purple
-    "Privacy": "#e74c3c",         # red
-}
+from .config import PILLARS
 
-NARROW_METRICS = ["DGE", "GSEA", "ssGSEA", "Cell Deconvolution", "Survival Analysis"]
+# Component (pillar) colors.
+COMPONENT_COLORS = {
+    "Statistical fidelity": "#3498db",  # blue
+    "Biological utility": "#9b59b6",    # purple
+    "Privacy": "#e74c3c",               # red
+}
 
 
 def build_metascore(per_dim_values: Dict[str, pd.DataFrame],
                     collapse_dims: tuple = ()) -> Dict[str, Dict[str, float]]:
     """Convert per-dimension candidate values into per-method mean ranks.
 
+    Values are rounded to 12 decimals before ranking, so that scores differing only in
+    the last floating-point bit tie. Missing values count as 0, the worst score.
+
     Args:
         per_dim_values: dimension name -> DataFrame with columns ['Model', 'Seed', 'Value'].
             'Value' is the higher-is-better score for that (method, seed) candidate.
         collapse_dims: dimensions whose per-(method, seed) values are replaced by the
-            per-method mean before ranking. This reproduces the manuscript MetaScore,
-            where DGE/GSEA/Privacy were collapsed to one value per method. Default: none
-            (every dimension ranked per-seed).
+            per-method mean before ranking. Default: none (every dimension ranked per seed).
 
     Returns:
         dict: MetaScore[dimension][model] = mean rank (lower = better).
@@ -52,7 +52,7 @@ def build_metascore(per_dim_values: Dict[str, pd.DataFrame],
         d["Value"] = pd.to_numeric(d["Value"], errors="coerce").fillna(0.0)
         if dim in collapse_dims:
             d["Value"] = d.groupby("Model")["Value"].transform("mean")
-        d["Rank"] = d["Value"].rank(ascending=False, method="min").astype(int)
+        d["Rank"] = d["Value"].round(12).rank(ascending=False, method="min").astype(int)
         rank_by_model = {m: float(d.loc[d["Model"] == m, "Rank"].mean())
                          for m in d["Model"].unique()}
         metascore[dim] = rank_by_model
@@ -68,9 +68,18 @@ def plot_weighted_composite_scores(
     save_path: Optional[str] = None,
     orientation: str = "horizontal",
 ) -> Tuple[plt.Figure, pd.DataFrame]:
-    """Plot weighted composite (stacked-bar) scores. Ported from the MetaScore notebook.
+    """Plot weighted composite (stacked-bar) scores.
 
-    Lower total = a more balanced method. Returns (figure, sorted composite DataFrame).
+    Each pillar is the mean rank-derived score of its dimensions present in ``MetaScore``,
+    multiplied by its weight (``broad_weight`` = statistical fidelity, ``narrow_weight`` =
+    biological utility, ``privacy_weight`` = privacy). Lower total = a more balanced method.
+
+    Returns:
+        (figure, composite DataFrame with one column per pillar and ``Total``, sorted by
+        decreasing total).
+
+    Raises:
+        ValueError: If a pillar has no dimension in ``MetaScore``.
     """
     try:
         plt.style.use(["science", "nature", "notebook"])
@@ -87,15 +96,13 @@ def plot_weighted_composite_scores(
     })
 
     df = pd.DataFrame(MetaScore)
-    df_final = pd.DataFrame()
-
-    broad_weighted = broad_weight * (1 / 2)
-    df_final["Broad Utility"] = (
-        df["Univariate"] * broad_weighted + df["Bivariate"] * broad_weighted
-    )
-    narrow_weighted = narrow_weight * (1 / 5)
-    df_final["Narrow Utility"] = df[NARROW_METRICS].sum(axis=1) * narrow_weighted
-    df_final["Privacy"] = df["Privacy"] * privacy_weight
+    df_final = pd.DataFrame(index=df.index)
+    weights = dict(zip(PILLARS, (broad_weight, narrow_weight, privacy_weight)))
+    for pillar, dims in PILLARS.items():
+        present = [d for d in dims if d in df.columns]
+        if not present:
+            raise ValueError(f"No dimension of the pillar '{pillar}' in the meta-score.")
+        df_final[pillar] = df[present].mean(axis=1) * weights[pillar]
 
     df_final["Total"] = df_final.sum(axis=1)
     df_final = df_final.sort_values("Total", ascending=(orientation == "vertical")).drop(columns="Total")
@@ -108,7 +115,7 @@ def plot_weighted_composite_scores(
         y = np.arange(n_datasets)
         height = 0.6
         left = np.zeros(n_datasets)
-        for component in ["Broad Utility", "Narrow Utility", "Privacy"]:
+        for component in PILLARS:
             values = df_final[component].values
             color = COMPONENT_COLORS[component]
             bars = ax.barh(y, values, height, left=left, label=component,
@@ -135,7 +142,7 @@ def plot_weighted_composite_scores(
         x = np.arange(n_datasets)
         width = 0.6
         bottom = np.zeros(n_datasets)
-        for component in ["Broad Utility", "Narrow Utility", "Privacy"]:
+        for component in PILLARS:
             values = df_final[component].values
             color = COMPONENT_COLORS[component]
             bars = ax.bar(x, values, width, bottom=bottom, label=component,

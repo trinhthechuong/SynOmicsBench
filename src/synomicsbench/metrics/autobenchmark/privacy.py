@@ -1,19 +1,20 @@
 """
-Privacy dimension via reuse of saved anonymeter evaluator pickles.
+Privacy risks of the four attack categories, from live attacks, saved pickles or a risk table.
 
-The privacy attacks (anonymeter) are stochastic, so re-running them would not
-reproduce the manuscript numbers. Instead we reuse the saved evaluator pickles
-(singling-out univariate/multivariate, linkability, inference), extract the risk
-of each with the same naive-baseline replacement rule used in
-``Manuscript/FigurePrivacy/OveralScore_Bayesian.ipynb``, and combine them into
-the per-method overall privacy score::
+Each attack category (univariate singling out, multivariate singling out, linkability,
+attribute inference) is one meta-score dimension; its risk is the mean over the attack's
+configurations (knowledge levels, ``n_cols`` values, secrets) of
 
-    overall_risk  = mean(uni_SO, multi_SO, linkability, inference)   # per method
-    privacy_score = 1 - overall_risk
+* the residual risk ``(R_attack - R_control) / (1 - R_control)`` when the attack was run
+  against an external control cohort, or
+* the attack risk floored at the naive (random-guess) risk otherwise — the rule used for the
+  published results (``Manuscript/FigurePrivacy/OveralScore_Bayesian.ipynb``).
 
-A robust fallback reads the already-aggregated ``overal_privacy_score_{cancer}.csv``
-(rows = method display names, columns = seeds), which is the canonical artifact
-that file itself was produced from.
+The dimension value is the privacy score ``1 - risk`` (higher = better).
+
+The older single "overall privacy score" (``1 - mean`` of the four category risks) is kept
+in :func:`overall_privacy_from_attacks`, :func:`overall_privacy_from_pickles` and
+:func:`overall_privacy_from_csv`.
 """
 
 from __future__ import annotations
@@ -27,6 +28,14 @@ import pandas as pd
 
 
 DEFAULT_TOOLS = ["Avatars K5", "Avatars K10", "CTGAN", "Gaussian Copula", "Synthpop", "TVAE"]
+
+#: attack-table label -> meta-score dimension
+ATTACK_DIMS = {
+    "SO_uni": "Singling-out (uni)",
+    "SO_multi": "Singling-out (multi)",
+    "Linkability": "Linkability",
+    "Inference": "Inference",
+}
 
 
 def _final_risk(obj) -> float:
@@ -42,6 +51,83 @@ def _final_risk(obj) -> float:
     except TypeError:
         return float(attack_risk)
     return float(naive_risk if attack_risk <= naive_risk else attack_risk)
+
+
+def _category_risk(obj) -> float:
+    """Risk of one evaluation: residual risk with a control set, otherwise :func:`_final_risk`."""
+    results = obj.results() if callable(getattr(obj, "results", None)) else obj
+    if getattr(results, "control_rate", None) is not None:
+        return float(results.risk().value)
+    return _final_risk(obj)
+
+
+def category_risks_from_attacks(uni: dict, multi: dict, link: dict, infer: dict) -> Dict[str, Dict[str, float]]:
+    """Mean risk of each attack category per synthetic dataset.
+
+    Args mirror the ``{dataset: [...]}`` returns of the ``metrics.privacy`` functions; failed
+    inference evaluations (``{"error": ...}``) are skipped.
+
+    Returns:
+        dict: dimension name (see ``ATTACK_DIMS``) -> {dataset: mean risk}.
+    """
+    def _mean(items) -> float:
+        vals = []
+        for item in items:
+            ev = item[1] if isinstance(item, tuple) else item
+            if not isinstance(ev, dict):
+                vals.append(_category_risk(ev))
+        return float(np.mean(vals)) if vals else float("nan")
+
+    out: Dict[str, Dict[str, float]] = {}
+    for key, res in (("SO_uni", uni), ("SO_multi", multi), ("Linkability", link), ("Inference", infer)):
+        out[ATTACK_DIMS[key]] = {tool: _mean(items) for tool, items in (res or {}).items()}
+    return out
+
+
+def category_risks_from_pickles(pickle_root: str, seed: int,
+                                tools: Sequence[str] = tuple(DEFAULT_TOOLS)) -> Dict[str, Dict[str, float]]:
+    """Mean risk of each attack category per method for one seed, from saved pickles.
+
+    Same layout as :func:`overall_privacy_from_pickles`.
+
+    Returns:
+        dict: dimension name -> {method: mean risk}.
+    """
+    tools = list(tools)
+    uni = _load_pickle(os.path.join(pickle_root, "SinglingOut", "UniSO", f"Seed_{seed}", "SOUni_Results.pkl"))
+    multi = _load_pickle(os.path.join(pickle_root, "SinglingOut", "MultiSO", f"Seed_{seed}", "MultiSO_Results.pkl"))
+    link = _load_pickle(os.path.join(pickle_root, "Linkability", f"Seed_{seed}", "LinkabilityResults.pkl"))
+    infer = _load_pickle(os.path.join(pickle_root, "Inference", f"Seed_{seed}", "results_inferences.pkl"))
+    risks = category_risks_from_attacks(
+        *[{tool: items for tool, items in zip(tools, res.values())} for res in (uni, multi, link, infer)]
+    )
+    return risks
+
+
+def category_risks_from_table(path_or_df) -> pd.DataFrame:
+    """Mean risk per (method, seed, attack category) from a long risk table.
+
+    Accepts a CSV/parquet path or a DataFrame with one row per evaluation and the columns
+    ``method``/``Model``, ``seed``/``Seed``, ``attack``/``Attack`` (``SO_uni``, ``SO_multi``,
+    ``Linkability``, ``Inference`` or the dimension names) and ``risk_residual``/``Risk``.
+
+    Returns:
+        pd.DataFrame: columns Model, Seed, Dimension, Risk.
+    """
+    if isinstance(path_or_df, pd.DataFrame):
+        df = path_or_df.copy()
+    elif str(path_or_df).endswith(".parquet"):
+        df = pd.read_parquet(path_or_df)
+    else:
+        df = pd.read_csv(path_or_df)
+    aliases = {"method": "Model", "seed": "Seed", "attack": "Attack", "risk_residual": "Risk"}
+    df = df.rename(columns={k: v for k, v in aliases.items() if k in df.columns})
+    missing = [c for c in ("Model", "Seed", "Attack", "Risk") if c not in df.columns]
+    if missing:
+        raise KeyError(f"Risk table lacks the column(s) {missing}.")
+    df["Dimension"] = df["Attack"].map(lambda a: ATTACK_DIMS.get(a, a))
+    df["Seed"] = df["Seed"].astype(int)
+    return df.groupby(["Model", "Seed", "Dimension"], as_index=False)["Risk"].mean()
 
 
 def _load_pickle(path: str):

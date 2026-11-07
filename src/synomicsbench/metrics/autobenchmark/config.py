@@ -4,10 +4,11 @@ Configuration for the automatic benchmark pipeline.
 `BenchmarkConfig` collects everything the pipeline needs to run all metric
 dimensions in one pass and reproduce the manuscript's per-seed results:
 the clinical/transcriptomic column partition, the phenotype split used by the
-narrow-utility metrics, the survival endpoints, the Hallmark gene set, the
-rank-derived meta-score weights, and the optional "reuse" hooks that point at
-already-computed intermediate artifacts (privacy pickles, CIBERSORTx results,
-per-dimension score tables).
+biological-utility metrics, the survival endpoints, the Hallmark gene set, the
+network and privacy-attack settings (including the external control cohort),
+the rank-derived meta-score weights, and the optional "reuse" hooks that point at
+already-computed intermediate artifacts (privacy risks or pickles, network scores,
+CIBERSORTx results, per-dimension score tables).
 
 Nothing here mutates existing package code; this module only *reads* the
 existing metric classes when the runners are invoked.
@@ -29,11 +30,19 @@ NAME_MAP: Dict[str, str] = {
     "TVAE": "tvae",
 }
 
-# The eight meta-score dimensions, grouped into the three equally-weighted pillars.
-BROAD_DIMS: Tuple[str, ...] = ("Univariate", "Bivariate")
+# The twelve meta-score dimensions, grouped into the three pillars. DGE and GSEA are scored
+# with F1-GCS and F1-PCS; each privacy dimension is the privacy score 1 - risk of one
+# attack category (residual risk when a control cohort is given), so that every dimension
+# is "higher = better".
+BROAD_DIMS: Tuple[str, ...] = ("Univariate", "Bivariate", "Network Preservation")
 NARROW_DIMS: Tuple[str, ...] = ("DGE", "GSEA", "ssGSEA", "Cell Deconvolution", "Survival Analysis")
-PRIVACY_DIMS: Tuple[str, ...] = ("Privacy",)
+PRIVACY_DIMS: Tuple[str, ...] = ("Singling-out (uni)", "Singling-out (multi)", "Linkability", "Inference")
 ALL_DIMS: Tuple[str, ...] = BROAD_DIMS + NARROW_DIMS + PRIVACY_DIMS
+PILLARS: Dict[str, Tuple[str, ...]] = {
+    "Statistical fidelity": BROAD_DIMS,
+    "Biological utility": NARROW_DIMS,
+    "Privacy": PRIVACY_DIMS,
+}
 
 # Per-dimension execution mode.
 #   "compute" : recompute the dimension from the raw data
@@ -64,11 +73,22 @@ class BenchmarkConfig:
         survival_endpoints: List of ``(time_col, event_col)`` endpoints (OS, PFS).
         corr_method / n_bins: Pairwise-similarity correlation settings.
         threshold_unique_values: Used only if metadata must be generated on the fly.
-        weights: (broad, narrow, privacy) meta-score weights (equal thirds by default).
+        network_csv: Precomputed network-preservation scores (reuse mode): columns
+            Model (or Tool), Seed and Value (normalized Z-summary).
+        network_log_transform / network_n_genes / network_n_permutations / network_threads:
+            Settings of :class:`~synomicsbench.metrics.fidelity.NetworkPreservation.NetworkPreservation`
+            (compute mode; needs R with WGCNA).
+        weights: (statistical fidelity, biological utility, privacy) meta-score weights
+            (equal thirds by default).
         modes: Per-dimension mode override (dimension name -> one of VALID_MODES).
         precomputed_dir: Root of the per-dimension precomputed tables (for reuse mode).
         cibersortx_dir: Directory of CIBERSORTx result CSVs (required for Cell Deconvolution).
         privacy_pickle_dir: Root of the saved anonymeter evaluator pickles.
+        privacy_control: External control cohort (path or DataFrame) with the columns of the
+            original data; when given, the privacy dimensions use the residual risk.
+        privacy_gene_sets: Named gene sets used as attacker knowledge levels, before the
+            gene fractions (e.g. ``{"FGES": [...]}``).
+        privacy_feature_seed: Seed of the gene sampling of the knowledge levels.
         top_k_cell_types: Number of most-abundant cell types used for Aitchison distance.
         output_dir: Where the pipeline writes its report (never an existing results dir).
         name_map: Display-name -> file-stem map for locating reuse artifacts.
@@ -111,14 +131,19 @@ class BenchmarkConfig:
     # an explicit list only to override what the metadata says.
     clinical_ordinal_features: Optional[List[str]] = None
 
+    # --- network preservation ---
+    network_csv: Optional[str] = None
+    network_log_transform: bool = False
+    network_n_genes: int = 10_000
+    network_n_permutations: int = 200
+    network_threads: int = 8
+
     # --- meta-score ---
     weights: Tuple[float, float, float] = (1 / 3, 1 / 3, 1 / 3)
     # Dimensions whose per-(method, seed) values are collapsed to the per-method mean
-    # before ranking. The manuscript's 5-seed MetaScore collapsed DGE/GSEA/Privacy this
-    # way (it averaged each method's 5 seed scores into one value), so this is the default
-    # for exact consistency with the published results. Set to () to instead rank every
-    # dimension per-seed. Has no effect on single-seed runs.
-    collapse_dims: Tuple[str, ...] = ("DGE", "GSEA", "Privacy")
+    # before ranking. By default every dimension is ranked per seed, as in the revised
+    # manuscript meta-score. Has no effect on single-seed runs.
+    collapse_dims: Tuple[str, ...] = ()
 
     # --- per-dimension modes & reuse hooks ---
     modes: Dict[str, str] = field(default_factory=dict)
@@ -127,9 +152,13 @@ class BenchmarkConfig:
     privacy_pickle_dir: Optional[str] = None
     top_k_cell_types: int = 10
 
-    # --- privacy compute mode (only used when Privacy mode == "compute") ---
-    # Runs the anonymeter attacks live via the existing src functions. Stochastic and slow;
-    # meant for NEW datasets (won't reproduce the manuscript). Defaults match the src signatures.
+    # --- privacy compute mode (only used when a privacy dimension is in "compute" mode) ---
+    # Runs the anonymeter attacks live via the metrics.privacy functions. Defaults match their
+    # signatures; the univariate singling-out and linkability levels are fractions of the genes,
+    # with the clinical columns always known.
+    privacy_control: Optional[object] = None  # path or DataFrame
+    privacy_gene_sets: Optional[Dict[str, List[str]]] = None
+    privacy_feature_seed: int = 42
     privacy_seed: int = 42
     privacy_n_attacks: int = 10_000
     privacy_max_attempts: int = 1_000_000
