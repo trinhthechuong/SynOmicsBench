@@ -1,13 +1,18 @@
 import os
 import math
+import warnings
 from typing import Any, Dict, List, Optional, Tuple
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import matplotlib.patches as mpatches
+from joblib import Parallel, delayed
+from scipy.stats import bootstrap
 
 from lifelines import KaplanMeierFitter, CoxPHFitter
 from lifelines.statistics import logrank_test
+from lifelines.exceptions import ConvergenceWarning
 from lifelines.utils import concordance_index
 
 # =============================================================================
@@ -15,12 +20,15 @@ from lifelines.utils import concordance_index
 # =============================================================================
 DATASET_COLORS = {
     "Origin": "#4d4d4d",
+    "Avatars": "#66c2a5",
     "Avatars K5": "#66c2a5",
     "Avatars K10": "#fc8d62",
     "CTGAN": "#8da0cb",
     "Gaussian Copula": "#e78ac3",
     "Synthpop": "#a6d854",
     "TVAE": "#ffd92f",
+    "Diffusion": "#e5c494",
+    "TabDiff": "#e5c494",
 }
 
 GROUP_COLORS = {
@@ -104,6 +112,7 @@ class SurvivalEvaluator:
         self.original_name = original_name
         self.dataset_names = self._get_dataset_order()
         self.summary_df = None
+        self.cox_df = None
 
     def _get_dataset_order(self) -> List[str]:
         """
@@ -199,16 +208,16 @@ class SurvivalEvaluator:
         self.summary_df = summary_df
         return summary_df
 
-    def compute_cindex_scores(self, original_name: Optional[str] = None) -> pd.DataFrame:
+    def compute_survival_scores(self, original_name: Optional[str] = None) -> pd.DataFrame:
         """
-        Compute C-index similarity scores between the reference and synthetic datasets.
+        Compute the survival score, 1 - |C_original - C_synthetic|, of every dataset.
 
         Args:
             original_name (Optional[str]): Reference dataset for score calculation. 
                 If None, uses self.original_name.
 
         Returns:
-            pd.DataFrame: DataFrame with additional column 'C-index_score'.
+            pd.DataFrame: DataFrame with the additional column 'Survival_score'.
 
         Raises:
             KeyError: If required columns or reference row are missing.
@@ -242,9 +251,261 @@ class SurvivalEvaluator:
                 score = 1.0 - diff
                 score = max(0.0, min(1.0, score))
             scores.append(score)
-        df["C-index_score"] = scores
+        df["Survival_score"] = scores
         df = df.drop(columns=["_cindex_parsed"])
         return df
+
+    def _cox_frame(self, ds_name: str) -> pd.DataFrame:
+        """
+        Survival frame of one dataset restricted to the two phenotype groups.
+
+        Args:
+            ds_name (str): Dataset name.
+
+        Returns:
+            pd.DataFrame: Columns T (time), E (event, int) and group (1 for value_A, 0 for value_B).
+        """
+        df = self.datasets_dict[ds_name]
+        d = df[df[self.phenotype_column].isin([self.value_A, self.value_B])][
+            [self.time_target, self.event_target, self.phenotype_column]
+        ].copy()
+        d[self.time_target] = pd.to_numeric(d[self.time_target], errors="coerce")
+        d[self.event_target] = pd.to_numeric(d[self.event_target], errors="coerce").fillna(0).astype(int)
+        d = d.dropna()
+        d["group"] = (d[self.phenotype_column] == self.value_A).astype(int)
+        d = d.rename(columns={self.time_target: "T", self.event_target: "E"})
+        return d[["T", "E", "group"]].reset_index(drop=True)
+
+    @staticmethod
+    def _cox_cindex(d: pd.DataFrame) -> Tuple[float, Optional[CoxPHFitter]]:
+        """
+        Harrell's C-index of a univariate Cox model on the phenotype group.
+
+        Args:
+            d (pd.DataFrame): Output of :meth:`_cox_frame`.
+
+        Returns:
+            tuple[float, CoxPHFitter | None]: (C-index, fitted model); (NaN, None) when the
+            model cannot be fitted (one group only or no event).
+        """
+        if d["group"].nunique() < 2 or d["E"].sum() == 0:
+            return np.nan, None
+        # Near-separation of the two groups (common on bootstrap resamples) only triggers
+        # convergence warnings; the fitted coefficient is still used as is.
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", ConvergenceWarning)
+            cph = CoxPHFitter().fit(d, "T", "E")
+        return concordance_index(d["T"], -cph.predict_partial_hazard(d), d["E"]), cph
+
+    @classmethod
+    def _bootstrap_cindex(cls, d: pd.DataFrame, idx: np.ndarray) -> float:
+        """C-index of one bootstrap resample, with the Cox model refitted."""
+        try:
+            return cls._cox_cindex(d.iloc[idx].reset_index(drop=True))[0]
+        except Exception:
+            return np.nan
+
+    @classmethod
+    def _cindex_ci(
+        cls, d: pd.DataFrame, n_bootstrap: int, confidence_level: float, seed: int
+    ) -> Tuple[float, float]:
+        """Bootstrap confidence interval of the C-index."""
+        res = bootstrap(
+            (np.arange(len(d)),),
+            lambda i: cls._bootstrap_cindex(d, i),
+            vectorized=False,
+            n_resamples=n_bootstrap,
+            confidence_level=confidence_level,
+            method="BCa",
+            rng=np.random.default_rng(seed),
+        )
+        return float(res.confidence_interval.low), float(res.confidence_interval.high)
+
+    def compute_cox_metrics(
+        self,
+        n_bootstrap: int = 1000,
+        confidence_level: float = 0.95,
+        seed: int = 0,
+        n_jobs: int = -1,
+        original_name: Optional[str] = None,
+    ) -> pd.DataFrame:
+        """
+        Absolute survival performance of every dataset and its agreement with the original.
+
+        For each dataset, a Cox model with the phenotype group as single covariate (value_A
+        coded 1) gives Harrell's C-index and the hazard ratio. The confidence interval of the
+        C-index is a bootstrap interval, the Cox model being refitted on every resample.
+        Against the reference dataset, ``HR_same_direction`` records whether the hazard ratio
+        lies on the same side of 1, and ``Survival_score`` = 1 - |C_synthetic - C_original|.
+
+        Args:
+            n_bootstrap (int): Number of bootstrap resamples.
+            confidence_level (float): Confidence level of the interval.
+            seed (int): Seed of the resampling; the k-th dataset with a C-index (in plotting
+                order) is resampled with seed + k.
+            n_jobs (int): Parallel jobs for the bootstrap (joblib convention).
+            original_name (Optional[str]): Reference dataset; defaults to self.original_name.
+
+        Returns:
+            pd.DataFrame: One row per dataset with columns Dataset, n_A, n_B, events_A,
+            events_B, logrank_P, C-index, CI_low, CI_high, HR, HR_same_direction,
+            Survival_score. The table is also stored in ``self.cox_df``.
+
+        Raises:
+            KeyError: If the reference dataset is not in datasets_dict.
+        """
+        ref_name = original_name or self.original_name
+        if ref_name not in self.datasets_dict:
+            raise KeyError(f"Reference dataset '{ref_name}' not found in datasets_dict.")
+
+        frames: Dict[str, pd.DataFrame] = {}
+        rows = []
+        for ds_name in self.dataset_names:
+            d = self._cox_frame(ds_name)
+            frames[ds_name] = d
+            g1, g0 = d[d["group"] == 1], d[d["group"] == 0]
+            row: Dict[str, Any] = {
+                "Dataset": ds_name,
+                "n_A": len(g1),
+                "n_B": len(g0),
+                "events_A": int(g1["E"].sum()),
+                "events_B": int(g0["E"].sum()),
+                "logrank_P": np.nan,
+                "C-index": np.nan,
+                "HR": np.nan,
+            }
+            if len(g1) > 0 and len(g0) > 0:
+                row["logrank_P"] = float(logrank_test(g1["T"], g0["T"], g1["E"], g0["E"]).p_value)
+                try:
+                    c, cph = self._cox_cindex(d)
+                except Exception:
+                    c, cph = np.nan, None
+                row["C-index"] = c
+                if cph is not None:
+                    row["HR"] = float(np.exp(cph.params_["group"]))
+            rows.append(row)
+        table = pd.DataFrame(rows)
+
+        with_c = [r["Dataset"] for r in rows if pd.notna(r["C-index"])]
+        intervals = Parallel(n_jobs=n_jobs)(
+            delayed(self._cindex_ci)(frames[name], n_bootstrap, confidence_level, seed + k)
+            for k, name in enumerate(with_c)
+        )
+        ci = dict(zip(with_c, intervals))
+        table["CI_low"] = [ci[n][0] if n in ci else np.nan for n in table["Dataset"]]
+        table["CI_high"] = [ci[n][1] if n in ci else np.nan for n in table["Dataset"]]
+
+        ref = table.set_index("Dataset").loc[ref_name]
+        is_ref = table["Dataset"] == ref_name
+        table["HR_same_direction"] = [
+            float(np.sign(np.log(hr)) == np.sign(np.log(ref["HR"]))) if pd.notna(hr) else np.nan
+            for hr in table["HR"]
+        ]
+        table["Survival_score"] = 1 - (table["C-index"] - ref["C-index"]).abs()
+        table.loc[is_ref, ["HR_same_direction", "Survival_score"]] = np.nan
+
+        table = table[[
+            "Dataset", "n_A", "n_B", "events_A", "events_B", "logrank_P",
+            "C-index", "CI_low", "CI_high", "HR", "HR_same_direction", "Survival_score",
+        ]]
+        table.attrs["confidence_level"] = confidence_level
+        self.cox_df = table
+        return table
+
+    def plot_cindex_forest(
+        self,
+        cox_df: Optional[pd.DataFrame] = None,
+        ax: Optional[plt.Axes] = None,
+        title: Optional[str] = None,
+        original_name: Optional[str] = None,
+        figsize: Tuple[float, float] = (6, 6),
+    ) -> Tuple[plt.Figure, pd.DataFrame]:
+        """
+        Forest plot of the C-index of every synthetic dataset with its confidence interval.
+
+        The grey band is the confidence interval of the reference C-index, the solid line its
+        point value and the dashed line C = 0.5 (no survival signal). A red cross marks a
+        hazard ratio on the opposite side of 1 from the reference (reversed association).
+
+        Args:
+            cox_df (Optional[pd.DataFrame]): Output of :meth:`compute_cox_metrics`; computed
+                with default settings when None and not computed before.
+            ax (Optional[matplotlib.axes.Axes]): Target axis; a new figure when None.
+            title (Optional[str]): Panel title; defaults to the endpoint and reference C-index.
+            original_name (Optional[str]): Reference dataset; defaults to self.original_name.
+            figsize (tuple[float, float]): Figure size when a new figure is created.
+
+        Returns:
+            tuple[matplotlib.figure.Figure, pd.DataFrame]: (figure, table plotted).
+        """
+        if cox_df is None:
+            cox_df = self.cox_df
+        if cox_df is None:
+            cox_df = self.compute_cox_metrics(original_name=original_name)
+        ref_name = original_name or self.original_name
+
+        if ax is None:
+            fig, ax = plt.subplots(figsize=figsize)
+        else:
+            fig = ax.figure
+
+        ref = cox_df[cox_df["Dataset"] == ref_name].iloc[0]
+        syn = cox_df[cox_df["Dataset"] != ref_name].reset_index(drop=True)
+
+        if pd.notna(ref["CI_low"]):
+            ax.axvspan(ref["CI_low"], ref["CI_high"], color="#bdbdbd", alpha=0.45, lw=0, zorder=0)
+        if pd.notna(ref["C-index"]):
+            ax.axvline(ref["C-index"], color="#4d4d4d", lw=1.4, zorder=1)
+        ax.axvline(0.5, color="#d32f2f", lw=1.1, ls="--", zorder=1)
+
+        x_lo, x_hi = 0.3, 0.9
+        for i, r in syn.iterrows():
+            y = -i
+            color = self.dataset_colors.get(str(r["Dataset"]), "#8c8c8c")
+            if pd.isna(r["C-index"]):
+                ax.text(x_lo + 0.02, y, "N/A", ha="left", va="center", fontsize=7, color="#9e9e9e",
+                        style="italic")
+                continue
+            if pd.notna(r["CI_low"]):
+                ax.plot([r["CI_low"], r["CI_high"]], [y, y], color=color, lw=1.6, zorder=2)
+            if r["HR_same_direction"] == 0:
+                ax.plot(r["C-index"], y, marker="X", ms=8, mfc="#d32f2f", mec="white", mew=0.6,
+                        zorder=3, ls="none")
+            else:
+                ax.plot(r["C-index"], y, marker="o", ms=5.5, mfc=color, mec="black", mew=0.7,
+                        zorder=3, ls="none")
+
+        ax.set_yticks([-i for i in range(len(syn))])
+        ax.set_yticklabels(syn["Dataset"].astype(str), fontsize=9)
+        ax.tick_params(axis="y", length=0)
+        ax.set_ylim(-len(syn) + 0.4, 0.6)
+        ax.set_xlim(x_lo, x_hi)
+        ax.grid(axis="x", alpha=0.3, ls=":", lw=0.6)
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.set_xlabel(f"C-index ({self._ci_label(cox_df)} CI)", fontsize=10)
+        if title is None:
+            title = f"{self.time_target}; {ref_name} C = {ref['C-index']:.2f}"
+            if pd.notna(ref["CI_low"]):
+                title += f" ({ref['CI_low']:.2f}–{ref['CI_high']:.2f})"
+        ax.set_title(title, fontsize=10)
+
+        handles = [
+            plt.Line2D([], [], marker="o", ls="none", mfc="#bdbdbd", mec="black", ms=5.5,
+                       label="Synthetic dataset"),
+            plt.Line2D([], [], marker="X", ls="none", mfc="#d32f2f", mec="white", ms=8,
+                       label="HR opposite to the reference"),
+            mpatches.Patch(color="#bdbdbd", alpha=0.45, label=f"{ref_name} C-index CI"),
+            plt.Line2D([], [], color="#d32f2f", ls="--", label="C = 0.5"),
+        ]
+        ax.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, -0.16), ncol=2,
+                  fontsize=7, frameon=False)
+        return fig, cox_df
+
+    @staticmethod
+    def _ci_label(cox_df: pd.DataFrame) -> str:
+        """Label of the confidence level stored by compute_cox_metrics."""
+        level = cox_df.attrs.get("confidence_level")
+        return f"{level:.0%}" if level is not None else "bootstrap"
 
     def plot_grid(
         self,
@@ -274,6 +535,8 @@ class SurvivalEvaluator:
         Raises:
             None
         """
+        import scienceplots  # noqa: F401  (registers the "science" matplotlib styles)
+
         plt.style.use(["science", "nature", "notebook"])
         plt.rcParams.update({
             "font.size": 10 * self.font_scale,
@@ -375,7 +638,7 @@ class SurvivalEvaluator:
                 fontsize=10 * self.font_scale,
                 horizontalalignment="right", verticalalignment="top", zorder=10,
             )
-            title_t = f"{ds_name}" if title_prefix is None else f"{title_prefix} — {ds_name}"
+            title_t = f"{ds_name}" if title_prefix is None else f"{title_prefix}: {ds_name}"
             ax.set_title(title_t, fontweight="bold", pad=12)
             ax.set_xlabel(f"Time ({self.time_target})")
             ax.set_ylabel("Survival probability" if is_large else "")

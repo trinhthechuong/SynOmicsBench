@@ -402,7 +402,7 @@ class TestGCSAnalyzer:
 
         ori, _ = sample_dge_data
         scores = GCSAnalyzer().compute_metrics(ori, ori.copy())
-        for name in ("Recall", "Precision", "F1", "Slope", "Slope_robust", "Pearson", "SignConcordance"):
+        for name in ("Recall", "Precision", "F1", "Slope", "Pearson", "SignConcordance"):
             assert scores[name] == pytest.approx(1.0), name
 
     def test_no_concordant_gene_gives_zero_f1(self, sample_dge_data):
@@ -462,6 +462,69 @@ class TestGCSAnalyzer:
         assert table.loc["A", "Slope"] == pytest.approx(analyzer.compute_metrics(ori, syn, "Slope"))
         plt.close(fig)
 
+    def test_slope_method_per_level(self, sample_dge_data):
+        from scipy import stats
+        from synomicsbench.metrics.narrow_utility.DGE import GCSAnalyzer
+        from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
+
+        ori, syn = sample_dge_data
+        gcs = GCSAnalyzer()
+        x, y = gcs._calibration_points(gcs.merge_effects(ori, syn))
+        assert gcs.compute_metrics(ori, syn, "Slope") == pytest.approx(stats.linregress(x, y).slope)
+
+        pcs = PCSAnalyzer(term_col="Gene", nes_col="Log2FC", sig_col="P_value")
+        assert pcs.compute_metrics(ori, syn, "Slope") == pytest.approx(stats.theilslopes(y, x)[0])
+
+    def test_theil_sen_intercept_is_joint(self):
+        from scipy import stats
+        from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
+
+        # two clusters of pathways, NES < 0 and > 0, with an uneven split
+        x = np.array([-2.0, -1.8, -1.6, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4])
+        y = 0.5 * x + np.array([0.1, -0.1, 0.0, 0.05, -0.05, 0.1, 0.0, -0.1, 0.05])
+        terms = [f"P{i}" for i in range(len(x))]
+        ori = pd.DataFrame({"Term": terms, "NES": x, "FDR q-val": 0.01})
+        syn = pd.DataFrame({"Term": terms, "NES": y, "FDR q-val": 0.01})
+        pcs = PCSAnalyzer()
+        res = pcs.calibration_score(pcs.merge_effects(ori, syn))
+        slope, intercept = stats.theilslopes(y, x, method="joint")[:2]
+        assert res["Slope"] == pytest.approx(slope)
+        assert res["Intercept"] == pytest.approx(intercept)
+        assert abs(res["Intercept"]) < 0.1   # the line passes through the two clusters
+
+    def test_plot_calibration_scatter_marks_few_features(self):
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        from synomicsbench.metrics.narrow_utility.GSEA import PCSAnalyzer
+
+        terms = [f"P{i}" for i in range(6)]
+        ori = pd.DataFrame({"Term": terms, "NES": [-2, -1.5, 1.5, 2, 2.5, 1.8], "FDR q-val": 0.01})
+        syn = pd.DataFrame({"Term": terms, "NES": [-1, 1, 1.2, 2.1, -0.5, 1.0],
+                            "FDR q-val": [0.01, 0.5, 0.01, 0.01, 0.3, 0.2]})
+        from matplotlib.collections import PathCollection
+
+        fig, table = PCSAnalyzer().plot_calibration_scatter(ori, {"A": syn})
+        ax = fig.axes[0]
+        points = [c for c in ax.collections if isinstance(c, PathCollection) and len(c.get_offsets())]
+        assert points and all(c.get_sizes()[0] == 48 for c in points)   # every pathway marked
+        assert sum(len(c.get_offsets()) for c in points) == 6
+        assert table.loc["A", "N"] == 6
+        # one range for both axes, containing every effect size and 0
+        assert ax.get_xlim() == ax.get_ylim()
+        lo, hi = ax.get_xlim()
+        assert lo <= min(ori.NES.min(), syn.NES.min(), 0) and hi >= max(ori.NES.max(), syn.NES.max(), 0)
+        plt.close(fig)
+
+        # pathways not significant in the original are drawn as small context points
+        ori2 = ori.assign(**{"FDR q-val": [0.01, 0.01, 0.01, 0.01, 0.4, 0.6]})
+        fig, table = PCSAnalyzer().plot_calibration_scatter(ori2, {"A": syn})
+        points = [c for c in fig.axes[0].collections if isinstance(c, PathCollection) and len(c.get_offsets())]
+        assert sorted((c.get_sizes()[0], len(c.get_offsets())) for c in points if c.get_sizes()[0] == 16) == [(16, 2)]
+        assert table.loc["A", "N"] == 4
+        plt.close(fig)
+
 
 # ===========================================================================
 # Narrow Utility — SurvivalEvaluator (requires lifelines + scienceplots)
@@ -517,6 +580,55 @@ class TestSurvivalEvaluator:
         metrics = evaluator.compute_survival_metrics()
         assert isinstance(metrics, pd.DataFrame)
         assert len(metrics) > 0
+
+    @staticmethod
+    def _cox_datasets():
+        rng = np.random.default_rng(2)
+        n = 80
+        group = rng.choice(["A", "B"], n)
+        # group A has a lower hazard, so the original HR is below 1
+        time = rng.exponential(np.where(group == "A", 20.0, 8.0))
+        ori = pd.DataFrame({"OS": time, "OS_CNSR": rng.integers(0, 2, n) | (time < 10), "grp": group})
+        reversed_ = ori.assign(grp=np.where(ori["grp"] == "A", "B", "A"))
+        return {"Origin": ori, "Same": ori.copy(), "Reversed": reversed_}
+
+    def test_compute_cox_metrics(self):
+        from synomicsbench.metrics.narrow_utility.survival_analysis import SurvivalEvaluator
+
+        ev = SurvivalEvaluator(self._cox_datasets(), phenotype={"grp": ["A", "B"]})
+        table = ev.compute_cox_metrics(n_bootstrap=30, n_jobs=1).set_index("Dataset")
+
+        assert table.loc["Origin", "HR"] < 1
+        assert np.isnan(table.loc["Origin", "Survival_score"])
+        assert table.loc["Same", "Survival_score"] == pytest.approx(1.0)
+        assert table.loc["Same", "HR_same_direction"] == 1.0
+        assert table.loc["Reversed", "HR_same_direction"] == 0.0
+        assert table.loc["Reversed", "HR"] == pytest.approx(1 / table.loc["Origin", "HR"], rel=1e-4)
+        assert (table["CI_low"] < table["CI_high"]).all()
+
+    def test_cox_metrics_are_reproducible(self):
+        from synomicsbench.metrics.narrow_utility.survival_analysis import SurvivalEvaluator
+
+        datasets = self._cox_datasets()
+        first = SurvivalEvaluator(datasets, phenotype={"grp": ["A", "B"]}).compute_cox_metrics(
+            n_bootstrap=20, seed=5, n_jobs=1)
+        second = SurvivalEvaluator(datasets, phenotype={"grp": ["A", "B"]}).compute_cox_metrics(
+            n_bootstrap=20, seed=5, n_jobs=1)
+        pd.testing.assert_frame_equal(first, second)
+
+    def test_plot_cindex_forest(self):
+        import matplotlib
+
+        matplotlib.use("Agg")
+        import matplotlib.pyplot as plt
+        from synomicsbench.metrics.narrow_utility.survival_analysis import SurvivalEvaluator
+
+        ev = SurvivalEvaluator(self._cox_datasets(), phenotype={"grp": ["A", "B"]})
+        ev.compute_cox_metrics(n_bootstrap=20, n_jobs=1)
+        fig, table = ev.plot_cindex_forest()
+        assert table is ev.cox_df
+        assert len(fig.axes[0].get_yticklabels()) == 2
+        plt.close(fig)
 
 
 # ===========================================================================
@@ -642,6 +754,17 @@ class TestPrivacyControl:
         # the same seed gives the same genes on every call
         assert knowledge_levels(["sex"], genes, (0.25,))[0] == levels[1]
 
+    def test_knowledge_levels_from_gmt(self, tmp_path):
+        from synomicsbench.metrics.privacy.knowledge import knowledge_levels, read_gmt
+
+        gmt = tmp_path / "sets.gmt"
+        gmt.write_text("A\tdesc\tg3\tg1\nB\thttp://x\tg2\tzz\n")
+        assert read_gmt(gmt) == {"A": ["g3", "g1"], "B": ["g2", "zz"]}
+
+        genes = [f"g{i}" for i in range(5)]
+        levels = knowledge_levels(["sex"], genes, proportions=(), gene_sets=str(gmt))
+        assert levels == [("A", ["sex", "g1", "g3"]), ("B", ["sex", "g2"])]
+
     def test_residual_risk_with_control(self, frames):
         from synomicsbench.metrics.privacy.linkability import eval_linkability_genes_clinical
         from synomicsbench.metrics.privacy.risk import privacy_risk_table
@@ -668,9 +791,49 @@ class TestPrivacyControl:
         ori, syn, _ = frames
         infer = eval_inference_genes_clinical(ori, {"s": syn}, clinical_cols=["sex", "stage"])
         table = privacy_risk_table(infer, "Inference")
-        assert list(table["Config"]) == ["sex", "stage"]
+        assert list(table["Config"]) == ["100%", "100%"]
+        assert list(table["Secret"]) == ["sex", "stage"]
         assert {"R_attack", "R_naive"} <= set(table.columns)
         assert "R_residual" not in table.columns
+
+    def test_inference_knowledge_levels(self, frames):
+        from synomicsbench.metrics.privacy.inference import eval_inference_genes_clinical
+        from synomicsbench.metrics.privacy.risk import privacy_risk_table
+
+        ori, syn, control = frames
+        infer = eval_inference_genes_clinical(ori, {"s": syn}, clinical_cols=["sex", "stage"],
+                                              proportions=(0.5, 1.0), gene_sets={"set": ["g0"]},
+                                              control=control)
+        assert [(level, secret) for level, secret, _ in infer["s"]] == [
+            ("set", "sex"), ("set", "stage"), ("50%", "sex"), ("50%", "stage"),
+            ("100%", "sex"), ("100%", "stage")]
+        table = privacy_risk_table(infer, "Inference")
+        assert list(table.columns[:4]) == ["Dataset", "Attack", "Config", "Secret"]
+        assert "R_residual" in table.columns
+
+    def test_evaluator_seed_repeats_linkability_and_inference(self, frames):
+        from synomicsbench.metrics.privacy.inference import eval_inference_genes_clinical
+        from synomicsbench.metrics.privacy.linkability import eval_linkability_genes_clinical
+
+        ori, syn, control = frames   # 60 original records, 40 control: 40 targets drawn at random
+
+        def link(seed):
+            ev = eval_linkability_genes_clinical(ori, {"s": syn}, clinical_cols=["sex", "stage"],
+                                                 control=control, evaluator_seed=seed)["s"][0]
+            return ev.results().n_success, ev.results().n_control
+
+        def infer(seed):
+            out = eval_inference_genes_clinical(ori, {"s": syn}, clinical_cols=["sex", "stage"],
+                                                control=control, evaluator_seed=seed)["s"]
+            return [(r.n_success, r.n_baseline, r.n_control) for _, _, r in out]
+
+        np.random.seed(123)
+        before = np.random.get_state()[1].copy()
+        assert link(7) == link(7)
+        assert infer(7) == infer(7)
+        assert [infer(s) for s in range(4)] != [infer(7)] * 4   # the seed does change the draw
+        # numpy's global generator is left as it was
+        assert (np.random.get_state()[1] == before).all()
 
     def test_control_must_have_attacked_columns(self, frames):
         from synomicsbench.metrics.privacy.singling_out import eval_singling_out_multivariate
