@@ -609,6 +609,78 @@ class TestPrivacyLinkability:
         assert len(results["test_synth"]) == 2
 
 
+class TestPrivacyControl:
+    """External control cohort: residual risk, attack budget and the risk table."""
+
+    @pytest.fixture(autouse=True)
+    def _skip_if_no_anonymeter(self):
+        pytest.importorskip("anonymeter")
+
+    @pytest.fixture
+    def frames(self):
+        rng = np.random.default_rng(3)
+
+        def make(n):
+            return pd.DataFrame({
+                "sex": rng.choice(["F", "M"], n),
+                "stage": rng.integers(1, 5, n),
+                **{f"g{i}": rng.normal(size=n).round(2) for i in range(12)},
+            })
+
+        return make(60), make(60), make(40)
+
+    def test_knowledge_levels(self):
+        from synomicsbench.metrics.privacy.knowledge import knowledge_levels
+
+        genes = [f"g{i}" for i in range(20)]
+        levels = knowledge_levels(["sex"], genes, proportions=(0.25, 1.0),
+                                  gene_sets={"set": ["g3", "g1", "zz"]})
+        assert [label for label, _ in levels] == ["set", "25%", "100%"]
+        assert levels[0][1] == ["sex", "g1", "g3"]
+        assert len(levels[1][1]) == 1 + 5
+        assert levels[2][1] == ["sex"] + genes
+        # the same seed gives the same genes on every call
+        assert knowledge_levels(["sex"], genes, (0.25,))[0] == levels[1]
+
+    def test_residual_risk_with_control(self, frames):
+        from synomicsbench.metrics.privacy.linkability import eval_linkability_genes_clinical
+        from synomicsbench.metrics.privacy.risk import privacy_risk_table
+        from synomicsbench.metrics.privacy.singling_out import eval_singling_out_univariate
+
+        ori, syn, control = frames
+        uni = eval_singling_out_univariate(ori, {"s": syn}, n_attacks=50, max_attempts=5_000,
+                                           proportions=(1.0,), control=control,
+                                           clinical_cols=["sex", "stage"])
+        table = privacy_risk_table(uni, "SO_uni", configs=["100%"])
+        assert {"R_residual", "R_attack", "R_control"} <= set(table.columns)
+        assert "R_naive" not in table.columns
+        assert 0.0 <= table.loc[0, "R_residual"] <= 1.0
+
+        link = eval_linkability_genes_clinical(ori, {"s": syn}, clinical_cols=["sex", "stage"],
+                                               proportions=(1.0,), control=control)
+        # the control cohort bounds the number of attacks
+        assert link["s"][0].results().n_attacks == len(control)
+
+    def test_naive_risk_without_control(self, frames):
+        from synomicsbench.metrics.privacy.inference import eval_inference_genes_clinical
+        from synomicsbench.metrics.privacy.risk import privacy_risk_table
+
+        ori, syn, _ = frames
+        infer = eval_inference_genes_clinical(ori, {"s": syn}, clinical_cols=["sex", "stage"])
+        table = privacy_risk_table(infer, "Inference")
+        assert list(table["Config"]) == ["sex", "stage"]
+        assert {"R_attack", "R_naive"} <= set(table.columns)
+        assert "R_residual" not in table.columns
+
+    def test_control_must_have_attacked_columns(self, frames):
+        from synomicsbench.metrics.privacy.singling_out import eval_singling_out_multivariate
+
+        ori, syn, control = frames
+        with pytest.raises(ValueError, match="control dataset lacks"):
+            eval_singling_out_multivariate(ori, {"s": syn}, n_cols_list=(2,),
+                                           control=control.drop(columns="g0"))
+
+
 # ===========================================================================
 # Narrow Utility — Cell Deconvolution (requires skbio)
 # ===========================================================================

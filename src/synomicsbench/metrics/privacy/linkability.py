@@ -8,27 +8,39 @@ same individual.
 
 from __future__ import annotations
 
-import random
-from typing import Dict, List, Sequence, Union
+from typing import Dict, List, Optional, Sequence
 
 import pandas as pd
-# from linkability_evaluator import LinkabilityEvaluator # if it's slow, import directly the script from Anonymeter repo
 from anonymeter.evaluators import LinkabilityEvaluator
+
+from synomicsbench.metrics.privacy.knowledge import (
+    ColumnSpec,
+    GeneSetSpec,
+    knowledge_levels,
+    n_record_attacks,
+    numpy_seed,
+    resolve_columns,
+    subset_frames,
+)
+
 
 def eval_linkability_genes_clinical(
     ori: pd.DataFrame,
     syns: Dict[str, pd.DataFrame],
-    clinical_cols: Union[List[int], List[str]],
-    transcriptomic_cols: Union[List[int], List[str]] = None,
+    clinical_cols: ColumnSpec,
+    transcriptomic_cols: ColumnSpec = None,
     n_neighbors: int = 1,
-    proportions: Sequence[float] = (0.25, 0.50, 0.75, 1.0),
+    proportions: Sequence[float] = (1.0,),
     seed: int = 42,
+    control: Optional[pd.DataFrame] = None,
+    gene_sets: GeneSetSpec = None,
+    evaluator_seed: Optional[int] = None,
 ) -> Dict[str, List[LinkabilityEvaluator]]:
     """Evaluate linkability risk between gene expression and clinical features.
 
     The attack attempts to link two disjoint attribute sets of the same
-    patient — clinical variables and a randomly sampled subset of gene
-    expression features — using the synthetic dataset as a bridge.
+    patient (the clinical variables, and the genes of one knowledge level) using the
+    synthetic dataset as a bridge.
 
     Args:
         ori: Original dataset.
@@ -40,51 +52,42 @@ def eval_linkability_genes_clinical(
             transcriptomic (gene) features. If ``None``, uses all remaining
             columns not in ``clinical_cols``.
         n_neighbors: Number of nearest neighbors for the linkability attack.
-        proportions: Fractions of gene columns to sample for the attack.
-        seed: Random seed for gene column sampling.
+        proportions: Fractions of gene columns known by the attacker.
+        seed: Seed of the gene sampling (reset at every knowledge level).
+        control: Optional dataset of patients not used to train the generators, with the
+            columns of ``ori``; enables the residual risk. The number of attacks is then
+            bounded by its size.
+        gene_sets: Optional named gene sets evaluated before the fractions: a path to a
+            ``.gmt`` file or a mapping such as ``{"FGES": [...]}``.
+        evaluator_seed: Seed of the draw of the target records, set before every
+            evaluation; ``None`` uses ``seed``. It matters when ``control`` has fewer
+            records than ``ori``, so that only part of the original records are attacked.
 
     Returns:
         Mapping from dataset name to a list of evaluated
-        ``LinkabilityEvaluator`` instances (one per proportion).
+        ``LinkabilityEvaluator`` instances, one per knowledge level (gene sets first,
+        then ``proportions``).
     """
+    clinical, genes = resolve_columns(ori.columns, clinical_cols, transcriptomic_cols)
+    levels = knowledge_levels(clinical, genes, proportions, gene_sets, seed)
+    n_attacks = n_record_attacks(ori, control)
+
     results: Dict[str, List[LinkabilityEvaluator]] = {}
-
-    all_columns = ori.columns.tolist()
-
-    # Resolve clinical columns (convert indices to names if needed)
-    if clinical_cols and isinstance(clinical_cols[0], int):
-        clinical_col_names = [all_columns[i] for i in clinical_cols]
-    else:
-        clinical_col_names = list(clinical_cols)
-
-    # Resolve transcriptomic columns
-    if transcriptomic_cols is not None:
-        if isinstance(transcriptomic_cols[0], int):
-            genes_cols = [all_columns[i] for i in transcriptomic_cols]
-        else:
-            genes_cols = list(transcriptomic_cols)
-    else:
-        genes_cols = [col for col in all_columns if col not in clinical_col_names]
-
     for syn_name, syn_df in syns.items():
-        random.seed(seed)
         risks: List[LinkabilityEvaluator] = []
-
-        for p in proportions:
-            n = int(len(genes_cols) * p)
-            sampled_genes = random.sample(genes_cols, n)
-            aux_cols = (clinical_col_names, sampled_genes)
-
+        for _, cols in levels:
+            o, s, c = subset_frames(ori, syn_df, control, cols)
             evaluator = LinkabilityEvaluator(
-                ori=ori,
-                syn=syn_df,
-                n_attacks=ori.shape[0],
-                aux_cols=aux_cols,
+                ori=o,
+                syn=s,
+                n_attacks=n_attacks,
+                aux_cols=(clinical, cols[len(clinical):]),
                 n_neighbors=n_neighbors,
+                control=c,
             )
-            evaluator.evaluate(n_jobs=-2)
+            with numpy_seed(seed if evaluator_seed is None else evaluator_seed):
+                evaluator.evaluate(n_jobs=-2)
             risks.append(evaluator)
-
         results[syn_name] = risks
 
     return results

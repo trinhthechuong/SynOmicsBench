@@ -78,6 +78,10 @@ The `metrics.privacy` module provides tools to assess the likelihood of privacy 
 
 ::: synomicsbench.metrics.privacy.inference
 
+::: synomicsbench.metrics.privacy.knowledge
+
+::: synomicsbench.metrics.privacy.risk
+
 ## Metrics: Automatic Benchmark
 
 The `metrics.autobenchmark` module orchestrates every metric dimension into a single run, producing a rank-derived meta-score and a comprehensive report.
