@@ -40,6 +40,8 @@ The `metrics.fidelity` module provides assessment tools for evaluating the distr
 
 ::: synomicsbench.metrics.fidelity.PairwiseSimilarity.PairwiseSimilarity
 
+::: synomicsbench.metrics.fidelity.NetworkPreservation
+
 ::: synomicsbench.metrics.fidelity.MissingValueSimilarity
 
 ::: synomicsbench.metrics.fidelity.BayesianComparison

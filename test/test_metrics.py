@@ -257,6 +257,69 @@ class TestMissingValueSimilarity:
 
 
 # ===========================================================================
+# Fidelity — NetworkPreservation (WGCNA through rpy2)
+# ===========================================================================
+
+
+def _wgcna_available() -> bool:
+    try:
+        from rpy2.robjects.packages import isinstalled
+
+        return bool(isinstalled("WGCNA"))
+    except Exception:
+        return False
+
+
+class TestNetworkPreservation:
+    @pytest.fixture
+    def expr(self):
+        rng = np.random.default_rng(4)
+        n, g = 40, 120
+        latent = rng.normal(size=(n, 3))
+        loadings = rng.normal(size=(3, g)) * (rng.random(g) < 0.6)
+        values = latent @ loadings + rng.normal(scale=0.5, size=(n, g))
+        return pd.DataFrame(values, columns=[f"G{i}" for i in range(g)])
+
+    def test_quantile_normalisation_gives_equal_distributions(self, expr):
+        from synomicsbench.metrics.fidelity.NetworkPreservation import quantile_normalize_samples
+
+        q = quantile_normalize_samples(expr)
+        sorted_rows = np.sort(q.values, axis=1)
+        np.testing.assert_allclose(sorted_rows, np.broadcast_to(sorted_rows[0], sorted_rows.shape))
+        # ranks within each sample are kept
+        assert (q.rank(axis=1).values == expr.rank(axis=1).values).all()
+
+    def test_reference_gene_space(self, expr, tmp_path):
+        from synomicsbench.metrics.fidelity.NetworkPreservation import NetworkPreservation
+
+        data = expr.assign(dup=expr["G0"], const=1.0)
+        npres = NetworkPreservation(output_dir=str(tmp_path), n_genes=50)
+        ref = npres.prepare_reference(data)
+        assert ref.shape == (40, 50)
+        assert "const" not in npres.genes and not ("dup" in npres.genes and "G0" in npres.genes)
+
+        syn = expr.copy()
+        syn["G1"] = 0.0                       # a constant gene keeps its place in the gene space
+        syn.iloc[0, 2] = np.inf
+        out = npres.prepare_synthetic(syn)
+        assert list(out.columns) == npres.genes
+        assert np.isfinite(out.values).all()
+        with pytest.raises(ValueError, match="reference genes are absent"):
+            npres.prepare_synthetic(syn.drop(columns=npres.genes[0]))
+
+    @pytest.mark.skipif(not _wgcna_available(), reason="R package WGCNA not available")
+    def test_self_comparison_is_perfect(self, expr, tmp_path):
+        from synomicsbench.metrics.fidelity.NetworkPreservation import NetworkPreservation
+
+        npres = NetworkPreservation(output_dir=str(tmp_path), n_permutations=10, threads=1)
+        npres.build_reference(expr)
+        scores = npres.evaluate({"copy": expr.copy()})
+        assert scores.loc["copy", "Zsummary_norm"] == pytest.approx(1.0)
+        assert scores.loc["copy", "ARI"] == pytest.approx(1.0)
+        assert scores.loc["copy", "TPR"] == pytest.approx(1.0)
+
+
+# ===========================================================================
 # Narrow Utility — GCSAnalyzer (DGE)
 # ===========================================================================
 

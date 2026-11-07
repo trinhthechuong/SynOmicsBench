@@ -134,3 +134,43 @@ fig, axes, mean_by_cancer = plot_violin_grid_by_cancer(
 )
 ```
 ![Similarity](../assets/figures/univariate_example.png)
+---
+
+## Co-expression Network Preservation
+
+Univariate and bivariate similarity do not tell whether the systems-level organization of the transcriptome survives synthesis. `NetworkPreservation` builds a weighted gene co-expression network (WGCNA) on the original data and uses it as the reference for every synthetic dataset.
+
+The network uses the `n_genes` (default 10,000) genes with the largest median absolute deviation, after removing identical and constant genes; every matrix is quantile-normalised across samples. The network is a signed hybrid network with biweight midcorrelation; the soft-thresholding power is chosen on the original data (best scale-free fit among the powers keeping a mean connectivity of at least 10) and reused for the synthetic data.
+
+### Metrics
+
+| Metric | Definition |
+|---|---|
+| `Zsummary_norm` | Median Z-summary of module preservation (WGCNA `modulePreservation`, original network as reference) over the reference modules (grey and gold excluded), divided by the median Z-summary of the original data compared with itself, truncated to [0, 1]. 1 = modules preserved as well as in the original data. |
+| `ARI` | Adjusted Rand index between the reference modules and the modules of a network built on the synthetic data with the reference power. |
+| `TPR` | Fraction of the reference's strongest edges (top 5% of gene pairs by topological overlap) also among the synthetic network's top 5%. Both edge sets have the same size, so precision, recall and F1 coincide; chance level is 0.05. |
+
+The raw median Z-summary depends on module sizes and sample size; dividing by the original data's own preservation puts the cohorts on a common 0–1 scale (`median_Zsummary` is reported as well). Z < 2 means no evidence and Z > 10 strong evidence of preservation.
+
+### Code Example
+
+WGCNA runs in R through rpy2: R and its `WGCNA` package must be installed.
+
+```python
+from synomicsbench.metrics.fidelity.NetworkPreservation import NetworkPreservation
+
+# samples x genes; TPM-like values here, hence log_transform=True (clip(0), log2(x + 1) and a
+# detection filter); pass log-scale data with log_transform=False
+npres = NetworkPreservation(output_dir="network", n_genes=10_000, n_permutations=200,
+                            log_transform=True, threads=8)
+npres.build_reference(original[gene_cols])
+
+scores = npres.evaluate(
+    {"Gaussian Copula": gc[gene_cols], "CTGAN": ctgan[gene_cols]},
+    metrics=["Zsummary_norm", "ARI", "TPR"],   # or a single name
+)
+
+# Z-summary of every reference module (columns, largest first) in every synthetic dataset;
+# the colour scale is centred on Z = 10
+fig, module_table = npres.plot_module_heatmap()
+```
