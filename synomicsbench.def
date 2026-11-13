@@ -1,10 +1,14 @@
 Bootstrap: docker
-From: ubuntu:24.04
+# Ubuntu 24.04 with CA certificates, so that apt can fetch over HTTPS from the start
+From: buildpack-deps:noble-curl
 
 %post
     # Setup NOW variable
     NOW=`date`
     echo "export NOW=\"${NOW}\"" >> $SINGULARITY_ENVIRONMENT
+
+    # Fetch Ubuntu packages over HTTPS, for build hosts without outbound HTTP
+    sed -i 's|http://|https://|g' /etc/apt/sources.list.d/ubuntu.sources
 
     # Base OS dependencies (no VS Code, no conda/miniforge)
     apt-get update
@@ -73,7 +77,7 @@ From: ubuntu:24.04
     export PATH=/usr/local/bin:$PATH
     uv python install 3.12
     uv venv /opt/synomicsbench-env --python 3.12
-    uv pip install --python /opt/synomicsbench-env/bin/python --no-binary rpy2-rinterface "synomicsbench==1.2.0"
+    uv pip install --python /opt/synomicsbench-env/bin/python --no-binary rpy2-rinterface "synomicsbench==1.2.0.post1"
 
 %environment
     export BIN=/binary
@@ -99,7 +103,7 @@ From: ubuntu:24.04
 
 %labels
     Author The-Chuong TRINH
-    Version 1.2.0
+    Version 1.2.0.post1
 
 %help
     Generic container for managing Python (via uv-managed Python versions) and R 4.4.1, suitable for SynOmics workflows.
