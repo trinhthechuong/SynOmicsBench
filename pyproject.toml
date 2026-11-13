@@ -1,17 +1,22 @@
 [project]
 name = "synomicsbench"
-version = "1.1.0"
+version = "1.2.0"
 # description = "Add your description here"
 readme = "README-pypi.md"
 requires-python = ">=3.12"
 dependencies = [
+    # category-encoders, icecream, tomli and tomli-w are imported by the TabDiff sources
+    # vendored under synomicsbench/third_party/tabdiff, pinned to the versions that
+    # generated the published TabDiff data.
     "anonymeter>=1.0.0",
     "baycomp>=1.0.3",
+    "category-encoders==2.10.0",
     "codecarbon>=3.2.5",
     "copulas>=0.12.0",
     "ctgan>=0.10.2",
     "deptry>=0.25.1",
     "gseapy>=1.1.12",
+    "icecream==2.2.0",
     "ipykernel>=7.2.0",
     "joblib>=1.5.3",
     "jupyter>=1.1.1",
@@ -39,18 +44,10 @@ dependencies = [
     "sdv>=1.18.0",
     "seaborn>=0.13.2",
     "statsmodels>=0.14.6",
-    "torch>=2.8.0",
-    "tqdm>=4.67.3",
-]
-
-[project.optional-dependencies]
-# Imported by the TabDiff sources vendored under synomicsbench/third_party/tabdiff.
-# Pinned to the versions that generated the published TabDiff data.
-tabdiff = [
-    "category-encoders==2.10.0",
-    "icecream==2.2.0",
     "tomli==2.4.0",
     "tomli-w==1.2.0",
+    "torch>=2.8.0",
+    "tqdm>=4.67.3",
 ]
 
 [tool.uv]

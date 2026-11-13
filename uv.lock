@@ -3627,16 +3627,18 @@ wheels = [
 
 [[package]]
 name = "synomicsbench"
-version = "1.1.0"
+version = "1.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "anonymeter", marker = "python_full_version < '3.13'" },
     { name = "baycomp", marker = "python_full_version < '3.13'" },
+    { name = "category-encoders", marker = "python_full_version < '3.13'" },
     { name = "codecarbon", marker = "python_full_version < '3.13'" },
     { name = "copulas", marker = "python_full_version < '3.13'" },
     { name = "ctgan", marker = "python_full_version < '3.13'" },
     { name = "deptry", marker = "python_full_version < '3.13'" },
     { name = "gseapy", marker = "python_full_version < '3.13'" },
+    { name = "icecream", marker = "python_full_version < '3.13'" },
     { name = "ipykernel", marker = "python_full_version < '3.13'" },
     { name = "joblib", marker = "python_full_version < '3.13'" },
     { name = "jupyter", marker = "python_full_version < '3.13'" },
@@ -3664,29 +3666,23 @@ dependencies = [
     { name = "sdv", marker = "python_full_version < '3.13'" },
     { name = "seaborn", marker = "python_full_version < '3.13'" },
     { name = "statsmodels", marker = "python_full_version < '3.13'" },
-    { name = "torch", marker = "python_full_version < '3.13'" },
-    { name = "tqdm", marker = "python_full_version < '3.13'" },
-]
-
-[package.optional-dependencies]
-tabdiff = [
-    { name = "category-encoders", marker = "python_full_version < '3.13'" },
-    { name = "icecream", marker = "python_full_version < '3.13'" },
     { name = "tomli", marker = "python_full_version < '3.13'" },
     { name = "tomli-w", marker = "python_full_version < '3.13'" },
+    { name = "torch", marker = "python_full_version < '3.13'" },
+    { name = "tqdm", marker = "python_full_version < '3.13'" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "anonymeter", specifier = ">=1.0.0" },
     { name = "baycomp", specifier = ">=1.0.3" },
-    { name = "category-encoders", marker = "extra == 'tabdiff'", specifier = "==2.10.0" },
+    { name = "category-encoders", specifier = "==2.10.0" },
     { name = "codecarbon", specifier = ">=3.2.5" },
     { name = "copulas", specifier = ">=0.12.0" },
     { name = "ctgan", specifier = ">=0.10.2" },
     { name = "deptry", specifier = ">=0.25.1" },
     { name = "gseapy", specifier = ">=1.1.12" },
-    { name = "icecream", marker = "extra == 'tabdiff'", specifier = "==2.2.0" },
+    { name = "icecream", specifier = "==2.2.0" },
     { name = "ipykernel", specifier = ">=7.2.0" },
     { name = "joblib", specifier = ">=1.5.3" },
     { name = "jupyter", specifier = ">=1.1.1" },
@@ -3714,12 +3710,11 @@ requires-dist = [
     { name = "sdv", specifier = ">=1.18.0" },
     { name = "seaborn", specifier = ">=0.13.2" },
     { name = "statsmodels", specifier = ">=0.14.6" },
-    { name = "tomli", marker = "extra == 'tabdiff'", specifier = "==2.4.0" },
-    { name = "tomli-w", marker = "extra == 'tabdiff'", specifier = "==1.2.0" },
+    { name = "tomli", specifier = "==2.4.0" },
+    { name = "tomli-w", specifier = "==1.2.0" },
     { name = "torch", specifier = ">=2.8.0" },
     { name = "tqdm", specifier = ">=4.67.3" },
 ]
-provides-extras = ["tabdiff"]
 
 [[package]]
 name = "terminado"

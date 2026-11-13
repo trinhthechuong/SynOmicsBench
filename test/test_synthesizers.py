@@ -291,12 +291,7 @@ def _tabdiff_files():
 
 
 class TestTabDiffSynthesizer:
-    """Tests for TabDiffsynthesizer class (needs the ``tabdiff`` extra)."""
-
-    @pytest.fixture(autouse=True)
-    def _requires_tabdiff_extra(self):
-        for module in ("icecream", "category_encoders", "tomli", "tomli_w"):
-            pytest.importorskip(module)
+    """Tests for TabDiffsynthesizer class."""
 
     def _generate(self, output_path, data, metadata, **fit_params):
         from synomicsbench.synthesizer.TabDiffsynthesizer import TabDiffsynthesizer
@@ -329,6 +324,17 @@ class TestTabDiffSynthesizer:
         with pytest.raises(ValueError, match="pass only one"):
             synth.fit(tabdiff_data, seed=0, epochs=2, cuda=False,
                       config_overrides={"train": {"main": {"steps": 3}}})
+
+    def test_periodic_eval_off_by_default(self, tmp_path, tabdiff_data, tabdiff_metadata):
+        from synomicsbench.synthesizer.TabDiffsynthesizer import TabDiffsynthesizer
+
+        synth = TabDiffsynthesizer(output_path=str(tmp_path / "off"), metadata=tabdiff_metadata)
+        synth.fit(tabdiff_data, seed=0, epochs=2, cuda=False)
+        assert synth.config["train"]["main"]["check_val_every"] == 3
+
+        synth = TabDiffsynthesizer(output_path=str(tmp_path / "on"), metadata=tabdiff_metadata)
+        synth.fit(tabdiff_data, seed=0, epochs=2, cuda=False, periodic_eval=True)
+        assert "train.main.check_val_every" not in synth.config_overrides_applied
 
     def test_resumed_run_matches_uninterrupted_run(self, tmp_path, tabdiff_data, tabdiff_metadata):
         import time

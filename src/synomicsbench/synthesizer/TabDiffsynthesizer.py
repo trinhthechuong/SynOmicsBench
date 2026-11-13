@@ -12,8 +12,7 @@ shape as ``CTGANsynthesizer`` / ``TVAEsynthesizer``::
 
 The TabDiff sources ship with this package, unmodified, under
 ``synomicsbench/third_party/tabdiff`` (commit ``5ecdb33``, see ``VENDORED.md`` there). Every
-adaptation is applied at run time by this module. Its extra dependencies are installed with
-``pip install "synomicsbench[tabdiff]"``.
+adaptation is applied at run time by this module.
 
 Every hyperparameter comes from TabDiff's own ``tabdiff/configs/tabdiff_configs.toml``, read at
 fit time and never written. The construction sequence mirrors TabDiff's ``tabdiff/main.py``,
@@ -38,9 +37,10 @@ hyperparameter, and ``main.py`` passes all three the same way:
     The wandb run is replaced by ``_EpochLog``, which writes the per-epoch training curve to
     ``train_log.csv`` in the output directory.
 
-``check_val_every`` keeps its shipped value of 2,000 unless overridden. With the no-op metrics the
-periodic evaluation still saves both models and samples a full synthetic cohort from each, so
-long runs usually set it past the last epoch through ``config_overrides``.
+TabDiff's periodic evaluation (every ``check_val_every`` epochs, 2,000 as shipped) saves both
+models and samples a full synthetic cohort from each. With the no-op metrics nothing uses them, so
+``fit`` sets ``check_val_every`` past the last epoch unless ``periodic_eval=True`` or
+``config_overrides`` sets it. Training itself is unchanged.
 """
 
 from __future__ import annotations
@@ -48,7 +48,6 @@ from __future__ import annotations
 import contextlib
 import copy
 import importlib
-import importlib.util
 import json
 import os
 import random
@@ -68,7 +67,6 @@ TABDIFF_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 
 # Top-level names the vendored TabDiff code imports itself under.
 _TABDIFF_MODULES = ("src", "tabdiff", "utils_train", "process_dataset")
-_EXTRA_DEPENDENCIES = ("icecream", "category_encoders", "tomli", "tomli_w")
 
 
 def _prepare_tabdiff_imports() -> None:
@@ -78,10 +76,6 @@ def _prepare_tabdiff_imports() -> None:
     ``from tabdiff.trainer import Trainer``). If a different module with one of those names is
     already imported, Python would hand that one back, so it is reported instead of used.
     """
-    missing = [name for name in _EXTRA_DEPENDENCIES if importlib.util.find_spec(name) is None]
-    if missing:
-        raise ImportError(f"TabDiff needs {missing}. Install them with "
-                          f"pip install \"synomicsbench[tabdiff]\"")
     for name in _TABDIFF_MODULES:
         module = sys.modules.get(name)
         if module is None:
@@ -589,6 +583,7 @@ class TabDiffsynthesizer(BaseSynthesizer):
             cuda: bool = True, use_sdpa: bool = True, target: Optional[str] = None,
             n_samples: Optional[int] = None,
             config_overrides: Optional[Dict[str, Dict[str, Any]]] = None,
+            periodic_eval: bool = False,
             ema_loss_every: int = 1, checkpoint_every: int = 0,
             deadline: Optional[float] = None, **kwargs) -> None:
         """Stage the data, then train TabDiff with its default configuration.
@@ -612,9 +607,13 @@ class TabDiffsynthesizer(BaseSynthesizer):
             n_samples (int, optional): Rows to be generated later; sets the sampling chunk size.
                 Defaults to the number of training rows.
             config_overrides (dict, optional): Nested dict of deviations from
-                ``tabdiff_configs.toml``, e.g. ``{"train": {"main": {"check_val_every": 3001}}}``.
+                ``tabdiff_configs.toml``, e.g. ``{"train": {"main": {"lr": 1e-3}}}``.
                 A wrong path raises with the valid alternatives. Every override applied is
                 logged and recorded in ``self.config_overrides_applied``.
+            periodic_eval (bool): Run TabDiff's periodic evaluation every ``check_val_every``
+                epochs (saves both models and samples a cohort from each). Off by default:
+                ``check_val_every`` is set past the last epoch. A ``check_val_every`` in
+                ``config_overrides`` takes precedence.
             ema_loss_every (int): Evaluate the EMA model's loss every this many epochs (and on
                 the last) instead of every epoch. ``Trainer`` spends one extra forward pass over
                 the whole cohort per epoch on it and only uses it for the best-EMA checkpoint
@@ -696,6 +695,10 @@ class TabDiffsynthesizer(BaseSynthesizer):
             # --- config: every value as shipped, file untouched ---
             cfg = src.load_config(os.path.join(TABDIFF_DIR, "tabdiff", "configs",
                                                "tabdiff_configs.toml"))
+            main_overrides = config_overrides.setdefault("train", {}).setdefault("main", {})
+            if not periodic_eval and "check_val_every" not in main_overrides:
+                steps = main_overrides.get("steps", cfg["train"]["main"]["steps"])
+                main_overrides["check_val_every"] = int(steps) + 1
             self.config_overrides_applied = {}
             _apply_overrides(cfg, config_overrides, self.config_overrides_applied)
             if self.config_overrides_applied:
