@@ -38,7 +38,7 @@ jobs:
         run: uv sync --all-extras --dev
 
       - name: Lint with ruff
-        run: uvx ruff check src/synomicsbench
+        run: uvx ruff@0.15.0 check src/synomicsbench
 
       - name: Run tests
         run: uv run pytest test/ --ignore=test/test_synthesizers_integration.py -v

@@ -58,6 +58,10 @@ dependencies = [
 # `requires-python` above stays permissive for downstream users.
 environments = ["python_full_version >= '3.12' and python_full_version < '3.13'"]
 
+[tool.ruff]
+# Vendored third-party sources are kept as published upstream and are not linted.
+extend-exclude = ["src/synomicsbench/third_party"]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

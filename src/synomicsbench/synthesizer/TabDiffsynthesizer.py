@@ -420,8 +420,6 @@ def _sdpa_attention_forward(self, x_q, x_kv, key_compression=None, value_compres
     L = 18,814, the output agrees to a relative 6.2e-06 and the input and weight gradients to
     1.7e-06, i.e. float32 summation epsilon.
     """
-    import math
-
     import torch.nn.functional as F
 
     q, k, v = self.W_q(x_q), self.W_k(x_kv), self.W_v(x_kv)
