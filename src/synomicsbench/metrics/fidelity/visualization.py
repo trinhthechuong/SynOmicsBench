@@ -45,13 +45,15 @@ STABILITY_PLOT_COLORS = {
 
 
 DATASET_COLORS = {
-    "Avatars K5": "#66c2a5",         # greenish
+    "Avatars": "#66c2a5",            # greenish
+    "Avatars K5": "#66c2a5",         # greenish (same method as "Avatars")
     "Avatars K10": "#fc8d62",        # orange
     "CTGAN": "#8da0cb",              # blue
     "Gaussian Copula": "#e78ac3",    # pink
     "Synthpop": "#a6d854",           # lime
     "TVAE": "#ffd92f",               # yellow
     "Diffusion": "#e5c494",          # tan
+    "TabDiff": "#e5c494",            # tan (same method as "Diffusion")
 }
 
 

@@ -1,32 +1,33 @@
 """
 Automatic benchmark for synthetic data generation (SDG).
 
-Given the original data and a list of synthetic datasets, run all metric
-dimensions in one pass (statistical fidelity, biological utility and
-privacy), aggregate a rank-derived meta-score, and emit a comprehensive report
-plus the weighted composite figure — replacing the manual, per-metric-then-
-aggregate workflow while staying numerically consistent with it.
+Given the original data and synthetic datasets, compute the selected metrics of the three
+pillars (statistical fidelity, biological utility, privacy), rank the datasets into the
+rank-derived meta-score, test its sensitivity to the pillar weights, and write a
+self-contained report.
 
 Example
 -------
->>> from synomicsbench.metrics.autobenchmark import BenchmarkConfig, BenchmarkRunner, write_report
->>> config = BenchmarkConfig(metadata="metadata.json", gene_set="h.all.gmt",
-...                          output_dir="results", cibersortx_dir="cibersort",
-...                          privacy_pickle_dir="Privacy", network_csv="network.csv")
->>> runner = BenchmarkRunner(config)
->>> result = runner.run("original_data.csv",
-...                     [{"method": "Gaussian Copula", "seed": 42, "data": "gaussiancopula_42.csv"}])
->>> write_report(result, config)
+>>> from synomicsbench.metrics.autobenchmark import run_benchmark
+>>> res = run_benchmark("original.csv", "synthetic/", metrics="all",
+...                     cibersortx="cibersortx/", output_dir="benchmark")
+>>> res.ranking          # meta-score per method, best first
+>>> res.report_html      # path of the HTML report
 """
 
-from .config import BenchmarkConfig, NAME_MAP, ALL_DIMS, BROAD_DIMS, NARROW_DIMS, PRIVACY_DIMS, PILLARS
-from .runner import BenchmarkRunner, BenchmarkResult
+from .config import (BenchmarkConfig, NAME_MAP, ALL_DIMS, BROAD_DIMS, NARROW_DIMS, PRIVACY_DIMS, PILLARS,
+                     LOWER_IS_BETTER, METRICS, METRIC_GROUPS, SCENARIOS, SCENARIO_DESCRIPTIONS, HALLMARK_GMT,
+                     resolve_metrics)
+from synomicsbench.metrics.privacy.knowledge import FGES_GMT
+from .runner import BenchmarkRunner, BenchmarkResult, run_benchmark
 from .runners import Candidate
 from .report import write_report
 from .html_report import write_html_report
-from .metascore import build_metascore, plot_weighted_composite_scores, COMPONENT_COLORS
+from .metascore import (build_metascore, composite_scores, pillar_scores, scenario_table, weight_sweep,
+                        plot_weighted_composite_scores, COMPONENT_COLORS)
 
 __all__ = [
+    "run_benchmark",
     "BenchmarkConfig",
     "BenchmarkRunner",
     "BenchmarkResult",
@@ -34,12 +35,24 @@ __all__ = [
     "write_report",
     "write_html_report",
     "build_metascore",
+    "composite_scores",
+    "pillar_scores",
+    "scenario_table",
+    "weight_sweep",
     "plot_weighted_composite_scores",
+    "resolve_metrics",
     "COMPONENT_COLORS",
     "NAME_MAP",
+    "METRICS",
+    "METRIC_GROUPS",
+    "SCENARIOS",
+    "HALLMARK_GMT",
+    "FGES_GMT",
+    "SCENARIO_DESCRIPTIONS",
     "ALL_DIMS",
     "BROAD_DIMS",
     "NARROW_DIMS",
     "PRIVACY_DIMS",
     "PILLARS",
+    "LOWER_IS_BETTER",
 ]

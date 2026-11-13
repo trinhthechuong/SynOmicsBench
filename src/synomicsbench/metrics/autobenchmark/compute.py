@@ -67,7 +67,7 @@ def build_gene_matrix(df: pd.DataFrame, gene_cols: Sequence[str]) -> pd.DataFram
 
 
 # ---------------------------------------------------------------------------
-# DGE (differential gene expression) — Wilcoxon rank-sum + BH-FDR + Log2FC
+# DGE (differential gene expression): Wilcoxon rank-sum + BH-FDR + Log2FC
 # ---------------------------------------------------------------------------
 
 def dge_analysis(
@@ -76,8 +76,14 @@ def dge_analysis(
     phenotypes: Dict[str, Iterable[Any]],
     id_col: str,
     n_jobs: int = -1,
+    log_transformed: bool = False,
 ) -> pd.DataFrame:
     """Per-gene differential expression (Wilcoxon rank-sum), ported from DGE.py.
+
+    With ``log_transformed=True`` the values are already on a log2 scale and Log2FC is the
+    difference of the group means (``mean_a - mean_b``), the fold change of log-scale data.
+    Otherwise the values are on a linear scale and Log2FC is ``log2(mean_a / mean_b)``, which
+    needs both group means to be positive.
 
     Returns a table with columns ``[Gene, P_value, Log2FC, Q_value, Status]`` in the
     same row order as ``gene_expressions``.
@@ -160,6 +166,15 @@ def dge_analysis(
                 p = np.nan
             mean_a = float(np.nanmean(a_finite)) if a_finite.size else np.nan
             mean_b = float(np.nanmean(b_finite)) if b_finite.size else np.nan
+            if log_transformed:
+                if not np.isfinite(mean_a) or not np.isfinite(mean_b):
+                    status = ["FC_nan"]
+                    if np.isnan(p):
+                        status.append("p_nan")
+                    return (p if np.isfinite(p) else np.nan), np.nan, ";".join(status)
+                log2fc = mean_a - mean_b
+                status = ["ok"] if (np.isfinite(p) or np.isfinite(log2fc)) else ["p_nan"]
+                return (p if np.isfinite(p) else np.nan), log2fc, ";".join(status)
             if not np.isfinite(mean_a) or not np.isfinite(mean_b) or mean_a <= 0 or mean_b <= 0:
                 status = []
                 if not np.isfinite(mean_a) or not np.isfinite(mean_b):
@@ -220,7 +235,7 @@ def dge_analysis(
 
 
 # ---------------------------------------------------------------------------
-# GSEA (pre-ranked) — recycled from GSEA_CRPR_PD.ipynb
+# GSEA (pre-ranked), as in GSEA_CRPR_PD.ipynb
 # ---------------------------------------------------------------------------
 
 def gsea_prerank(
@@ -291,7 +306,7 @@ def _standardize_gsea_columns(res: pd.DataFrame) -> pd.DataFrame:
 
 
 # ---------------------------------------------------------------------------
-# ssGSEA — recycled from ssGSEA_CRPR_PD.ipynb
+# ssGSEA, as in ssGSEA_CRPR_PD.ipynb
 # ---------------------------------------------------------------------------
 
 def ssgsea_scores(

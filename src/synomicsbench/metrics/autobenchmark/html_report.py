@@ -1,412 +1,680 @@
 """
-Self-contained HTML report for the automatic benchmark.
+Self-contained HTML report of the automatic benchmark.
 
-Produces a single ``report.html`` (inline CSS, figures embedded as base64 PNGs —
-no external/CDN dependencies) that walks the reader through a clear narrative:
+``report.html`` has no external dependency (inline CSS, SVG and JavaScript) and follows the
+SynOmicsBench documentation style. It reads from the summary to the detail:
 
-    per dimension  ->  per pillar  ->  overall meta-rank
+1. the ranking by meta-score, with each pillar's share of the score;
+2. the sensitivity of the ranking to the pillar weights: the ranks under the weighting
+   scenarios (``config.scenarios``) and an interactive weight triangle that shows the
+   weights and the ranking at the pointer;
+3. the value and the rank-derived score of every metric;
+4. how the meta-score is computed.
 
-with a color-coded table at each level for transparency. The page is generic
-(labels derived from the inputs), so it suits any cohort/method set — not tailored
-to any particular study.
-
-Design choices follow the dataviz guidance:
-- method identity uses the established categorical palette ``DATASET_COLORS``;
-- ranks use a diverging green->gray->red map (two hues + neutral gray midpoint,
-  not a rainbow), rank 1 = green (best);
-- legends are always shown for >=2 series; grids are recessive; exact numbers live
-  in the tables, not only in the figures.
+The triangle and the scenario chart are computed in the browser from the unweighted pillar
+scores, since the meta-score is their weighted sum.
 """
 
 from __future__ import annotations
 
-import base64
 import html
-import io
+import json
 import os
+from datetime import date
 from typing import Dict, List
 
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-from matplotlib.colors import LinearSegmentedColormap
 
 from synomicsbench.metrics.fidelity.visualization import DATASET_COLORS
-from .config import BenchmarkConfig, ALL_DIMS, PILLARS
-from .metascore import COMPONENT_COLORS, plot_weighted_composite_scores
+from .config import BenchmarkConfig, ALL_DIMS, LOWER_IS_BETTER, PILLARS, SCENARIO_DESCRIPTIONS
+from .metascore import pillar_scores
+
+#: Display name of each dimension in the report.
+METRIC_LABELS = {
+    "Univariate": "Univariate similarity",
+    "Bivariate": "Bivariate similarity",
+    "Network Preservation": "Network preservation",
+    "DGE": "F1-GCS (DGE)",
+    "GSEA": "F1-PCS (GSEA)",
+    "ssGSEA": "ssGSEA",
+    "Cell Deconvolution": "Cell deconvolution",
+    "Survival Analysis": "Survival score",
+    "Singling-out (uni)": "Singling out, univariate",
+    "Singling-out (multi)": "Singling out, multivariate",
+    "Linkability": "Linkability",
+    "Inference": "Attribute inference",
+}
+PILLAR_KEYS = {"Statistical fidelity": "stat", "Biological utility": "bio", "Privacy": "priv"}
+FALLBACK_COLORS = ["#4e79a7", "#f28e2b", "#59a14f", "#b07aa1", "#9c755f", "#76b7b2", "#edc948", "#ff9da7"]
 
 
-# Diverging rank colormap: rank 1 (best) = green, midpoint = neutral gray, worst = red.
-RANK_CMAP = LinearSegmentedColormap.from_list(
-    "rank_good_bad", ["#1a9850", "#f0f0f0", "#d73027"]
-)
-INK = "#1f2933"
-MUTED = "#66727f"
-SURFACE = "#ffffff"
-PANEL = "#f7f9fb"
-BORDER = "#e3e8ee"
+def _esc(x) -> str:
+    return html.escape(str(x))
 
 
-# ---------------------------------------------------------------------------
-# figure helpers
-# ---------------------------------------------------------------------------
-
-def _fig_to_base64(fig, dpi: int = 150) -> str:
-    """Serialize a matplotlib figure to a base64 PNG data URI, then close it."""
-    buf = io.BytesIO()
-    fig.savefig(buf, format="png", dpi=dpi, bbox_inches="tight", facecolor="white")
-    plt.close(fig)
-    buf.seek(0)
-    return "data:image/png;base64," + base64.b64encode(buf.read()).decode("ascii")
-
-
-def _method_order(result, config: BenchmarkConfig) -> List[str]:
-    present = list(result.value_table.index) if not result.value_table.empty else []
-    ordered = [m for m in config.name_map if m in present]
-    return ordered + [m for m in present if m not in ordered]
-
-
-def _rank_heatmap_fig(rank_table: pd.DataFrame, methods: List[str], n_candidates: int):
-    dims = [d for d in ALL_DIMS if d in rank_table.columns]
-    mat = rank_table.loc[methods, dims].to_numpy(dtype=float)
-    n = len(methods)
-    fig, ax = plt.subplots(figsize=(1.15 * len(dims) + 2.2, 0.62 * n + 1.4))
-    ax.imshow((mat - 1) / max(n_candidates - 1, 1), cmap=RANK_CMAP, vmin=0, vmax=1, aspect="auto")
-    ax.set_xticks(range(len(dims)))
-    ax.set_xticklabels(dims, rotation=35, ha="right", fontsize=9, color=INK)
-    ax.set_yticks(range(n))
-    ax.set_yticklabels(methods, fontsize=9, color=INK)
-    for i in range(n):
-        for j in range(len(dims)):
-            v = mat[i, j]
-            ax.text(j, i, f"{v:.1f}" if v % 1 else f"{int(v)}", ha="center", va="center",
-                    fontsize=9, color="#1a1a1a", fontweight="bold")
-    ax.set_xticks(np.arange(-0.5, len(dims), 1), minor=True)
-    ax.set_yticks(np.arange(-0.5, n, 1), minor=True)
-    ax.grid(which="minor", color="white", linewidth=2)
-    ax.tick_params(which="both", length=0)
-    for s in ax.spines.values():
-        s.set_visible(False)
-    ax.set_title("Mean rank per dimension  (1 = best, green)", fontsize=11,
-                 color=INK, fontweight="bold", pad=10)
-    fig.tight_layout()
-    return fig
-
-
-def _per_metric_bars_fig(value_table: pd.DataFrame, methods: List[str]):
-    dims = [d for d in ALL_DIMS if d in value_table.columns]
-    x = np.arange(len(dims))
-    n = len(methods)
-    width = 0.8 / max(n, 1)
-    fig, ax = plt.subplots(figsize=(1.5 * len(dims) + 1, 4.6))
-    for i, m in enumerate(methods):
-        ax.bar(x + i * width, value_table.loc[m, dims].to_numpy(dtype=float), width,
-               label=m, color=DATASET_COLORS.get(m, "#9aa5b1"), edgecolor="white", linewidth=0.8)
-    ax.set_xticks(x + width * (n - 1) / 2)
-    ax.set_xticklabels(dims, rotation=30, ha="right", fontsize=9, color=INK)
-    ax.set_ylabel("Score (higher = better)", fontsize=10, color=INK)
-    ax.set_ylim(0, 1)
-    ax.legend(fontsize=8, ncol=min(n, 3), frameon=False)
-    ax.grid(axis="y", linestyle="--", alpha=0.35)
-    ax.set_axisbelow(True)
-    for sp in ("top", "right"):
-        ax.spines[sp].set_visible(False)
-    fig.tight_layout()
-    return fig
-
-
-def _radar_fig(value_table: pd.DataFrame, methods: List[str]):
-    dims = [d for d in ALL_DIMS if d in value_table.columns]
-    angles = np.linspace(0, 2 * np.pi, len(dims), endpoint=False).tolist()
-    angles += angles[:1]
-    fig, ax = plt.subplots(figsize=(6.4, 6.4), subplot_kw={"polar": True})
+def _method_colors(methods: List[str]) -> Dict[str, str]:
+    colors, k = {}, 0
     for m in methods:
-        vals = value_table.loc[m, dims].to_numpy(dtype=float).tolist()
-        vals += vals[:1]
-        color = DATASET_COLORS.get(m, "#9aa5b1")
-        ax.plot(angles, vals, color=color, linewidth=1.8, label=m)
-        ax.fill(angles, vals, color=color, alpha=0.06)
-    ax.set_xticks(angles[:-1])
-    ax.set_xticklabels(dims, fontsize=8.5, color=INK)
-    ax.set_ylim(0, 1)
-    ax.set_yticks([0.25, 0.5, 0.75, 1.0])
-    ax.set_yticklabels(["0.25", "0.50", "0.75", "1.0"], fontsize=7, color=MUTED)
-    ax.tick_params(pad=8)
-    ax.grid(color=BORDER, linewidth=0.8)
-    ax.spines["polar"].set_color(BORDER)
-    ax.set_title("All-round profile  (score 0–1, larger = better)", fontsize=11,
-                 color=INK, fontweight="bold", pad=18)
-    ax.legend(loc="upper right", bbox_to_anchor=(1.28, 1.12), fontsize=8, frameon=False)
-    fig.tight_layout()
-    return fig
-
-
-# ---------------------------------------------------------------------------
-# HTML helpers
-# ---------------------------------------------------------------------------
-
-def _chip(method: str) -> str:
-    c = DATASET_COLORS.get(method, "#9aa5b1")
-    return (f'<span style="display:inline-block;width:10px;height:10px;border-radius:50%;'
-            f'background:{c};margin-right:7px;vertical-align:middle"></span>'
-            f'<span style="vertical-align:middle">{html.escape(method)}</span>')
-
-
-def _score_bg(v: float) -> str:
-    """Subtle sequential shading for a 0..1 score (higher = deeper teal)."""
-    if not np.isfinite(v):
-        return ""
-    t = max(0.0, min(1.0, float(v)))
-    return f"background:rgba(38,132,125,{0.06 + 0.42 * t:.3f})"
+        if m in DATASET_COLORS:
+            colors[m] = DATASET_COLORS[m]
+        else:
+            colors[m] = FALLBACK_COLORS[k % len(FALLBACK_COLORS)]
+            k += 1
+    return colors
 
 
 def _fmt(v, nd=3) -> str:
-    return "" if v is None or (isinstance(v, float) and not np.isfinite(v)) else f"{v:.{nd}f}"
+    if v is None or (isinstance(v, float) and np.isnan(v)):
+        return "–"
+    return f"{v:.{nd}f}"
 
 
-def _scores_table(value_table: pd.DataFrame, methods: List[str]) -> str:
-    dims = [d for d in ALL_DIMS if d in value_table.columns]
-    head = "".join(f"<th>{html.escape(d)}</th>" for d in dims)
-    rows = []
-    for m in methods:
-        cells = "".join(
-            f'<td style="text-align:center;{_score_bg(value_table.loc[m, d])}">{_fmt(value_table.loc[m, d])}</td>'
-            for d in dims
-        )
-        rows.append(f"<tr><td class='rowhead'>{_chip(m)}</td>{cells}</tr>")
-    return _table_html("Per-metric scores (higher = better; privacy as 1 &minus; risk)", f"<th>Method</th>{head}", rows)
+def _risk_digits(values) -> int:
+    """Decimals that show small risks (e.g. 0.0014) with two significant digits."""
+    vals = [abs(v) for v in values if v is not None and not np.isnan(v) and v != 0]
+    if not vals:
+        return 3
+    return int(min(6, max(3, 1 - np.floor(np.log10(min(vals))))))
 
 
-def _pillar_table(composite: pd.DataFrame) -> str:
-    cols = [*PILLARS, "Total"]
-    head = "".join(
-        f'<th style="color:{COMPONENT_COLORS.get(c, INK)}">{html.escape(c)}</th>' for c in cols
-    )
-    df = composite.sort_values("Total")
-    rows = []
-    for m in df.index:
-        cells = "".join(f'<td style="text-align:center">{_fmt(df.loc[m, c])}</td>' for c in cols)
-        rows.append(f"<tr><td class='rowhead'>{_chip(m)}</td>{cells}</tr>")
-    return _table_html("Pillar sub-scores &amp; total (lower rank-derived score = better)",
-                       f"<th>Method</th>{head}", rows)
-
-
-def _ranking_table(composite: pd.DataFrame) -> str:
-    df = composite.sort_values("Total")
-    rows = []
-    for pos, (m, row) in enumerate(df.iterrows(), 1):
-        medal = {1: "🥇", 2: "🥈", 3: "🥉"}.get(pos, "")
-        hl = ' style="background:#eaf6ee;font-weight:600"' if pos == 1 else ""
-        rows.append(
-            f"<tr{hl}><td style='text-align:center'>{pos} {medal}</td>"
-            f"<td class='rowhead'>{_chip(m)}</td>"
-            f"<td style='text-align:center'>{_fmt(row['Total'])}</td></tr>"
-        )
-    return _table_html("Overall ranking (lower Total = more balanced)",
-                       "<th>#</th><th>Method</th><th>Total</th>", rows)
-
-
-def _table_html(caption: str, header_cells: str, rows: List[str]) -> str:
-    return (
-        f'<table><caption>{caption}</caption>'
-        f'<thead><tr>{header_cells}</tr></thead>'
-        f'<tbody>{"".join(rows)}</tbody></table>'
-    )
-
-
-def _img(src: str, alt: str) -> str:
-    return f'<img src="{src}" alt="{html.escape(alt)}" loading="lazy"/>'
+def _chip(method: str, color: str) -> str:
+    return f'<span class="chip"><i style="background:{color}"></i>{_esc(method)}</span>'
 
 
 # ---------------------------------------------------------------------------
-# main entry
+# sections
+# ---------------------------------------------------------------------------
+
+def _ranking_section(result, config, colors) -> str:
+    comp = result.composite.sort_values("Total", kind="stable")
+    pillars = [p for p in PILLARS if p in comp.columns]
+    weights = dict(zip(PILLARS, config.weights))
+    wsum = sum(weights[p] for p in pillars)
+    vmax = float(comp["Total"].max()) or 1.0
+    rows = []
+    for rank, (method, row) in enumerate(comp.iterrows(), start=1):
+        segs = "".join(
+            f'<span class="seg {PILLAR_KEYS[p]}" style="width:{100 * row[p] / vmax:.2f}%" '
+            f'title="{_esc(p)}: {row[p]:.2f}"></span>' for p in pillars)
+        rows.append(
+            f'<tr><td class="num rank">{rank}</td><td>{_chip(method, colors[method])}</td>'
+            f'<td class="num strong">{row["Total"]:.2f}</td>'
+            + "".join(f'<td class="num">{row[p]:.2f}</td>' for p in pillars)
+            + f'<td class="barcell"><div class="stack">{segs}</div></td></tr>')
+    head = ('<tr><th class="num">Rank</th><th>Method</th><th class="num">Meta-score</th>'
+            + "".join(f'<th class="num"><span class="key {PILLAR_KEYS[p]}"></span>{_esc(p)} '
+                      f'<span class="w">×{weights[p] / wsum:.2f}</span></th>' for p in pillars)
+            + "<th>Contribution of each pillar</th></tr>")
+    best = comp.index[0]
+    missing = [p for p in PILLARS if p not in pillars]
+    note = ""
+    if missing:
+        note = (f'<p class="note">No metric of {", ".join(missing)} was evaluated: the meta-score '
+                f'uses {" and ".join(pillars)}, with the weights rescaled to sum to 1.</p>')
+    return f"""
+<section id="ranking">
+  <h2>Ranking</h2>
+  <p class="lede"><strong>{_esc(best)}</strong> has the lowest meta-score
+  ({comp['Total'].iloc[0]:.2f}). The meta-score is the weighted sum of the pillar scores; a pillar
+  score is the mean rank of the method's datasets over the pillar's metrics, so lower is better.</p>
+  {note}
+  <div class="scroll"><table class="data ranking">{head}{''.join(rows)}</table></div>
+</section>"""
+
+
+def _sensitivity_section(result, config) -> str:
+    pillars = pillar_scores(result.metascore)
+    if len(pillars.columns) < 2:
+        return f"""
+<section id="sensitivity">
+  <h2>Sensitivity to the pillar weights</h2>
+  <p class="lede">Only {_esc(pillars.columns[0])} was evaluated, so the pillar weights do not change
+  the ranking.</p>
+</section>"""
+    has_all = all(p in pillars.columns for p in PILLARS)
+    triangle = ""
+    if has_all:
+        triangle = """
+  <h3>All pillar weights</h3>
+  <p>Each point of the triangle is a weighting of the three pillars (summing to 1), coloured by the
+  method ranked first. Move the pointer over the triangle, or use the sliders, to read the weights
+  and the full ranking. Circles mark the scenarios above.</p>
+  <div class="tri-wrap">
+    <figure class="tri">
+      <div class="tri-stage">
+        <canvas id="tri-canvas" width="460" height="420" role="img"
+          aria-label="Weight triangle coloured by the first-ranked method"></canvas>
+        <svg id="tri-svg" viewBox="0 0 460 420" aria-hidden="true"></svg>
+      </div>
+      <div class="tri-controls">
+        <label for="tri-color">Colour by</label>
+        <select id="tri-color"></select>
+      </div>
+      <p class="hint" id="tri-legend"></p>
+    </figure>
+    <div class="tri-side">
+      <div class="readout" aria-live="polite">
+        <div class="weights" id="tri-weights"></div>
+        <ol class="ranklist" id="tri-ranks"></ol>
+      </div>
+      <div class="sliders">
+        <label for="w-stat">Statistical fidelity <output id="o-stat"></output></label>
+        <input type="range" id="w-stat" min="0" max="100" step="1">
+        <label for="w-bio">Biological utility <output id="o-bio"></output></label>
+        <input type="range" id="w-bio" min="0" max="100" step="1">
+        <label for="w-priv">Privacy <output id="o-priv"></output></label>
+        <input type="range" id="w-priv" min="0" max="100" step="1">
+        <p class="hint">The three weights sum to 1: moving one slider shares the rest between the other two in their current proportion.</p>
+      </div>
+      <table class="data share" id="tri-share"></table>
+    </div>
+  </div>"""
+    elif len(pillars.columns) > 1:
+        triangle = ('<p class="note">The weight triangle needs metrics of the three pillars; '
+                    'the scenarios above rescale the weights of the evaluated pillars.</p>')
+    described = [(n, SCENARIO_DESCRIPTIONS[n], w) for n, w in (config.scenarios or {}).items()
+                 if n in SCENARIO_DESCRIPTIONS]
+    desc = ""
+    if described:
+        items = "".join(
+            f"<div><dt>{_esc(n)} <span class=\"wts\">{' / '.join(f'{x:.2f}' for x in w)}</span></dt>"
+            f"<dd>{_esc(d)}</dd></div>" for n, d, w in described)
+        desc = f'<dl class="scen-desc">{items}</dl>'
+    return f"""
+<section id="sensitivity">
+  <h2>Sensitivity to the pillar weights</h2>
+  <p class="lede">The ranking depends on how the three pillars are weighted, and the right weights
+  depend on how the synthetic data will be shared. The scenarios below give the ranking for typical
+  data-sharing settings; the triangle covers every weighting.</p>
+  <h3>Weighting scenarios</h3>
+  {desc}
+  <div class="scen-wrap">
+    <div class="scroll"><table class="data" id="scen-table"></table></div>
+    <figure class="bump"><svg id="bump-svg" role="img" aria-label="Rank of each method under each scenario"></svg></figure>
+  </div>
+  {triangle}
+</section>"""
+
+
+def _metrics_section(result, colors) -> str:
+    methods = list(result.composite.sort_values("Total", kind="stable").index)
+    dims = [d for d in ALL_DIMS if d in result.per_dim_values]
+    blocks = []
+    for pillar, pdims in PILLARS.items():
+        present = [d for d in pdims if d in dims]
+        if not present:
+            continue
+        head = "<tr><th>Method</th>" + "".join(
+            f'<th class="num">{_esc(METRIC_LABELS.get(d, d))}<span class="dir">{"risk, lower is better" if d in LOWER_IS_BETTER else "higher is better"}</span></th>'
+            for d in present) + "</tr>"
+        stats = {d: result.per_dim_values[d].groupby("Model")["Value"].agg(["mean", "std", "count"]) for d in present}
+        digits = {d: (_risk_digits(stats[d]["mean"].tolist()) if d in LOWER_IS_BETTER else 3) for d in present}
+        rows = []
+        for m in methods:
+            cells = []
+            for d in present:
+                s = stats[d]
+                if m not in s.index:
+                    cells.append('<td class="num">–</td>')
+                    continue
+                mean, sd, n = s.loc[m, "mean"], s.loc[m, "std"], s.loc[m, "count"]
+                rank = result.metascore[d].get(m, np.nan)
+                ranks = sorted(result.metascore[d].values())
+                best = rank == ranks[0]
+                sd_txt = f'<span class="sd">± {_fmt(sd, digits[d])}</span>' if n > 1 and not np.isnan(sd) else ""
+                cells.append(f'<td class="num{" best" if best else ""}">{_fmt(mean, digits[d])}{sd_txt}'
+                             f'<span class="r">rank {rank:.1f}</span></td>')
+            rows.append(f"<tr><td>{_chip(m, colors[m])}</td>{''.join(cells)}</tr>")
+        blocks.append(f'<h3><span class="key {PILLAR_KEYS[pillar]}"></span>{_esc(pillar)}</h3>'
+                      f'<div class="scroll"><table class="data metrics">{head}{"".join(rows)}</table></div>')
+    missing = ""
+    if result.dims_missing:
+        errors = getattr(result, "errors", {}) or {}
+        items = "".join(f"<li><strong>{_esc(METRIC_LABELS.get(d, d))}</strong>: {_esc(errors.get(d, 'not computed'))}</li>"
+                        for d in result.dims_missing)
+        missing = f'<div class="missing"><h3>Not evaluated</h3><ul>{items}</ul></div>'
+    return f"""
+<section id="metrics">
+  <h2>Metrics</h2>
+  <p class="lede">Mean over the datasets of each method (± standard deviation), and the
+  rank-derived score: the mean rank of the method's datasets among all datasets
+  (1 = best). The best score of each metric is highlighted.</p>
+  {''.join(blocks)}
+  {missing}
+</section>"""
+
+
+def _method_section() -> str:
+    return """
+<section id="method">
+  <h2>How the meta-score is computed</h2>
+  <ol class="steps">
+    <li>Every synthetic dataset (method × seed) is ranked against all the others on each metric:
+    rank 1 is the highest score, or the lowest risk for the privacy metrics. Ties share the
+    lowest rank.</li>
+    <li>The rank-derived score of a method on a metric is the mean rank of its datasets.</li>
+    <li>A pillar score is the mean of the rank-derived scores of the pillar's metrics.</li>
+    <li>The meta-score is the weighted sum of the pillar scores (weights summing to 1). Lower is
+    better.</li>
+  </ol>
+  <p>Ranks compress the size of the differences: read the metric values alongside the ranking.</p>
+</section>"""
+
+
+# ---------------------------------------------------------------------------
+# page
 # ---------------------------------------------------------------------------
 
 def write_html_report(result, config: BenchmarkConfig, filename: str = "report.html") -> str:
-    """Write a self-contained HTML report and return its path."""
+    """Write the self-contained HTML report to ``config.output_dir`` and return its path."""
     os.makedirs(config.output_dir, exist_ok=True)
-    methods = _method_order(result, config)
-    has_composite = result.composite is not None and not result.value_table.empty
-
-    # Distinct (method, seed) candidates across all dimensions — the pool that gets ranked.
-    pairs = {(row.Model, int(row.Seed))
-             for df in result.per_dim_values.values() for row in df.itertuples()}
-    seeds_per_method = {m: sorted(s for mm, s in pairs if mm == m) for m in methods}
-    seed_counts = {m: len(v) for m, v in seeds_per_method.items()}
-    balanced = len(set(seed_counts.values())) <= 1
-    # Scale that mean ranks live on (rank 1..n_candidates); used for heatmap color + notes.
-    n_candidates = len(pairs) if pairs else len(methods)
-
-    # --- figures (embedded) ---
-    figs: Dict[str, str] = {}
-    if not result.rank_table.empty:
-        figs["heatmap"] = _fig_to_base64(_rank_heatmap_fig(result.rank_table, methods, n_candidates))
-    if not result.value_table.empty:
-        figs["bars"] = _fig_to_base64(_per_metric_bars_fig(result.value_table, methods))
-        figs["radar"] = _fig_to_base64(_radar_fig(result.value_table, methods))
-    if has_composite:
-        fig, _ = plot_weighted_composite_scores(
-            result.metascore, broad_weight=config.weights[0], narrow_weight=config.weights[1],
-            privacy_weight=config.weights[2], save_path=None,
-        )
-        figs["composite"] = _fig_to_base64(fig)
-
-    # --- header / winner ---
-    if has_composite:
-        winner = result.composite["Total"].idxmin()
-        wc = DATASET_COLORS.get(winner, "#26847d")
-        hero = (
-            f'<div class="hero" style="border-left:6px solid {wc}">'
-            f'<div class="hero-label">🏆 Most balanced method</div>'
-            f'<div class="hero-name" style="color:{wc}">{html.escape(str(winner))}</div>'
-            f'<div class="hero-sub">Total rank-derived score '
-            f'{result.composite["Total"].min():.2f} — lower is better</div></div>'
-        )
-    else:
-        hero = ('<div class="hero"><div class="hero-sub">Composite not available — '
-                'not all dimensions were evaluated.</div></div>')
-
-    dims_run = ", ".join(result.dims_run) if result.dims_run else "none"
-    n_methods = len(methods)
-    seeds = sorted({int(s) for df in result.per_dim_values.values() for s in df["Seed"]}) \
-        if result.per_dim_values else []
-    n_seeds = len(seeds)
-
-    # Prominent run-summary chips (so single- vs multi-seed is obvious at a glance).
-    seed_label = "Seed" if n_seeds == 1 else "Seeds"
-    seed_val = (", ".join(map(str, seeds)) if 0 < n_seeds <= 8 else f"{n_seeds}")
-    # Only claim an "M×S" grid when seed counts are equal across methods.
-    cand_detail = f"{n_methods}×{seed_counts[methods[0]]}" if (balanced and methods) else "unbalanced"
-    chips = [
-        ("Methods", str(n_methods)),
-        (seed_label, f"{n_seeds} ({seed_val})" if seeds else "—"),
-        ("Dimensions", str(len(result.dims_run))),
-        ("Candidates ranked", f"{n_candidates}  ({cand_detail})"),
-    ]
-    chips_html = "".join(
-        f'<div class="chip"><div class="chip-label">{html.escape(k)}</div>'
-        f'<div class="chip-val">{html.escape(v)}</div></div>' for k, v in chips
-    )
-    # Aggregation note: single seed ranks per-seed; multi-seed may collapse some dims.
-    if n_seeds <= 1 and balanced:
-        agg_note = "Single-seed run — every dimension ranked over the {} methods.".format(n_methods)
-    else:
-        collapsed = [d for d in getattr(config, "collapse_dims", ()) if d in result.dims_run]
-        base = ("Multi-seed run — {} candidates ranked per dimension; each method's score is the "
-                "mean rank of its own seeds.").format(n_candidates)
-        if collapsed:
-            base += " {} collapsed to a per-method mean before ranking (manuscript-compatible).".format(
-                ", ".join(collapsed))
-        agg_note = base
-    # Warn when seed counts differ across methods (uneven ranking pool).
-    if not balanced:
-        detail = "; ".join(f"{m}: {seed_counts[m]}" for m in methods)
-        agg_note += (" ⚠ Unbalanced seeds per method ({}). Methods with more seeds are estimated "
-                     "more stably; for a fair comparison use the same seed count per method.").format(detail)
-
-    sections = [f'<section>{hero}<div class="chips">{chips_html}</div>'
-                f'<p class="meta">Dimensions: {dims_run}.<br>{html.escape(agg_note)}</p></section>']
-
-    # --- Level 1: per dimension ---
-    lvl1 = ['<h2>1 · Per dimension</h2>',
-            '<p class="lead">How each method performs on every individual metric.</p>']
-    if "heatmap" in figs:
-        lvl1.append(f'<div class="fig">{_img(figs["heatmap"], "rank heatmap")}</div>')
-    if "bars" in figs:
-        lvl1.append(f'<div class="fig">{_img(figs["bars"], "per-metric score bars")}</div>')
-    # Note: the exact mean ranks are already annotated in the heatmap above, so we show
-    # only the per-metric *scores* table here (ranks would duplicate the heatmap).
-    if not result.value_table.empty:
-        lvl1.append(_scores_table(result.value_table, methods))
-    sections.append("<section>" + "".join(lvl1) + "</section>")
-
-    # --- Level 2: per pillar ---
-    if has_composite:
-        lvl2 = ['<h2>2 · Per pillar</h2>',
-                '<p class="lead">The dimensions roll up into three pillars, each the mean rank-derived '
-                'score of its dimensions: '
-                f'<b style="color:{COMPONENT_COLORS["Statistical fidelity"]}">Statistical fidelity</b>, '
-                f'<b style="color:{COMPONENT_COLORS["Biological utility"]}">Biological utility</b>, and '
-                f'<b style="color:{COMPONENT_COLORS["Privacy"]}">Privacy</b> '
-                '(privacy dimensions are scored as 1 &minus; risk).</p>']
-        if "radar" in figs:
-            lvl2.append(f'<div class="fig">{_img(figs["radar"], "all-round radar")}</div>')
-        lvl2.append(_pillar_table(result.composite))
-        sections.append("<section>" + "".join(lvl2) + "</section>")
-
-    # --- Level 3: overall ---
-    if has_composite:
-        lvl3 = ['<h2>3 · Overall meta-rank</h2>',
-                '<p class="lead">Pillars combined into one balanced score. Lower = more balanced '
-                'across utility and privacy.</p>']
-        if "composite" in figs:
-            lvl3.append(f'<div class="fig">{_img(figs["composite"], "composite stacked bar")}</div>')
-        lvl3.append(_ranking_table(result.composite))
-        sections.append("<section>" + "".join(lvl3) + "</section>")
-
-    page = _PAGE_TEMPLATE.format(css=_CSS, body="".join(sections))
     path = os.path.join(config.output_dir, filename)
+    if result.composite is None or not result.metascore:
+        body = '<section><h2>No result</h2><p>No metric was evaluated.</p></section>'
+        data = {}
+        n_sets = 0
+        methods = []
+    else:
+        methods = list(result.composite.sort_values("Total", kind="stable").index)
+        colors = _method_colors(methods)
+        pillars = pillar_scores(result.metascore)
+        data = {
+            "methods": methods,
+            "colors": colors,
+            "pillars": [p for p in PILLARS if p in pillars.columns],
+            "scores": {m: [float(pillars.loc[m, p]) for p in PILLARS if p in pillars.columns] for m in methods},
+            "scenarios": [{"name": n, "w": list(map(float, w))} for n, w in (config.scenarios or {}).items()
+                          if len(pillars.columns) > 1
+                          and sum(x for p, x in zip(PILLARS, w) if p in pillars.columns) > 0],
+            "weights": list(map(float, config.weights)),
+        }
+        body = (_ranking_section(result, config, colors) + _sensitivity_section(result, config)
+                + _metrics_section(result, colors) + _method_section())
+        n_sets = int(sum(df.shape[0] for df in result.per_dim_values.values()) / max(len(result.per_dim_values), 1))
+    seeds = sorted({int(s) for df in result.per_dim_values.values() for s in df["Seed"]}) if result.per_dim_values else []
+    meta = (f"{len(methods)} methods · {len(seeds)} seed{'s' if len(seeds) != 1 else ''} · "
+            f"{n_sets} synthetic datasets · {len(result.dims_run)} of 12 metrics · {date.today().isoformat()}")
+    page = (_PAGE.replace("%%META%%", _esc(meta))
+            .replace("%%BODY%%", body)
+            .replace("%%DATA%%", json.dumps(data).replace("</", "<\\/")))
     with open(path, "w", encoding="utf-8") as fh:
         fh.write(page)
     return path
 
 
-_CSS = """
-:root { color-scheme: light dark; }
-* { box-sizing: border-box; }
-body { margin:0; background:#eef1f5; color:#1f2933;
-  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-  line-height:1.5; }
-.wrap { max-width:1040px; margin:0 auto; padding:32px 20px 64px; }
-h1 { font-size:26px; margin:0 0 4px; letter-spacing:-.01em; }
-.subtitle { color:#66727f; margin:0 0 24px; font-size:14px; }
-h2 { font-size:19px; margin:34px 0 4px; }
-.lead { color:#66727f; margin:0 0 16px; font-size:14px; }
-.meta { color:#66727f; font-size:13px; margin:14px 0 0; }
-section { background:#fff; border:1px solid #e3e8ee; border-radius:14px;
-  padding:22px 24px; margin:0 0 20px; box-shadow:0 1px 2px rgba(16,24,40,.04); }
-.hero { background:#f7f9fb; border-radius:12px; padding:18px 22px; }
-.hero-label { font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:#66727f; }
-.hero-name { font-size:30px; font-weight:750; margin:2px 0 2px; letter-spacing:-.02em; }
-.hero-sub { color:#66727f; font-size:14px; }
-.chips { display:flex; flex-wrap:wrap; gap:12px; margin:16px 0 4px; }
-.chip { flex:1 1 130px; background:#f7f9fb; border:1px solid #e3e8ee; border-radius:10px;
-  padding:10px 14px; }
-.chip-label { font-size:11px; text-transform:uppercase; letter-spacing:.05em; color:#66727f; }
-.chip-val { font-size:18px; font-weight:700; color:#1f2933; margin-top:2px; }
-.fig { text-align:center; margin:12px 0 18px; }
-.fig img { max-width:100%; height:auto; border-radius:8px; }
-table { border-collapse:collapse; width:100%; margin:14px 0 8px; font-size:13px;
-  overflow-x:auto; display:block; }
-caption { caption-side:top; text-align:left; font-weight:650; font-size:13px;
-  color:#1f2933; padding:6px 2px 10px; }
-th,td { border-bottom:1px solid #eef1f5; padding:7px 10px; white-space:nowrap; }
-thead th { color:#66727f; font-weight:600; text-align:center; border-bottom:2px solid #e3e8ee;
-  position:sticky; top:0; background:#fff; }
-td.rowhead { text-align:left; font-weight:500; }
-footer { color:#9aa5b1; font-size:12px; text-align:center; padding:8px 0; }
-@media (prefers-color-scheme: dark) {
-  body { background:#0f1419; color:#e4e8ee; }
-  section { background:#161b22; border-color:#242b34; box-shadow:none; }
-  .hero,.chip { background:#1b2028; border-color:#242b34; }
-  .chip-val { color:#e4e8ee; }
-  .subtitle,.lead,.meta,.hero-sub,.hero-label,.chip-label { color:#9aa5b1; }
-  h1,h2,.hero-name { color:#e4e8ee; }
-  thead th { background:#161b22; border-bottom-color:#242b34; color:#9aa5b1; }
-  th,td { border-bottom-color:#242b34; }
-  caption { color:#e4e8ee; }
+_PAGE = r"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SynOmicsBench Benchmark Report</title>
+<style>
+/* Layout: one reading column (max 1080px) under a red brand rule, as the SynOmicsBench docs;
+   summary first (ranking), then sensitivity, then the metric detail. */
+:root {
+  --brand: #E2001A;          /* CEA red, docs primary colour */
+  --brand-dark: #C10016;
+  --bg: #FFFFFF;
+  --panel: #F5F7F9;          /* docs light neutral */
+  --line: #E0E4E8;           /* docs tab border */
+  --ink: #1E2A31;
+  --muted: #455A64;          /* docs tab text */
+  --faint: #78909C;
+  --link: #0D47A1;           /* docs content links */
+  --stat: #2F6DB5;           /* pillar colours of the manuscript: blue, purple, red */
+  --bio: #7B4FA2;
+  --priv: #D2453F;
+  --best: #E8F3EC;
+  --best-ink: #1B6B3A;
+  --font: Roboto, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --mono: "Roboto Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
 }
-"""
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #FF3B4E; --brand-dark: #E2001A; --bg: #151A1E; --panel: #1D2429; --line: #2E383F;
+    --ink: #E6ECEF; --muted: #B0BEC5; --faint: #8796A0; --link: #82B1FF;
+    --stat: #6FA3E0; --bio: #B08AD6; --priv: #F07068; --best: #18352A; --best-ink: #8FD9A8;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --brand: #FF3B4E; --brand-dark: #E2001A; --bg: #151A1E; --panel: #1D2429; --line: #2E383F;
+  --ink: #E6ECEF; --muted: #B0BEC5; --faint: #8796A0; --link: #82B1FF;
+  --stat: #6FA3E0; --bio: #B08AD6; --priv: #F07068; --best: #18352A; --best-ink: #8FD9A8;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.6 var(--font); }
+a { color: var(--link); }
+.brandbar { height: 4px; background: var(--brand); }
+header.top, main, footer {
+  max-width: 1080px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+header.top { padding-block: 28px 8px; border-bottom: 1px solid var(--line); }
+.eyebrow { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--brand); font-weight: 700; }
+h1 { font-size: 28px; line-height: 1.2; margin: 4px 0 6px; font-weight: 700; text-wrap: balance; }
+.meta { color: var(--muted); font-size: 13px; margin: 0 0 12px; font-variant-numeric: tabular-nums; }
+nav.toc { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 13px; padding-block: 6px 10px; }
+nav.toc a { color: var(--muted); text-decoration: none; border-bottom: 2px solid transparent; padding-bottom: 2px; }
+nav.toc a:hover, nav.toc a:focus-visible { color: var(--brand); border-bottom-color: var(--brand); outline: none; }
+main { padding-block: 8px 40px; }
+section { padding-block: 24px 8px; }
+section + section { border-top: 1px solid var(--line); }
+h2 { font-size: 21px; margin: 0 0 8px; font-weight: 700; text-wrap: balance; }
+h3 { font-size: 15px; margin: 24px 0 8px; font-weight: 700; color: var(--ink); display: flex; align-items: center; gap: 8px; }
+p { max-width: 70ch; margin: 0 0 10px; }
+.lede { color: var(--muted); }
+.note { font-size: 13px; color: var(--muted); border-left: 3px solid var(--brand); padding: 6px 10px; background: var(--panel); max-width: none; }
+.scroll { overflow-x: auto; }
+table.data { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+table.data th { text-align: left; font-weight: 500; color: var(--muted); font-size: 12px; padding: 8px 10px;
+  border-bottom: 2px solid var(--line); vertical-align: bottom; white-space: nowrap; }
+table.data td { padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+table.data tr:last-child td { border-bottom: none; }
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+table.data th.num { text-align: right; }
+.strong { font-weight: 700; }
+.rank { color: var(--faint); width: 3em; }
+.chip { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; font-weight: 500; }
+.chip i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; flex: none; }
+.key { width: 10px; height: 10px; display: inline-block; margin-right: 6px; vertical-align: -1px; flex: none; }
+.key.stat, .seg.stat { background: var(--stat); }
+.key.bio, .seg.bio { background: var(--bio); }
+.key.priv, .seg.priv { background: var(--priv); }
+.w { color: var(--faint); font-size: 11px; }
+.barcell { width: 32%; min-width: 160px; }
+.stack { display: flex; height: 12px; background: var(--panel); }
+.seg { display: block; height: 100%; }
+.seg + .seg { box-shadow: inset 1px 0 0 var(--bg); }
+table.metrics th { white-space: normal; min-width: 110px; }
+table.metrics th:first-child { min-width: 0; }
+.dir { display: block; color: var(--faint); font-size: 11px; font-weight: 400; }
+td .sd { display: block; color: var(--faint); font-size: 11.5px; }
+td .r { display: block; color: var(--muted); font-size: 11.5px; }
+td.best { background: var(--best); color: var(--best-ink); font-weight: 700; }
+td.best .r, td.best .sd { color: var(--best-ink); font-weight: 400; }
+.missing ul { margin: 0; padding-left: 20px; color: var(--muted); font-size: 13.5px; }
+.scen-wrap { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; align-items: start; }
+.scen-wrap > * { min-width: 0; }
+#scen-table th { white-space: normal; min-width: 92px; }
+#scen-table th .wts { display: block; white-space: nowrap; font-size: 11px; color: var(--faint); font-weight: 400; font-variant-numeric: tabular-nums; }
+.scen-desc { margin: 0 0 18px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px 24px; max-width: none; }
+.scen-desc dt { font-weight: 600; font-size: 14px; color: var(--ink); }
+.scen-desc dt .wts { font-weight: 400; font-size: 12px; color: var(--faint); font-variant-numeric: tabular-nums; margin-left: 4px; }
+.scen-desc dd { margin: 2px 0 0; font-size: 13px; color: var(--muted); }
+.scen-desc > div { min-width: 0; }
+.bump { margin: 0; }
+.bump svg { width: 100%; height: auto; display: block; }
+.tri-wrap { display: grid; grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: 28px; align-items: start; }
+.tri-wrap > * { min-width: 0; }
+.tri { margin: 0; }
+.tri-stage { position: relative; width: 100%; max-width: 460px; aspect-ratio: 460 / 420; }
+.tri-stage canvas, .tri-stage svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.tri-stage canvas { cursor: crosshair; touch-action: none; }
+.tri-stage svg { pointer-events: none; }
+.tri-controls { display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--muted); margin-top: 8px; }
+select, input[type=range] { accent-color: var(--brand); }
+select { font: inherit; color: var(--ink); background: var(--bg); border: 1px solid var(--line); padding: 4px 6px; }
+select:focus-visible, input:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.readout { background: var(--panel); border-left: 4px solid var(--brand); padding: 12px 14px; }
+.weights { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; margin-bottom: 8px; }
+.weights b { color: var(--ink); }
+.ranklist { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; counter-reset: r; }
+.ranklist li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr) auto; align-items: center; gap: 8px; font-size: 14px; }
+.ranklist li .n { color: var(--faint); font-variant-numeric: tabular-nums; }
+.ranklist li .s { font-variant-numeric: tabular-nums; color: var(--muted); }
+.ranklist li:first-child { font-weight: 700; }
+.sliders { display: grid; gap: 2px; margin-top: 14px; font-size: 13px; color: var(--muted); }
+.sliders input { width: 100%; }
+.sliders output { color: var(--ink); font-variant-numeric: tabular-nums; margin-left: 4px; }
+.hint { font-size: 13px; margin: 0; }
+table.share { margin-top: 14px; }
+.steps { padding-left: 20px; max-width: 72ch; }
+.steps li { margin-bottom: 6px; }
+footer { color: var(--faint); font-size: 12px; padding-block: 16px 32px; border-top: 1px solid var(--line); }
+@media (max-width: 820px) {
+  .scen-wrap, .tri-wrap, .scen-desc { grid-template-columns: minmax(0, 1fr); }
+  .barcell { min-width: 120px; }
+}
+@media (prefers-reduced-motion: no-preference) { nav.toc a { transition: color .15s, border-color .15s; } }
+</style>
+</head>
+<body>
+<div class="brandbar"></div>
+<header class="top">
+  <div class="eyebrow">SynOmicsBench · Automatic benchmark</div>
+  <h1>Benchmark report</h1>
+  <p class="meta">%%META%%</p>
+  <nav class="toc" aria-label="Sections">
+    <a href="#ranking">Ranking</a><a href="#sensitivity">Sensitivity to the weights</a>
+    <a href="#metrics">Metrics</a><a href="#method">How it is computed</a>
+  </nav>
+</header>
+<main>
+%%BODY%%
+</main>
+<footer>Generated by SynOmicsBench. Tables of this report are also written as CSV files next to it.</footer>
+<script>
+(function () {
+  "use strict";
+  var D = %%DATA%%;
+  if (!D.methods) return;
+  var M = D.methods, P = D.pillars, S = D.scores, C = D.colors;
+  var css = getComputedStyle(document.documentElement);
+  function tok(n) { return css.getPropertyValue(n).trim(); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]; }); }
+  var ALL = ["Statistical fidelity", "Biological utility", "Privacy"];
+  var SHORT = {"Statistical fidelity": "Fidelity", "Biological utility": "Utility", "Privacy": "Privacy"};
 
-_PAGE_TEMPLATE = """<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SynOmicsBench — Automatic Benchmark Report</title>
-<style>{css}</style></head>
-<body><div class="wrap">
-<h1>SynOmicsBench — Automatic Benchmark Report</h1>
-<p class="subtitle">Synthetic data generation, ranked across fidelity, biological utility and privacy.</p>
-{body}
-<footer>Generated by synomicsbench.autobenchmark</footer>
-</div></body></html>
+  // Meta-score of every method for full (stat, bio, priv) weights, restricted to the evaluated pillars.
+  function totals(w3) {
+    var w = P.map(function (p) { return w3[ALL.indexOf(p)]; });
+    var sum = w.reduce(function (a, b) { return a + b; }, 0) || 1;
+    return M.map(function (m) {
+      var t = 0;
+      for (var i = 0; i < P.length; i++) t += S[m][i] * w[i] / sum;
+      return {m: m, t: t};
+    });
+  }
+  function ranked(w3) {
+    var tt = totals(w3);
+    var order = tt.slice().sort(function (a, b) { return a.t - b.t || M.indexOf(a.m) - M.indexOf(b.m); });
+    var rank = {};
+    order.forEach(function (o, i) {
+      rank[o.m] = (i > 0 && Math.abs(o.t - order[i - 1].t) < 1e-12) ? rank[order[i - 1].m] : i + 1;
+    });
+    return {order: order, rank: rank};
+  }
+  function chip(m) { return '<span class="chip"><i style="background:' + C[m] + '"></i>' + esc(m) + '</span>'; }
+
+  // ---- scenario table and bump chart -------------------------------------------------
+  var SC = D.scenarios;
+  var res = SC.map(function (s) { return ranked(s.w); });
+  var tbl = document.getElementById("scen-table");
+  if (tbl && SC.length) {
+    var h = "<tr><th>Method</th>" + SC.map(function (s) {
+      return '<th class="num">' + esc(s.name) + '<span class="wts">' + s.w.map(function (x) { return x.toFixed(2); }).join(" / ") + "</span></th>";
+    }).join("") + "</tr>";
+    var first = res[0].order.map(function (o) { return o.m; });
+    first.forEach(function (m) {
+      h += "<tr><td>" + chip(m) + "</td>" + res.map(function (r) {
+        var t = r.order.filter(function (o) { return o.m === m; })[0].t;
+        return '<td class="num"><b>' + r.rank[m] + '</b> <span style="color:var(--faint)">' + t.toFixed(2) + "</span></td>";
+      }).join("") + "</tr>";
+    });
+    tbl.innerHTML = h + '<tr><td colspan="' + (SC.length + 1) + '" style="color:var(--faint);font-size:12px">Rank, then meta-score. Weights: statistical fidelity / biological utility / privacy.</td></tr>';
+  }
+  var bump = document.getElementById("bump-svg");
+  if (bump && SC.length) {
+    var W = 420, H = 40 + 34 * M.length, x0 = 110, x1 = W - 30, y0 = 34;
+    var dx = SC.length > 1 ? (x1 - x0) / (SC.length - 1) : 0;
+    var ink = tok("--ink"), faint = tok("--faint"), line = tok("--line");
+    var g = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="none"/>';
+    SC.forEach(function (s, j) {
+      var x = x0 + j * dx;
+      g += '<line x1="' + x + '" x2="' + x + '" y1="' + (y0 - 6) + '" y2="' + (H - 12) + '" stroke="' + line + '"/>';
+      var label = s.name.split(" ")[0];
+      g += '<text x="' + x + '" y="16" text-anchor="middle" font-size="11" fill="' + faint + '">' + esc(label) + "</text>";
+    });
+    function yr(r) { return y0 + (r - 1) * 34; }
+    M.forEach(function (m) {
+      var pts = res.map(function (r, j) { return [x0 + j * dx, yr(r.rank[m])]; });
+      g += '<polyline fill="none" stroke="' + C[m] + '" stroke-width="3" points="' + pts.map(function (p) { return p.join(","); }).join(" ") + '"/>';
+      pts.forEach(function (p, j) {
+        g += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="9" fill="' + C[m] + '"/>';
+        g += '<text x="' + p[0] + '" y="' + (p[1] + 4) + '" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1E2A31">' + res[j].rank[m] + "</text>";
+      });
+      g += '<text x="' + (x0 - 16) + '" y="' + (yr(res[0].rank[m]) + 4) + '" text-anchor="end" font-size="12" fill="' + ink + '">' + esc(m) + "</text>";
+    });
+    bump.setAttribute("viewBox", "0 0 " + W + " " + H);
+    bump.innerHTML = g;
+  }
+
+  // ---- weight triangle ----------------------------------------------------------------
+  var cv = document.getElementById("tri-canvas");
+  if (!cv || P.length < 3) return;
+  var svg = document.getElementById("tri-svg");
+  var VW = 460, VH = 420;
+  var A = [230, 34], B = [40, 362], Cc = [420, 362];   // top: fidelity, left: utility, right: privacy
+  function toXY(w) { return [w[0] * A[0] + w[1] * B[0] + w[2] * Cc[0], w[0] * A[1] + w[1] * B[1] + w[2] * Cc[1]]; }
+  function toW(x, y) {
+    var det = (B[1] - Cc[1]) * (A[0] - Cc[0]) + (Cc[0] - B[0]) * (A[1] - Cc[1]);
+    var a = ((B[1] - Cc[1]) * (x - Cc[0]) + (Cc[0] - B[0]) * (y - Cc[1])) / det;
+    var b = ((Cc[1] - A[1]) * (x - Cc[0]) + (A[0] - Cc[0]) * (y - Cc[1])) / det;
+    return [a, b, 1 - a - b];
+  }
+  function hexRGB(hx) { var n = parseInt(hx.slice(1), 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; }
+  var mode = document.getElementById("tri-color");
+  mode.innerHTML = '<option value="">Method ranked first</option>' + M.map(function (m) {
+    return '<option value="' + esc(m) + '">Rank of ' + esc(m) + "</option>"; }).join("");
+
+  // share of the 0.01 grid where each method ranks first
+  var share = {}; M.forEach(function (m) { share[m] = 0; });
+  var npts = 0;
+  for (var i = 0; i <= 100; i++) for (var j = 0; j <= 100 - i; j++) {
+    var o = ranked([i / 100, j / 100, (100 - i - j) / 100]).order[0].m; share[o]++; npts++;
+  }
+  var st = document.getElementById("tri-share");
+  st.innerHTML = '<tr><th>Method</th><th class="num">Ranked first</th></tr>' + M.slice().sort(function (a, b) { return share[b] - share[a]; }).map(function (m) {
+    return "<tr><td>" + chip(m) + '</td><td class="num">' + (100 * share[m] / npts).toFixed(1) + " % of the weights</td></tr>"; }).join("");
+
+  function paint() {
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.round(VW * dpr), hh = Math.round(VH * dpr);
+    cv.width = w; cv.height = hh;
+    var ctx = cv.getContext("2d");
+    var img = ctx.createImageData(w, hh), px = img.data;
+    var target = mode.value, n = M.length;
+    var rgb = {}; M.forEach(function (m) { rgb[m] = hexRGB(C[m]); });
+    var lo = hexRGB(tok("--panel").length === 7 ? tok("--panel") : "#F5F7F9");
+    var hi = hexRGB(target ? C[target] : "#000000");
+    var idx = target ? M.indexOf(target) : -1, tot = new Float64Array(n);
+    var pw = P.map(function (p) { return ALL.indexOf(p); });
+    for (var y = 0; y < hh; y++) for (var x = 0; x < w; x++) {
+      var wv = toW(x / dpr, y / dpr);
+      if (wv[0] < -1e-9 || wv[1] < -1e-9 || wv[2] < -1e-9) continue;
+      var best = 0, c;
+      for (var q = 0; q < n; q++) {
+        var t = 0, sc = S[M[q]];
+        for (var z = 0; z < pw.length; z++) t += sc[z] * wv[pw[z]];
+        tot[q] = t;
+        if (t < tot[best] - 1e-12) best = q;
+      }
+      if (idx < 0) c = rgb[M[best]];
+      else {
+        var below = 0;
+        for (var q2 = 0; q2 < n; q2++) if (tot[q2] < tot[idx] - 1e-12) below++;
+        var f = n > 1 ? (n - 1 - below) / (n - 1) : 1;      // 1 for rank 1, 0 for last
+        c = [lo[0] + (hi[0] - lo[0]) * f, lo[1] + (hi[1] - lo[1]) * f, lo[2] + (hi[2] - lo[2]) * f];
+      }
+      var k = 4 * (y * w + x); px[k] = c[0]; px[k + 1] = c[1]; px[k + 2] = c[2]; px[k + 3] = 255;
+    }
+    ctx.putImageData(img, 0, 0);
+    drawOverlay();
+  }
+  var cur = D.weights.slice();
+  function drawOverlay() {
+    var ink = tok("--ink"), faint = tok("--faint"), bg = tok("--bg");
+    var g = '<polygon points="' + [A, B, Cc].map(function (p) { return p.join(","); }).join(" ") + '" fill="none" stroke="' + ink + '" stroke-width="1"/>';
+    [0.25, 0.5, 0.75].forEach(function (t) {       // faint iso-weight lines
+      [[0, 1, 2], [1, 2, 0], [2, 0, 1]].forEach(function (k) {
+        var p = [0, 0, 0], q = [0, 0, 0];
+        p[k[0]] = t; p[k[1]] = 1 - t; q[k[0]] = t; q[k[2]] = 1 - t;
+        var a = toXY(p), b = toXY(q);
+        g += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="' + bg + '" stroke-opacity=".55" stroke-width="1"/>';
+      });
+    });
+    g += '<text x="' + A[0] + '" y="' + (A[1] - 12) + '" text-anchor="middle" font-size="12" fill="' + ink + '">Statistical fidelity</text>';
+    g += '<text x="' + B[0] + '" y="' + (B[1] + 22) + '" text-anchor="start" font-size="12" fill="' + ink + '">Biological utility</text>';
+    g += '<text x="' + Cc[0] + '" y="' + (Cc[1] + 22) + '" text-anchor="end" font-size="12" fill="' + ink + '">Privacy</text>';
+    SC.forEach(function (s) {
+      var p = toXY(s.w);
+      g += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="6" fill="none" stroke="' + ink + '" stroke-width="1.5"/>';
+      g += '<text x="' + (p[0] + 9) + '" y="' + (p[1] + 4) + '" font-size="10.5" fill="' + ink + '" stroke="' + bg + '" stroke-width="3" paint-order="stroke">' + esc(s.name.split(" ")[0]) + "</text>";
+    });
+    var c = toXY(cur);
+    g += '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="5" fill="' + bg + '" stroke="' + ink + '" stroke-width="2"/>';
+    svg.innerHTML = g;
+  }
+  var oS = document.getElementById("o-stat"), oB = document.getElementById("o-bio"), oP = document.getElementById("o-priv");
+  var sS = document.getElementById("w-stat"), sB = document.getElementById("w-bio"), sP = document.getElementById("w-priv");
+  function show(w) {
+    cur = w;
+    var r = ranked(w);
+    document.getElementById("tri-weights").innerHTML = ALL.map(function (p, i) {
+      return '<span><span class="key ' + ["stat", "bio", "priv"][i] + '"></span>' + SHORT[p] + " <b>" + w[i].toFixed(2) + "</b></span>"; }).join("");
+    document.getElementById("tri-ranks").innerHTML = r.order.map(function (o) {
+      return '<li><span class="n">' + r.rank[o.m] + "</span>" + chip(o.m) + '<span class="s">' + o.t.toFixed(2) + "</span></li>"; }).join("");
+    sS.value = Math.round(w[0] * 100); sB.value = Math.round(w[1] * 100); sP.value = Math.round(w[2] * 100);
+    oS.textContent = w[0].toFixed(2); oB.textContent = w[1].toFixed(2); oP.textContent = w[2].toFixed(2);
+    drawOverlay();
+  }
+  function snap(w) {
+    var a = Math.round(Math.max(0, w[0]) * 100), b = Math.round(Math.max(0, w[1]) * 100);
+    if (a + b > 100) b = 100 - a;
+    return [a / 100, b / 100, (100 - a - b) / 100];
+  }
+  function pointer(ev) {
+    var rc = cv.getBoundingClientRect();
+    var x = (ev.clientX - rc.left) * VW / rc.width, y = (ev.clientY - rc.top) * VH / rc.height;
+    var w = toW(x, y);
+    if (w[0] < -0.02 || w[1] < -0.02 || w[2] < -0.02) return;
+    show(snap(w));
+  }
+  cv.addEventListener("pointermove", pointer);
+  cv.addEventListener("pointerdown", pointer);
+  function fromSliders(k) {
+    // k: index of the moved slider; the other two share the rest in their current proportion
+    var v = [+sS.value, +sB.value, +sP.value].map(function (x) { return x / 100; });
+    var o = [0, 1, 2].filter(function (i) { return i !== k; });
+    var rest = 1 - v[k], prev = cur[o[0]] + cur[o[1]];
+    var a = prev > 0 ? rest * cur[o[0]] / prev : rest / 2;
+    var w = [0, 0, 0]; w[k] = v[k]; w[o[0]] = a; w[o[1]] = rest - a;
+    show(snap(w));
+  }
+  sS.addEventListener("input", function () { fromSliders(0); });
+  sB.addEventListener("input", function () { fromSliders(1); });
+  sP.addEventListener("input", function () { fromSliders(2); });
+  var legend = document.getElementById("tri-legend");
+  function setLegend() {
+    legend.textContent = mode.value ? "Darker: better rank of " + mode.value + " (darkest = ranked first, lightest = ranked last)."
+                                    : "Each colour is the method ranked first at these weights.";
+  }
+  mode.addEventListener("change", function () { setLegend(); paint(); });
+  setLegend();
+  paint();
+  show(D.weights.map(function (x) { return x / D.weights.reduce(function (a, b) { return a + b; }, 0); }));
+  if (window.matchMedia) {
+    var mq = window.matchMedia("(prefers-color-scheme: dark)");
+    var re = function () { css = getComputedStyle(document.documentElement); paint(); show(cur); };
+    if (mq.addEventListener) mq.addEventListener("change", re);
+  }
+})();
+</script>
+</body>
+</html>
 """
