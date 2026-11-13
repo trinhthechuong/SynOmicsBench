@@ -1,9 +1,6 @@
 Bootstrap: docker
 From: ubuntu:24.04
 
-%files
-  dist/synomicsbench-1.0.2-py3-none-any.whl /opt/synomicsbench-1.0.2-py3-none-any.whl  
-
 %post
     # Setup NOW variable
     NOW=`date`
@@ -72,11 +69,11 @@ From: ubuntu:24.04
     export R_HOME=/opt/R/4.4.1/lib/R
     /opt/R/4.4.1/bin/Rscript -e "install.packages(c('synthpop', 'dplyr'), repos='https://cloud.r-project.org', quiet=TRUE)"
 
-    # Install Python via uv and synomicsbench
+    # Install Python via uv and the synomicsbench release published on PyPI
     export PATH=/usr/local/bin:$PATH
     uv python install 3.12
     uv venv /opt/synomicsbench-env --python 3.12
-    uv pip install --python /opt/synomicsbench-env/bin/python --no-binary rpy2-rinterface /opt/synomicsbench-1.0.2-py3-none-any.whl
+    uv pip install --python /opt/synomicsbench-env/bin/python --no-binary rpy2-rinterface "synomicsbench==1.2.0"
 
 %environment
     export BIN=/binary
@@ -102,7 +99,7 @@ From: ubuntu:24.04
 
 %labels
     Author The-Chuong TRINH
-    Version v20260424
+    Version 1.2.0
 
 %help
     Generic container for managing Python (via uv-managed Python versions) and R 4.4.1, suitable for SynOmics workflows.
