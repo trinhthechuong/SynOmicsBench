@@ -2,7 +2,7 @@
 
 ## Synthetic Data Generation (SDG) Methods
 
-Our study leverages five synthetic data generation (SDG) methods through their official libraries.
+SynOmicsBench benchmarks six synthetic data generation (SDG) methods through their official libraries. Each card links to the original publication of the method.
 
 <div class="sdg-cards-grid">
   <!-- Avatars -->
@@ -22,7 +22,7 @@ Our study leverages five synthetic data generation (SDG) methods through their o
   </a>
 
   <!-- Gaussian Copula -->
-  <a href="https://github.com/sdv-dev/Copulas" target="_blank" class="sdg-card">
+  <a href="https://doi.org/10.1109/DSAA.2016.49" target="_blank" class="sdg-card">
     <div class="sdg-card-front">
       <img src="../assets/figures/copulas.png" alt="Gaussian Copula Logo" class="sdg-logo">
       <h3>Gaussian Copula</h3>
@@ -48,7 +48,7 @@ Our study leverages five synthetic data generation (SDG) methods through their o
   </a>
 
   <!-- TabDiff -->
-  <a href="https://github.com/MinkaiXu/TabDiff" target="_blank" class="sdg-card">
+  <a href="https://arxiv.org/abs/2410.20626" target="_blank" class="sdg-card">
     <div class="sdg-card-front">
       <img src="../assets/figures/neural_network.png" alt="TabDiff Logo" class="sdg-logo">
       <h3>TabDiff</h3>
@@ -56,7 +56,7 @@ Our study leverages five synthetic data generation (SDG) methods through their o
   </a>
 </div>
 
-Five SDG methods were benchmarked across three cancer types (NSCLC, melanoma, ccRCC), each repeated 5 times with different random seeds to assess the robustness of each method.
+Six SDG methods were benchmarked across three cancer types (NSCLC, melanoma, ccRCC), each repeated 5 times with different random seeds to assess the robustness of each method.
 
 Naive fitting of synthetic data generation methods often fails on high-dimensional and heterogeneous multi-omic datasets. Therefore, we designed adaptations for each method to handle these challenges. 
 
@@ -66,7 +66,17 @@ Naive fitting of synthetic data generation methods often fails on high-dimension
 - TabDiff requires a GPU and a memory-efficient attention (`use_sdpa=True`, the default) to train on thousands of gene columns.
 - Avatars requires a feature clustering to partition the features into batch before submitting to the API.
 
-Detail description of each adaptation is provided in the manuscript of this work and [GitHub repository](https://github.com/thechuongtrinh/SynOmicsBench).
+Each adaptation is described in detail in the Supplementary Methods of the SynOmicsBench manuscript.
+
+### References
+
+If you use one of these methods, please cite its original publication:
+
+- **Avatars**: Guillaudeux, M. *et al.* Patient-centric synthetic data generation, no reason to risk re-identification in biomedical data analysis. *npj Digit. Med.* **6**, 1–10 (2023). [doi:10.1038/s41746-023-00771-5](https://doi.org/10.1038/s41746-023-00771-5)
+- **CTGAN** and **TVAE**: Xu, L., Skoularidou, M., Cuesta-Infante, A. & Veeramachaneni, K. Modeling Tabular data using Conditional GAN. *Advances in Neural Information Processing Systems* **32** (2019).
+- **Gaussian Copula**: Patki, N., Wedge, R. & Veeramachaneni, K. The Synthetic Data Vault. *2016 IEEE International Conference on Data Science and Advanced Analytics (DSAA)*, 399–410 (2016). [doi:10.1109/DSAA.2016.49](https://doi.org/10.1109/DSAA.2016.49)
+- **Synthpop**: Nowok, B., Raab, G. M. & Dibben, C. synthpop: Bespoke Creation of Synthetic Data in R. *J. Stat. Softw.* **74**, 1–26 (2016).
+- **TabDiff**: Shi, J. *et al.* TabDiff: a Mixed-type Diffusion Model for Tabular Data Generation. *The Thirteenth International Conference on Learning Representations (ICLR)* (2025).
 
 ---
 
@@ -168,9 +178,6 @@ synthetic_data = synth.generate(
 
 ### 5. TabDiff
 
-> [!NOTE]
-> The TabDiff sources ([MinkaiXu/TabDiff](https://github.com/MinkaiXu/TabDiff), MIT licence, commit `5ecdb33`) ship with SynOmicsBench, unmodified. Install their extra dependencies with `pip install "synomicsbench[tabdiff]"`.
-
 ```python
 from synomicsbench.synthesizer.TabDiffsynthesizer import TabDiffsynthesizer
 
@@ -183,14 +190,12 @@ synthetic_data = synthesizer.generate(
     fit_params={
         "epochs": 3000,            # TabDiff default: 8000
         "cuda": True,
-        # Skip TabDiff's periodic evaluation, whose metrics are not used here.
-        "config_overrides": {"train": {"main": {"check_val_every": 3001}}},
     },
     output_filename="synthetic_data_tabdiff.csv",
 )
 ```
 
-Every other hyperparameter is read from TabDiff's own `tabdiff_configs.toml`. Any of them can be changed through `config_overrides`, which mirrors the TOML nesting. The per-epoch training curve is written to `train_log.csv` in `output_path`.
+Every other hyperparameter is read from TabDiff's own `tabdiff_configs.toml`. Any of them can be changed through `config_overrides`, which mirrors the TOML nesting. TabDiff's periodic evaluation (a checkpoint and a sampled cohort every `check_val_every` epochs) is off by default, since its metrics are not used here; `periodic_eval=True` turns it back on. The per-epoch training curve is written to `train_log.csv` in `output_path`.
 
 For runs longer than one cluster job, `checkpoint_every` saves the full training state to `resume.pt`, and `deadline` (a Unix time) stops training safely before the walltime, raising `TrainingPaused`. Calling `generate` again with the same arguments and `output_path` resumes from `resume.pt`.
 

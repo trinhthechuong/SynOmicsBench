@@ -88,7 +88,7 @@ The `metrics.autobenchmark` module orchestrates every metric dimension into a si
 
 ::: synomicsbench.metrics.autobenchmark.config.BenchmarkConfig
 
-::: synomicsbench.metrics.autobenchmark.runner.BenchmarkRunner
+::: synomicsbench.metrics.autobenchmark.runner
 
 ::: synomicsbench.metrics.autobenchmark.runners
 

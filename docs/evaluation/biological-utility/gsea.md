@@ -24,7 +24,7 @@ A synthetic dataset can call no pathway significant: precision is then undefined
 
 ## NES calibration
 
-On the pathways significant in the original data, the synthetic NES is regressed on the original NES (`Slope`, `Slope_robust`, `Pearson`), and `SignConcordance` gives the fraction of those pathways enriched in the same direction (chance level 0.5). With few pathways the Theil–Sen slope (`Slope_robust`) is the recommended slope.
+On the pathways significant in the original data, the synthetic NES is regressed on the original NES with the Theil–Sen estimator (`Slope`), the median of the pairwise slopes, which one outlying pathway cannot pull with the few significant pathways; `Pearson` is their correlation and `SignConcordance` the fraction of those pathways enriched in the same direction.
 
 ## Code Example
 
@@ -44,37 +44,31 @@ syn_gsea = pd.read_csv("synthetic_gsea_result.csv")
 f1 = analyzer.compute_metrics(ori_gsea, syn_gsea, metrics="F1")
 scores = analyzer.compute_metrics(ori_gsea, syn_gsea)   # all metrics
 
-# Zone counts and the points of the rank-score plot
-x, y, result = analyzer.process_single_gsea_result(ori_gsea, syn_gsea)
-print(f"F1-PCS: {result.f1:.3f}  (recall {result.recall:.3f}, precision {result.precision:.3f})")
+print(f"F1-PCS: {scores['F1']:.3f}  (recall {scores['Recall']:.3f}, precision {scores['Precision']:.3f})")
 ```
 
-Available metrics: `Recall`, `Precision`, `F1`, `Slope`, `Slope_robust`, `Pearson`, `SignConcordance`. Several synthetic datasets are compared with `analyzer.compute_metrics_datasets(ori_data, dataset_dict)`.
+Available metrics: `Recall`, `Precision`, `F1`, `Slope`, `Pearson`, `SignConcordance`. Several synthetic datasets are compared with `analyzer.compute_metrics_datasets(ori_data, dataset_dict)`.
 
-## Scatter Plot Visualization
+## NES calibration plot
+
+The calibration plot shows the synthetic versus original NES of the pathways significant in the original data, with the identity line, the Theil–Sen fit and, in each panel, the slope, Pearson R and sign concordance. Filled points are also significant in the synthetic data, open points are not, and grey points have the opposite sign; the small light grey points are the pathways not significant in the original data, shown for context and left out of the fit:
 
 ```python
 dataset_dict = {
-    "Avatars K5": "GSEA/avatarsk5_0.csv",
-    "CTGAN": "GSEA/ctgan_0.csv",
-    "Gaussian Copula": "GSEA/gaussiancopula_0.csv",
-    "Synthpop": "GSEA/synthpop_0.csv",
-    "TVAE": "GSEA/tvae_0.csv",
-    "Diffusion": "GSEA/tabdiff_0.csv",
+    "Avatars": "GSEA/avatars_42.csv",
+    "CTGAN": "GSEA/ctgan_42.csv",
+    "Gaussian Copula": "GSEA/gaussiancopula_42.csv",
+    "Synthpop": "GSEA/synthpop_42.csv",
+    "TVAE": "GSEA/tvae_42.csv",
+    "TabDiff": "GSEA/tabdiff_42.csv",
 }
 
-# Concordance zones, F1-PCS in each panel
-fig, f1_dict = analyzer.plot_gsea_datasets(
-    ori_data="GSEA/original_data.csv",
-    dataset_dict=dataset_dict,
-    figsize=(9, 10),
-)
-fig.savefig("gsea_pcs_scatter.png", dpi=300, bbox_inches="tight")
-
-# NES calibration of the pathways enriched in the original
 fig, calibration = analyzer.plot_calibration_scatter("GSEA/original_data.csv", dataset_dict)
+fig.savefig("gsea_calibration_scatter.png", dpi=300, bbox_inches="tight")
 ```
 
-![GSEA PCS Scatter Plots](../../assets/figures/melanoma_gsea_pcs.png)
+`calibration` is a table with the Theil–Sen slope and intercept, Pearson correlation, sign concordance and number of pathways of each dataset.
 
-*Scatter plots of pathway rank scores (Original vs. Synthetic) for each SDG method in the Melanoma cohort.*
+![GSEA NES calibration](../../assets/figures/nsclc_gsea_calibration.png)
+
+*NES of the Hallmark pathways significant in the original NSCLC cohort (responders versus progressors), original versus synthetic data of each SDG method.*

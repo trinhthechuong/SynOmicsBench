@@ -11,21 +11,53 @@
 [![Container](https://img.shields.io/badge/container-Apptainer-blue.svg)](https://github.com/trinhthechuong/SynOmicsBench/pkgs/container/synomicsbench)
 
 
-**SynOmicsBench** is a unified benchmarking framework for synthetic data generation (SDG) for clinical transcriptomic cancer cohorts.
+**SynOmicsBench** is a unified benchmarking framework for synthetic data generation (SDG) for clinical trial transcriptomic cancer cohorts.
 
-Achieving a trade-off between **biological utility** and **patient privacy** is critical for secure data sharing when applying transcriptomic clinical datasets to artificial intelligence in precision oncology. Here, we present the **SynOmicsBench** framework. SynOmicsBench combines standardized preprocessing with multidimensional evaluation, prioritizing downstream biological validation alongside statistical fidelity and attack-based privacy assessment. This work provides a reproducible decision-support tool for method selection and promotes biologically informed, privacy-aware adoption of synthetic data in precision oncology.
+Achieving a trade-off between **biological utility** and **patient privacy** is critical for secure data sharing when applying transcriptomic clinical trial datasets to artificial intelligence in precision oncology. Here, we present the **SynOmicsBench** framework. SynOmicsBench combines standardized preprocessing with multidimensional evaluation, prioritizing downstream biological validation alongside statistical fidelity and attack-based privacy assessment. This work provides a reproducible decision-support tool for method selection and promotes biologically informed, privacy-aware adoption of synthetic data in precision oncology.
 
 ---
 
 ## 🔬 Framework Overview
 
-![Framework Overview](https://github.com/user-attachments/assets/2cf2423c-dc24-4f85-b97f-2160bfc9ebf4)
+![Framework Overview](docs/assets/figures/Figure_1_Graphical_abstract.png)
 
 SynOmicsBench compares synthetic data generation methods using a standardized pipeline that combines:
 
 - **Standardized Preprocessing**: Automated data filtering, harmonization, and integration.
-- **Multidimensional Evaluation**: Assessing Statistical Fidelity, Downstream Biological Utility, and Privacy Risk.
-- **State-of-the-Art SDG Methods**: Native support for **CTGAN, TVAE, Gaussian Copula, Synthpop, TabDiff, and Avatars (K5/K10)**. 
+- **Multidimensional Evaluation**: Assessing Statistical Fidelity (including co-expression network preservation), Downstream Biological Utility (F1 concordance, effect-size calibration, survival score with C-index confidence intervals), and Privacy Risk (with an external control cohort), combined into a twelve-metric meta-score by a one-call automatic benchmark. See [What's new in 1.2.0](https://trinhthechuong.github.io/SynOmicsBench/whats-new/).
+- **State-of-the-Art SDG Methods**: Native support for **CTGAN, TVAE, Gaussian Copula, Synthpop, TabDiff, and Avatars**. 
+
+---
+
+## 🏆 Overall ranking
+
+Six SDG methods, 90 synthetic datasets (ccRCC, Melanoma and NSCLC cohorts × 6 methods × 5 seeds) and twelve metrics in three pillars: statistical fidelity, biological utility and privacy. On every metric the 90 datasets are ranked together; a method's meta-score is the weighted sum of its three pillar scores (mean ranks; lower is better).
+
+The right weights depend on how the synthetic data will be shared:
+
+- **Equal weights** (statistical fidelity / biological utility / privacy: 1/3 each).
+- **Controlled sharing within a research consortium** (0.3 / 0.5 / 0.2): access is governed by a data transfer agreement, so the legal framework carries most of the privacy burden; biological utility comes first, as the goal is faithful downstream discovery.
+- **Public release for open challenges or hackathons** (0.2 / 0.3 / 0.5): no governance layer restricts access, so privacy weighs most; biological utility comes second, so that models trained on the data generalize to real patients.
+- **Method development and pipeline testing** (0.3 / 0.2 / 0.5): synthetic data embedded in software packages, tutorials and public repositories, so privacy weighs most; statistical fidelity comes second, as the software must behave as it would on real data.
+
+Rank (meta-score) of each method:
+
+| Method | Equal weights | Controlled sharing within a research consortium | Public release for open challenges or hackathons | Method development and pipeline testing | Ranked first over all weights |
+|---|---|---|---|---|---|
+| Gaussian Copula | 1 (30.00) | 1 (27.14) | 1 (33.84) | 1 (33.69) | 92.12% |
+| Avatars | 2 (36.94) | 2 (35.01) | 2 (41.14) | 2 (40.12) | 0.00% |
+| TabDiff | 3 (42.74) | 3 (40.70) | 3 (44.05) | 3 (44.76) | 0.00% |
+| Synthpop | 4 (47.88) | 4 (47.03) | 5 (51.01) | 5 (49.83) | 0.00% |
+| CTGAN | 5 (54.86) | 6 (59.30) | 4 (47.61) | 4 (48.58) | 7.88% |
+| TVAE | 6 (56.97) | 5 (59.12) | 6 (51.65) | 6 (53.15) | 0.00% |
+
+### Sensitivity to the pillar weights
+
+Each point of the triangle is a weighting of the three pillars, coloured by the method ranked first; the ranking on the right follows the point through the four weightings. Click the animation to open the interactive report.
+
+[![Ranking under every weighting of the three pillars](docs/assets/figures/weight_sweep.gif)](https://trinhthechuong.github.io/SynOmicsBench/assets/reports/synomicsbench_leaderboard.html)
+
+**[Open the full interactive report](https://trinhthechuong.github.io/SynOmicsBench/assets/reports/synomicsbench_leaderboard.html)** · [Benchmark Leaderboard](https://trinhthechuong.github.io/SynOmicsBench/evaluation/leaderboard/)
 
 ---
 

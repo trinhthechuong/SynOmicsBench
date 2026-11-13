@@ -8,11 +8,11 @@ Univariate similarity measures how well the distribution of each individual feat
 
 ### Metrics
 
-- **Numerical features** — the [Kolmogorov–Smirnov (KS)](https://docs.sdv.dev/sdmetrics/data-metrics/quality/kscomplement) statistic measures the maximum distance between the cumulative distributions:
+- **Numerical features**: the [Kolmogorov–Smirnov (KS)](https://docs.sdv.dev/sdmetrics/data-metrics/quality/kscomplement) statistic measures the maximum distance between the cumulative distributions:
 
 $$s_k = 1 - \text{KS}\!\bigl(\text{CDF}(F_k^{\text{original}}),\; \text{CDF}(F_k^{\text{synthetic}})\bigr)$$
 
-- **Categorical features** — the [Total Variation Distance (TVD)](https://docs.sdv.dev/sdmetrics/data-metrics/quality/tvcomplement) quantifies the discrepancy between frequency distributions:
+- **Categorical features**: the [Total Variation Distance (TVD)](https://docs.sdv.dev/sdmetrics/data-metrics/quality/tvcomplement) quantifies the discrepancy between frequency distributions:
 
 $$s_k = 1 - \text{TVD}(F_{k,\text{original}},\; F_{k,\text{synthetic}})$$
 
@@ -58,11 +58,11 @@ Bivariate similarity evaluates how well pairwise relationships between features 
 
 ### Metrics
 
-- **Numerical–numerical pairs** — Spearman's rank correlation ($\rho$):
+- **Numerical–numerical pairs**: Spearman's rank correlation ($\rho$):
 
 $$s_{i,j} = 1 - \frac{1}{2}\left|\rho_{i,j}^{\text{original}} - \rho_{i,j}^{\text{synthetic}}\right|$$
 
-- **Categorical–categorical and mixed pairs** — Cramér's V. For mixed pairs, numerical features are discretized into 10 bins:
+- **Categorical–categorical and mixed pairs**: Cramér's V. For mixed pairs, numerical features are discretized into 10 bins:
 
 $$s_{i,j} = 1 - \left|V_{i,j}^{\text{original}} - V_{i,j}^{\text{synthetic}}\right|$$
 
@@ -114,15 +114,15 @@ from synomicsbench.metrics.fidelity.visualization import plot_violin_grid_by_can
 # Each list contains per-feature (univariate) or per-pair (bivariate) scores across replicates.
 Score_Dict = {
     "ccRCC": {
-        "Avatars K5": avatars_k5_ccrcc_scores,
-        "Avatars K10": avatars_k10_ccrcc_scores,
+        "Avatars": avatars_ccrcc_scores,
         "CTGAN": ctgan_ccrcc_scores,
         "Gaussian Copula": gc_ccrcc_scores,
         "Synthpop": synthpop_ccrcc_scores,
         "TVAE": tvae_ccrcc_scores,
+        "TabDiff": tabdiff_ccrcc_scores,
     },
     "Melanoma": {
-        "Avatars K5": avatars_k5_melanoma_scores,
+        "Avatars": avatars_melanoma_scores,
         # ...
     },
 }
@@ -174,3 +174,7 @@ scores = npres.evaluate(
 # the colour scale is centred on Z = 10
 fig, module_table = npres.plot_module_heatmap()
 ```
+
+![Network preservation heatmap](../assets/figures/melanoma_network_heatmap.png)
+
+*Z-summary preservation of the co-expression modules of the original Melanoma cohort in one synthetic replicate (seed 0) of each SDG method.*

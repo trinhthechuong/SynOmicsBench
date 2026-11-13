@@ -74,7 +74,7 @@ results = pipeline.run_pipeline(
     verbose=True,
 )
 
-# Access outputs — run_pipeline() returns a dict with three keys
+# Access outputs: run_pipeline() returns a dict with three keys
 processed_clinical       = results["processed_clinical"]
 processed_transcriptomics = results["processed_transcriptomics"]
 integrated_data          = results["integrated_data"]   # None if integrate_data=False
@@ -109,7 +109,7 @@ feature_engineering → integrate_data
 
 !!! tip
     If you only need one step (e.g., just filtering, encoding, or imputation), you can call the
-    preprocessing utilities directly—see the section below.
+    preprocessing utilities directly (see the section below).
 
 ## Utility Functions (`DataProcessor`)
 

@@ -16,11 +16,13 @@ Statistical fidelity assesses how well the synthetic data preserves the global s
 -   **[Univariate Similarity](statistical-fidelity.md#univariate-similarity)**
 
 -   **[Bivariate Similarity](statistical-fidelity.md#bivariate-similarity)**
+
+-   **[Co-expression Network Preservation](statistical-fidelity.md#co-expression-network-preservation)**
 </div>
 
 This dimension provides the first line of evaluation for any synthetic data generation method.
 
-### [Biological Utility](biological-utility/index.md)
+### Biological Utility
 
 Biological utility focuses on task-specific performance in clinically relevant downstream analyses. Statistical fidelity does not always guarantee that biological signals are preserved for scientific discovery.
 
@@ -48,9 +50,11 @@ Privacy evaluation quantifies the disclosure vulnerability of the synthetic data
 - **Linkability**: The risk of connecting records from the synthetic dataset to the original or other external datasets
 - **Inference**: The risk of deducing sensitive attribute values from other available information
 
+Each attack can be run against an external control cohort (patients the generator never saw) to report the residual risk attributable to the synthetic data.
+
 ### [Automatic Benchmark](autobenchmark.md)
 
-Rather than computing each of the three pillars separately and aggregating the results by hand, the **Automatic Benchmark** runs every dimension in one pass and produces a rank-derived meta-score plus a comprehensive report — the recommended entry point once you have multiple candidate SDG methods to compare.
+Rather than computing each of the three pillars separately and aggregating the results by hand, the **Automatic Benchmark** computes the twelve metrics, or any subset of them, in one call. It ranks the synthetic datasets into a rank-derived meta-score, tests how the ranking depends on the pillar weights, and writes a report. It is the recommended entry point to compare several SDG methods.
 
 ---
 
@@ -79,22 +83,22 @@ from synomicsbench.metrics.fidelity.BayesianComparison import BayesianComparison
 bc = BayesianComparison(rope=0.01)
 
 score_ccrcc = {
-    'Avatars K10': [0.868223, 0.870562, 0.866601, 0.871735, 0.869462],
-    'CTGAN': [0.834993, 0.805653, 0.821708, 0.816810, 0.809196]
+    'Avatars': [0.8905, 0.8906, 0.8888, 0.8913, 0.8881],
+    'CTGAN': [0.8057, 0.8217, 0.8168, 0.8092, 0.835]
 }
 
 compare_result = bc.compare_methods(
     method_to_scores=score_ccrcc,
-    methods_order=['Avatars K10', 'CTGAN'],
+    methods_order=['Avatars', 'CTGAN'],
 )
 ```
 
 **Output:**
 
-| Method 1    | Method 2    |   Better Prob |   Worse Prob |   Equivalent Prob |
-|:------------|:------------|--------------:|-------------:|------------------:|
-| Avatars K10 | CTGAN       |   0.995937    |  0.000969485 |        0.00309318 |
-| CTGAN       | Avatars K10 |   0.000969485 |  0.995937    |        0.00309318 |
+| Method 1 | Method 2 | Better Prob | Worse Prob | Equivalent Prob |
+|:---------|:---------|------------:|-----------:|----------------:|
+| Avatars  | CTGAN    |    0.999097 |   0.000311 |        0.000592 |
+| CTGAN    | Avatars  |    0.000311 |   0.999097 |        0.000592 |
 
 #### Heatmap Visualization
 
@@ -105,34 +109,34 @@ from synomicsbench.metrics.fidelity.BayesianComparison import BayesianComparison
 
 Univariate_Score_Dict = {
     'ccRCC': {
-        'Avatars K5': [0.8881120877695017, 0.890477305776368, 0.8905614386501237, 0.8888098881167701, 0.8913354237600071],
-        'Avatars K10': [0.8682233057904494, 0.8705623113141328, 0.8666012789137973, 0.8717350925047507, 0.869462903338299],
-        'CTGAN': [0.8349935442546923, 0.8056530676365664, 0.8217082370402533, 0.8168101267159, 0.8091963081738267],
-        'Gaussian Copula': [0.8939178299457882, 0.888584901789092, 0.8908454392711511, 0.886851763847271, 0.883785424538307],
-        'Synthpop': [0.9518448306115543, 0.9532236382164678, 0.9517425968988666, 0.9503118851292676, 0.9534472187997605],
-        'TVAE': [0.6309826968017754, 0.621016865353633, 0.6637430006699062, 0.5812554183782042, 0.6395117650457438]
+        'Avatars': [0.8905, 0.8906, 0.8888, 0.8913, 0.8881],
+        'CTGAN': [0.8057, 0.8217, 0.8168, 0.8092, 0.835],
+        'Gaussian Copula': [0.8886, 0.8908, 0.8869, 0.8838, 0.8939],
+        'Synthpop': [0.9532, 0.9517, 0.9503, 0.9534, 0.9518],
+        'TVAE': [0.621, 0.6637, 0.5813, 0.6395, 0.631],
+        'TabDiff': [0.8354, 0.8364, 0.8218, 0.8298, 0.8234],
     },
     'Melanoma': {
-        'Avatars K5': [0.8564967958041939, 0.8566124125620105, 0.8557903057614384, 0.8552329963363088, 0.861733435106733],
-        'Avatars K10': [0.8466413890303546, 0.8432481904403524, 0.8421363812805591, 0.8407387666940881, 0.8438034236667638],
-        'CTGAN': [0.7386315254751082, 0.7627143040836618, 0.7829547727714179, 0.7675820451259966, 0.7806570896923586],
-        'Gaussian Copula': [0.8947284965524952, 0.8910051558010256, 0.894645248824405, 0.8926649796604031, 0.8936413709040798],
-        'Synthpop': [0.9228348197885513, 0.9161532463334907, 0.9268803262950096, 0.9306173790084618, 0.921938807240532],
-        'TVAE': [0.8118174428996952, 0.8155383849775407, 0.7688229113356462, 0.8111297666213386, 0.8032479967530497]
+        'Avatars': [0.8566, 0.8558, 0.8552, 0.8617, 0.8565],
+        'CTGAN': [0.7627, 0.783, 0.7676, 0.7807, 0.7386],
+        'Gaussian Copula': [0.891, 0.8946, 0.8927, 0.8936, 0.8947],
+        'Synthpop': [0.9162, 0.9269, 0.9306, 0.9219, 0.9228],
+        'TVAE': [0.8155, 0.7688, 0.8111, 0.8032, 0.8118],
+        'TabDiff': [0.8624, 0.863, 0.8726, 0.8707, 0.8894],
     },
     'NSCLC': {
-        'Avatars K5': [0.8640593599686472, 0.8697787139827998, 0.8702699655884499, 0.8671504554801867, 0.8639593703968106],
-        'Avatars K10': [0.8543093480034314, 0.854821534289125, 0.8519989756828202, 0.8488335579271308, 0.8541274238575611],
-        'CTGAN': [0.7767114152979895, 0.7500690012214213, 0.7827400422596005, 0.7734342410909774, 0.7250724465427827],
-        'Gaussian Copula': [0.9057809875606977, 0.8996162072029326, 0.8935751605323073, 0.9016654341446757, 0.9065041456658781],
-        'Synthpop': [0.9184738919693407, 0.9231041713180277, 0.9282744185326606, 0.9296057084197769, 0.9232167259549566],
-        'TVAE': [0.7460308291609655, 0.7440953841590348, 0.754862702150197, 0.712140411911071, 0.7793414436344053]
-    }
+        'Avatars': [0.8698, 0.8703, 0.8672, 0.864, 0.8641],
+        'CTGAN': [0.7501, 0.7827, 0.7734, 0.7251, 0.7767],
+        'Gaussian Copula': [0.8996, 0.8936, 0.9017, 0.9065, 0.9058],
+        'Synthpop': [0.9231, 0.9283, 0.9296, 0.9232, 0.9185],
+        'TVAE': [0.7441, 0.7549, 0.7121, 0.7793, 0.746],
+        'TabDiff': [0.8797, 0.8633, 0.8499, 0.871, 0.8673],
+    },
 }
 
 bc = BayesianComparison(rope=0.01)
 cancers = ["ccRCC", "Melanoma", "NSCLC"]
-methods_order = ["Avatars K5", "Avatars K10", "CTGAN", "Gaussian Copula", "Synthpop", "TVAE"]
+methods_order = ["Avatars", "CTGAN", "Gaussian Copula", "Synthpop", "TVAE", "TabDiff"]
 fig, axes, mats_by_cancer, comp_by_cancer = bc.plot_pbetter_heatmap_grid(
     cancer_to_method_scores=Univariate_Score_Dict,
     cancers_order=cancers,

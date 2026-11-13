@@ -41,7 +41,9 @@ markdown_extensions:
 
 # Navigation Structure (EXACTLY 6 top-level tabs)
 nav:
-  - Home: index.md
+  - Home:
+      - index.md
+      - What's New in 1.2.0: whats-new.md
   - Getting Started: getting-started/index.md
   - Preprocessing Data: preprocessing/index.md
   - Generate Synthetic Data: synthetic-data/index.md
@@ -56,6 +58,7 @@ nav:
           - Survival Analysis: evaluation/biological-utility/survival-analysis.md
       - Biological Results: evaluation/biological-results.md
       - Privacy: evaluation/privacy.md
+      - Benchmark Leaderboard: evaluation/leaderboard.md
       - Automatic Benchmark: evaluation/autobenchmark.md
   - API: api/index.md
 
